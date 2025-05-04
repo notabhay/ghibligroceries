@@ -1230,10 +1230,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     } else {
         // Log warnings if any modal elements are missing
-        if (!cancelOrderModal) console.warn("Cancel order modal (#cancelOrderModal) not found.");
-        if (!confirmCancelBtn) console.warn("Confirm cancel button (#confirmCancelBtn) not found.");
-        if (!modalCloseBtn) console.warn("Modal close button (#modalCloseBtn) not found.");
-        if (!cancelOrderForm) console.warn("Cancel order form (#cancelOrderForm) not found.");
+        // if (!cancelOrderModal) console.warn("Cancel order modal (#cancelOrderModal) not found.");
+        // if (!confirmCancelBtn) console.warn("Confirm cancel button (#confirmCancelBtn) not found.");
+        // if (!modalCloseBtn) console.warn("Modal close button (#modalCloseBtn) not found.");
+        // if (!cancelOrderForm) console.warn("Cancel order form (#cancelOrderForm) not found.");
     }
 
 }); // End DOMContentLoaded
