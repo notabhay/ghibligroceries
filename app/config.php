@@ -46,8 +46,8 @@ return [
     // --- Database Configuration ---
     'DB_HOST' => 'localhost', // Database host address (e.g., 'localhost' or IP address).
     'DB_NAME' => 'ghibligroceriesdb', // Name of the database to connect to.
-    'DB_USER' => 'root', // Database username.
-    'DB_PASS' => 'password', // Database password.
+    'DB_USER' => 'ghibli_app_user', // Database username for the application.
+    'DB_PASS' => 'keeleteachingserversucks', // Database password for the application user. **CHANGE THIS!**
 
     // --- Security and Authentication ---
     'AUTH_TIMEOUT' => 3600, // Session timeout in seconds for authenticated users (1 hour).
