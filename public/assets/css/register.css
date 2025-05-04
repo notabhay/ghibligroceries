@@ -1,0 +1,368 @@
+/* ==========================================================================
+   Registration Page Specific Styles
+   ========================================================================== */
+
+/* Styles for the main registration section wrapper */
+.register-section {
+    align-items: center;
+    /* Center content vertically if using flex */
+    background-color: var(--light-color);
+    /* Use a light background color variable */
+    /* Example fallback: background-color: #f8f9fa; */
+}
+
+/* Common page title block styling (shared with login page) */
+.page-title {
+    margin-bottom: 30px;
+    /* Space below the title block */
+    text-align: center;
+    /* Center align title and subtitle */
+}
+
+/* Main heading (H2) styling */
+.page-title h2 {
+    margin-bottom: 15px;
+    /* Space below heading */
+    color: var(--dark-color);
+    /* Use a dark color variable */
+    /* Example fallback: color: #343a40; */
+    font-size: 2rem;
+    /* Heading font size */
+}
+
+/* Subtitle paragraph styling */
+.page-title p {
+    color: var(--gray-color);
+    /* Use a gray color variable */
+    /* Example fallback: color: #6c757d; */
+    font-size: 1.1rem;
+    /* Subtitle font size */
+}
+
+/* Container adjustments within the registration section */
+.register-section .container {
+    display: flex;
+    /* Use flexbox */
+    flex-direction: column;
+    /* Stack children vertically */
+    align-items: center;
+    /* Center children horizontally */
+    padding-top: 40px;
+    /* Top padding */
+    padding-bottom: 40px;
+    /* Bottom padding */
+}
+
+/* Container for the registration form */
+/* Includes ID for potential JS targeting and class for styling */
+#register-form-container,
+.register-form-container {
+    margin-top: 20px;
+    /* Space above the form */
+    box-shadow: var(--shadow, 0 2px 10px rgba(0, 0, 0, 0.1));
+    /* Standard shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: #fff;
+    /* White background */
+    padding: 30px;
+    /* Inner padding */
+    width: 100%;
+    /* Full width on small screens */
+    max-width: 500px;
+    /* Max width */
+}
+
+/* Style for the form container when it's empty (e.g., while React component loads) */
+#register-form-container:empty::before {
+    display: block;
+    /* Make the pseudo-element visible */
+    opacity: 0.7;
+    /* Slightly transparent */
+    padding: 40px;
+    /* Padding */
+    content: "Loading Registration Form...";
+    /* Loading message */
+    color: var(--herb-green, #5a8f50);
+    /* Theme color */
+    text-align: center;
+    /* Center align text */
+}
+
+/* Common margin for form groups within the registration form */
+.register-form .form-group {
+    margin-bottom: 20px;
+    /* Space below each group */
+}
+
+/* Common input field styling (text, tel, email, password) */
+.register-form input[type="text"],
+.register-form input[type="tel"],
+.register-form input[type="email"],
+.register-form input[type="password"] {
+    border: 1px solid #ddd;
+    /* Light border */
+    border-radius: 4px;
+    /* Rounded corners */
+    background-color: #f9f9f9;
+    /* Light background */
+    padding: 12px;
+    /* Inner padding */
+    width: 100%;
+    /* Full width */
+    font-size: 1rem;
+    /* Standard font size */
+    /* Inherits focus styles from general form controls if defined elsewhere */
+}
+
+/* Styling for the primary registration button */
+.register-form .btn-primary {
+    transition: var(--transition);
+    /* Smooth transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    border: none;
+    /* No border */
+    border-radius: 5px;
+    /* Rounded corners */
+    background-color: var(--tomato-red);
+    /* Accent color */
+    padding: 12px 20px;
+    /* Button padding */
+    width: 100%;
+    /* Full width button */
+    color: white;
+    /* Text color */
+    font-weight: 500;
+    /* Medium font weight */
+    font-size: 1rem;
+    /* Standard font size */
+}
+
+/* Hover effect for the registration button */
+.register-form .btn-primary:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Add shadow */
+    background-color: var(--dark-tomato-red);
+    /* Darken background */
+}
+
+/* Container for the "Already have an account?" link */
+.login-link {
+    margin-top: 20px;
+    /* Space above the link */
+    text-align: center;
+    /* Center align the text */
+    /* Assumes link styling is handled globally or via .register-link a */
+}
+
+/* ==========================================================================
+   Alert Message Styles (Shared potentially)
+   ========================================================================== */
+
+/* Base alert styling */
+.alert {
+    margin-bottom: 20px;
+    /* Space below alert */
+    border-radius: 4px;
+    /* Rounded corners */
+    padding: 15px;
+    /* Inner padding */
+    text-align: center;
+    /* Center align text */
+}
+
+/* Remove default margin from paragraph inside alert */
+.alert p {
+    margin: 0;
+}
+
+/* Style links within alerts */
+.alert a {
+    font-weight: 600;
+    /* Make links slightly bolder */
+    /* Color inherited or set specifically */
+}
+
+/* Success alert styling */
+.alert-success {
+    border: 1px solid var(--primary-color);
+    /* Border color */
+    background-color: rgba(39, 174, 96, 0.1);
+    /* Light background tint */
+    color: var(--primary-color);
+    /* Text color */
+}
+
+/* Error alert styling */
+.alert-error {
+    border: 1px solid var(--error-color);
+    /* Border color */
+    background-color: rgba(231, 76, 60, 0.1);
+    /* Light background tint */
+    color: var(--error-color);
+    /* Text color */
+}
+
+/* ==========================================================================
+   Password Strength Indicator Styles
+   ========================================================================== */
+
+/* Container for the password strength meter and text */
+.password-strength {
+    margin-top: 5px;
+    /* Small space above the indicator */
+}
+
+/* The background bar of the strength meter */
+.strength-meter {
+    margin-top: 5px;
+    /* Space above the bar */
+    border-radius: 2px;
+    /* Slight rounding */
+    background-color: #eee;
+    /* Light gray background */
+    width: 100%;
+    /* Full width */
+    height: 4px;
+    /* Thin bar */
+    overflow: hidden;
+    /* Hide the fill overflow */
+}
+
+/* The colored fill part of the strength meter */
+.strength-meter-fill {
+    transition: width 0.3s, background-color 0.3s;
+    /* Animate changes */
+    height: 100%;
+    /* Full height of the meter */
+}
+
+/* Styles for 'weak' password strength */
+.strength-meter-fill.weak {
+    background-color: #e74c3c;
+    /* Red color */
+    width: 33%;
+    /* Fill one-third */
+}
+
+/* Styles for 'medium' password strength */
+.strength-meter-fill.medium {
+    background-color: #f39c12;
+    /* Orange color */
+    width: 66%;
+    /* Fill two-thirds */
+}
+
+/* Styles for 'strong' password strength */
+.strength-meter-fill.strong {
+    background-color: #27ae60;
+    /* Green color */
+    width: 100%;
+    /* Fill completely */
+}
+
+/* Text indicating password strength (e.g., "Weak", "Medium", "Strong") */
+.strength-text {
+    margin-top: 5px;
+    /* Space above the text */
+    font-size: 0.85rem;
+    /* Smaller font size */
+    text-align: right;
+    /* Align text to the right */
+}
+
+/* Text color for 'weak' strength */
+.strength-text.weak {
+    color: #e74c3c;
+}
+
+/* Text color for 'medium' strength */
+.strength-text.medium {
+    color: #f39c12;
+}
+
+/* Text color for 'strong' strength */
+.strength-text.strong {
+    color: #27ae60;
+}
+
+/* ==========================================================================
+   Loading Indicator & Field Validation Styles
+   ========================================================================== */
+
+/* Loading indicator style (e.g., during form submission) */
+.loading-indicator {
+    display: flex;
+    /* Use flexbox */
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
+    margin-top: 10px;
+    /* Space above indicator */
+    color: var(--primary-color);
+    /* Use primary color */
+}
+
+/* Icon styling within loading indicator */
+.loading-indicator i {
+    margin-right: 8px;
+    /* Space between icon and text (if any) */
+    /* Add animation if using a spinner icon */
+}
+
+/* Success indicator icon for validated fields (e.g., checkmark) */
+.field-success {
+    position: absolute;
+    /* Position relative to input-container */
+    top: 50%;
+    /* Center vertically */
+    right: 12px;
+    /* Position on the right */
+    transform: translateY(-50%);
+    /* Fine-tune vertical centering */
+    color: var(--success-color);
+    /* Use success color variable */
+    /* Assuming --success-color is defined, e.g., #27ae60 */
+}
+
+/* Container needed for positioning validation icons */
+.input-container {
+    position: relative;
+    /* Required for absolute positioning of children */
+}
+
+/* ==========================================================================
+   Responsive Adjustments for Registration Page
+   ========================================================================== */
+
+/* Tablets and smaller */
+@media (max-width: 768px) {
+
+    /* Reduce padding in the form container */
+    .register-form-container {
+        padding: 20px;
+    }
+
+    /* Reduce padding in input fields */
+    .form-group input {
+        padding: 10px;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 576px) {
+
+    /* Reduce page title font size */
+    .page-title h2 {
+        font-size: 1.8rem;
+    }
+
+    /* Remove shadow and reduce padding further for form container */
+    .register-form-container {
+        box-shadow: none;
+        /* Remove shadow on small screens */
+        padding: 15px;
+    }
+}

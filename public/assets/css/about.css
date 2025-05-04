@@ -1,0 +1,139 @@
+/* ==========================================================================
+   About Page Specific Styles
+   ========================================================================== */
+
+/* Main container for the about section content */
+.about-section {
+    padding: 20px 0 60px;
+    /* Top/bottom padding for the section */
+}
+
+/* Styling for the main content block on the about page */
+.about-content {
+    margin-top: 20px;
+    /* Space above the content block */
+    box-shadow: var(--shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
+    /* Standard shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: #fff;
+    /* White background */
+    padding: 30px;
+    /* Inner padding */
+}
+
+/* Common styles for different subsections (intro, values, team) */
+.about-intro,
+.about-values,
+.about-team {
+    margin-bottom: 40px;
+    /* Space below each subsection */
+    border-bottom: 1px solid rgba(90, 143, 80, 0.1);
+    /* Subtle bottom border as separator */
+    padding-bottom: 20px;
+    /* Padding below the content before the border */
+}
+
+/* Remove the bottom border from the last section (team) */
+.about-team {
+    border-bottom: none;
+}
+
+/* Styling for H3 headings within the about content */
+.about-content h3 {
+    margin-bottom: 15px;
+    /* Space below headings */
+    color: var(--herb-green, #5a8f50);
+    /* Use theme color */
+    font-size: 1.5rem;
+    /* Heading font size */
+}
+
+/* Specific margin for the first H3 in the intro section */
+.about-intro h3:first-of-type {
+    margin-bottom: 15px;
+}
+
+/* Specific margin for the second H3 in the intro section */
+.about-intro h3:nth-of-type(2) {
+    margin-top: 30px;
+    /* Add more space above the second heading */
+}
+
+/* Grid layout for displaying company values */
+.values-grid {
+    display: grid;
+    /* Responsive grid: columns adjust width, minimum 250px */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    /* Space between grid items */
+    margin-top: 20px;
+    /* Space above the grid */
+}
+
+/* Styling for individual value items within the grid */
+.value-item {
+    transition: var(--transition, all 0.3s ease);
+    /* Smooth transition for hover effects */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: #f9f9f9;
+    /* Light background color */
+    padding: 20px;
+    /* Inner padding */
+    text-align: center;
+    /* Center align text and icon */
+}
+
+/* Hover effect for value items */
+.value-item:hover {
+    transform: translateY(-5px);
+    /* Slight lift effect */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    /* Add shadow on hover */
+}
+
+/* Styling for icons within value items */
+.value-item i {
+    margin-bottom: 15px;
+    /* Space below the icon */
+    color: var(--herb-green, #5a8f50);
+    /* Use theme color */
+    font-size: 2rem;
+    /* Icon size */
+}
+
+/* Styling for H4 headings (value titles) within value items */
+.value-item h4 {
+    margin-bottom: 10px;
+    /* Space below the value title */
+    color: var(--herb-green, #5a8f50);
+    /* Use theme color */
+}
+
+/* ==========================================================================
+   Responsive Adjustments for About Page
+   ========================================================================== */
+
+/* Medium screens (tablets) */
+@media (max-width:768px) {
+
+    /* Adjust values grid to 2 columns */
+    .values-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Reduce padding for the main content block */
+    .about-content {
+        padding: 20px;
+    }
+}
+
+/* Small screens (mobile) */
+@media (max-width:576px) {
+
+    /* Adjust values grid to a single column */
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,437 @@
+/* ==========================================================================
+   Login Page Specific Styles
+   ========================================================================== */
+
+/* Styles for the main login section wrapper */
+.login-section {
+    align-items: center;
+    /* Center content vertically if using flex */
+    background-color: var(--light-color);
+    /* Use a light background color variable */
+    /* Assuming --light-color is defined, otherwise fallback needed */
+    /* Example fallback: background-color: #f8f9fa; */
+}
+
+/* Common page title block styling (might be shared with register page) */
+.page-title {
+    margin-bottom: 30px;
+    /* Space below the title block */
+    text-align: center;
+    /* Center align title and subtitle */
+}
+
+/* Main heading (H2) styling */
+.page-title h2 {
+    margin-bottom: 15px;
+    /* Space below heading */
+    color: var(--dark-color);
+    /* Use a dark color variable */
+    /* Example fallback: color: #343a40; */
+    font-size: 2rem;
+    /* Heading font size */
+}
+
+/* Subtitle paragraph styling */
+.page-title p {
+    color: var(--gray-color);
+    /* Use a gray color variable */
+    /* Example fallback: color: #6c757d; */
+    font-size: 1.1rem;
+    /* Subtitle font size */
+}
+
+/* Container adjustments within the login section */
+.login-section .container {
+    display: flex;
+    /* Use flexbox */
+    flex-direction: column;
+    /* Stack children vertically */
+    align-items: center;
+    /* Center children horizontally */
+    padding-top: 40px;
+    /* Top padding */
+    padding-bottom: 40px;
+    /* Bottom padding */
+}
+
+/* Container for the login form itself */
+.login-form-container {
+    margin-top: 20px;
+    /* Space above the form */
+    box-shadow: var(--shadow, 0 2px 10px rgba(0, 0, 0, 0.1));
+    /* Standard shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: #fff;
+    /* White background */
+    padding: 30px;
+    /* Inner padding */
+    width: 100%;
+    /* Full width on small screens */
+    max-width: 500px;
+    /* Max width to prevent it becoming too wide */
+}
+
+/* Styling for the form element */
+.login-form {
+    display: flex;
+    /* Use flexbox */
+    flex-direction: column;
+    /* Stack form elements vertically */
+}
+
+/* Common margin for form groups (label + input) */
+.login-form .form-group {
+    margin-bottom: 20px;
+    /* Space below each group */
+}
+
+/* Common label styling within form groups */
+.form-group label {
+    display: block;
+    /* Ensure label takes full width */
+    margin-bottom: 8px;
+    /* Space below label */
+    color: var(--dark-color);
+    /* Use dark color variable */
+    font-weight: 600;
+    /* Bolder label text */
+}
+
+/* Common input field styling (email, password, text) */
+.login-form input[type="email"],
+.login-form input[type="password"],
+.login-form input[type="text"] {
+    transition: var(--transition);
+    /* Smooth transition for focus */
+    border: 1px solid #ddd;
+    /* Light border */
+    border-radius: 4px;
+    /* Rounded corners */
+    background-color: #f9f9f9;
+    /* Light background */
+    padding: 12px;
+    /* Inner padding */
+    width: 100%;
+    /* Full width */
+    font-size: 1rem;
+    /* Standard font size */
+}
+
+/* Focus state styling for input fields */
+.form-group input:focus {
+    outline: none;
+    /* Remove default outline */
+    /* Add a subtle box shadow to indicate focus */
+    box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.2);
+    /* Using a green shade */
+    border-color: var(--primary-color);
+    /* Change border color on focus */
+    /* Assuming --primary-color is defined, e.g., #27ae60 */
+}
+
+/* Container specifically for the password input and toggle icon */
+.password-container {
+    position: relative;
+    /* Needed for absolute positioning of the icon */
+}
+
+/* Styling for the password visibility toggle icon (eye icon) */
+.toggle-password {
+    position: absolute;
+    /* Position relative to password-container */
+    top: 50%;
+    /* Center vertically */
+    right: 12px;
+    /* Position on the right */
+    transform: translateY(-50%);
+    /* Fine-tune vertical centering */
+    cursor: pointer;
+    /* Pointer cursor */
+    color: var(--gray-color);
+    /* Use gray color variable */
+}
+
+/* Hover effect for the password toggle icon */
+.toggle-password:hover {
+    color: var(--dark-color);
+    /* Darken color on hover */
+}
+
+/* Form group specifically for the CAPTCHA elements */
+.captcha-group {
+    margin-top: 25px;
+    /* Add extra space above CAPTCHA */
+}
+
+/* Container for CAPTCHA image, refresh button, and input */
+.captcha-container {
+    display: flex;
+    /* Use flexbox */
+    flex-direction: column;
+    /* Stack elements vertically */
+    gap: 10px;
+    /* Space between elements */
+}
+
+/* Container for the CAPTCHA image and refresh button */
+.captcha-image {
+    display: flex;
+    /* Use flexbox */
+    align-items: center;
+    /* Align items vertically */
+    gap: 10px;
+    /* Space between image and button */
+    border: 1px solid #ddd;
+    /* Border around the container */
+    border-radius: 4px;
+    /* Rounded corners */
+    background-color: #f9f9f9;
+    /* Light background */
+    padding: 5px;
+    /* Padding around image/button */
+}
+
+/* Styling for the CAPTCHA image itself */
+.captcha-image img {
+    border-radius: 4px;
+    /* Rounded corners for the image */
+    height: 50px;
+    /* Fixed height */
+}
+
+/* Styling for the CAPTCHA refresh button */
+.refresh-captcha {
+    transition: var(--transition);
+    /* Smooth transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    border: none;
+    /* No border */
+    background: none;
+    /* Transparent background */
+    padding: 5px;
+    /* Padding */
+    color: var(--primary-color);
+    /* Use primary color */
+    font-size: 1.2rem;
+    /* Icon size */
+}
+
+/* Hover effect for the refresh button */
+.refresh-captcha:hover {
+    color: var(--secondary-color);
+    /* Change color on hover */
+    /* Assuming --secondary-color is defined */
+}
+
+/* Container for "Remember Me" checkbox and "Forgot Password" link */
+.remember-me {
+    display: flex;
+    /* Use flexbox */
+    justify-content: space-between;
+    /* Space elements apart */
+    align-items: center;
+    /* Align items vertically */
+    font-size: 0.9rem;
+    /* Smaller font size */
+}
+
+/* Styling for the "Remember Me" label */
+.remember-me label {
+    display: flex;
+    /* Use flexbox */
+    align-items: center;
+    /* Align checkbox and text */
+    cursor: pointer;
+    /* Pointer cursor */
+    font-weight: normal;
+    /* Normal font weight */
+}
+
+/* Styling for the "Remember Me" checkbox */
+.remember-me input[type="checkbox"] {
+    cursor: pointer;
+    /* Pointer cursor */
+    margin-right: 8px;
+    /* Space between checkbox and text */
+}
+
+/* Styling for the "Forgot Password" link */
+.forgot-password {
+    color: var(--primary-color);
+    /* Use primary color */
+    font-size: 0.9rem;
+    /* Smaller font size */
+}
+
+/* Hover effect for the "Forgot Password" link */
+.forgot-password:hover {
+    text-decoration: underline;
+    /* Underline on hover */
+}
+
+/* Styling for the primary login button */
+.login-form .btn-primary {
+    transition: var(--transition);
+    /* Smooth transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    border: none;
+    /* No border */
+    border-radius: 5px;
+    /* Rounded corners */
+    background-color: var(--tomato-red);
+    /* Accent color */
+    padding: 12px 20px;
+    /* Button padding */
+    width: 100%;
+    /* Full width button */
+    color: white;
+    /* Text color */
+    font-weight: 500;
+    /* Medium font weight */
+    font-size: 1rem;
+    /* Standard font size */
+}
+
+/* Hover effect for the login button */
+.login-form .btn-primary:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Add shadow */
+    background-color: var(--dark-tomato-red);
+    /* Darken background */
+}
+
+/* Container for the "Don't have an account?" link */
+.register-link {
+    margin-top: 20px;
+    /* Space above the link */
+    text-align: center;
+    /* Center align the text */
+}
+
+/* Styling for the registration link itself */
+.register-link a {
+    color: var(--primary-color);
+    /* Use primary color */
+    font-weight: 600;
+    /* Bolder text */
+}
+
+/* Hover effect for the registration link */
+.register-link a:hover {
+    text-decoration: underline;
+    /* Underline on hover */
+}
+
+/* ==========================================================================
+   Alert Message Styles (Shared potentially)
+   ========================================================================== */
+
+/* Base alert styling */
+.alert {
+    margin-bottom: 20px;
+    /* Space below alert */
+    border-radius: 4px;
+    /* Rounded corners */
+    padding: 15px;
+    /* Inner padding */
+    text-align: center;
+    /* Center align text */
+}
+
+/* Remove default margin from paragraph inside alert */
+.alert p {
+    margin: 0;
+}
+
+/* Success alert styling */
+.alert-success {
+    border: 1px solid var(--primary-color);
+    /* Border color */
+    background-color: rgba(39, 174, 96, 0.1);
+    /* Light background tint */
+    color: var(--primary-color);
+    /* Text color */
+}
+
+/* Error alert styling */
+.alert-error {
+    border: 1px solid var(--error-color);
+    /* Border color */
+    /* Assuming --error-color is defined, e.g., #e74c3c */
+    background-color: rgba(231, 76, 60, 0.1);
+    /* Light background tint */
+    color: var(--error-color);
+    /* Text color */
+}
+
+/* Styling for inline error messages below input fields */
+.error-message {
+    display: flex;
+    /* Use flexbox */
+    align-items: center;
+    /* Align icon and text */
+    margin-top: 5px;
+    /* Space above the error message */
+    color: var(--error-color);
+    /* Use error color */
+    font-size: 0.85rem;
+    /* Smaller font size */
+}
+
+/* Styling for the icon within the error message */
+.error-message i {
+    margin-right: 5px;
+    /* Space between icon and text */
+}
+
+/* ==========================================================================
+   Responsive Adjustments for Login Page
+   ========================================================================== */
+
+/* Tablets and smaller */
+@media (max-width: 768px) {
+
+    /* Reduce padding in the form container */
+    .login-form-container {
+        padding: 20px;
+    }
+
+    /* Reduce padding in input fields */
+    .form-group input {
+        padding: 10px;
+    }
+
+    /* Stack "Remember Me" and "Forgot Password" vertically */
+    .remember-me {
+        flex-direction: column;
+        /* Stack vertically */
+        align-items: flex-start;
+        /* Align items to the start */
+        gap: 10px;
+        /* Add space between stacked items */
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 576px) {
+
+    /* Reduce page title font size */
+    .page-title h2 {
+        font-size: 1.8rem;
+    }
+
+    /* Remove shadow and reduce padding further for form container */
+    .login-form-container {
+        box-shadow: none;
+        /* Remove shadow on small screens */
+        padding: 15px;
+    }
+
+    /* Reduce gap in CAPTCHA container */
+    .captcha-container {
+        gap: 5px;
+    }
+}

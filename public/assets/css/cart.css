@@ -1,0 +1,543 @@
+/* ==========================================================================
+   Shopping Cart Page Specific Styles
+   ========================================================================== */
+
+/* Main container for the cart page */
+.cart-container {
+    margin: 0 auto;
+    /* Center the container */
+    padding: 20px;
+    /* Padding around the content */
+    max-width: 1000px;
+    /* Maximum width of the cart content */
+}
+
+/* Cart page title styling */
+.cart-container h1 {
+    margin-bottom: 30px;
+    /* Space below the title */
+    color: var(--herb-green);
+    /* Use theme color */
+    font-weight: 700;
+    /* Bold title */
+    text-align: center;
+    /* Center align the title */
+}
+
+/* Styles for the empty cart message display */
+.empty-cart {
+    padding: 50px 0;
+    /* Vertical padding */
+    text-align: center;
+    /* Center align content */
+}
+
+/* Image displayed when the cart is empty */
+.empty-cart-image {
+    margin-bottom: 20px;
+    /* Space below the image */
+    width: 100px;
+    /* Fixed width for the image */
+}
+
+/* Text message displayed when the cart is empty */
+.empty-cart p {
+    margin-bottom: 20px;
+    /* Space below the text */
+    color: var(--herb-green);
+    /* Use theme color */
+    font-size: 16px;
+    /* Text size */
+}
+
+/* Styling for the table displaying cart items */
+.cart-table {
+    margin-bottom: 30px;
+    /* Space below the table */
+    box-shadow: var(--shadow);
+    /* Standard shadow */
+    border-radius: 8px;
+    /* Rounded corners for the table container */
+    border-collapse: collapse;
+    /* Collapse borders between cells */
+    width: 100%;
+    /* Table takes full width of its container */
+    table-layout: fixed;
+    /* Fixed layout helps maintain column widths */
+    overflow: hidden;
+    /* Hide overflow content (e.g., from border-radius) */
+}
+
+/* Common styles for table header (th) and data (td) cells */
+.cart-table th,
+.cart-table td {
+    border-bottom: 1px solid #ddd;
+    /* Bottom border for separation */
+    padding: 15px;
+    /* Padding within cells */
+    text-align: left;
+    /* Default text alignment */
+}
+
+/* Center align specific columns (Price, Quantity, Total, Actions) */
+.cart-table th:nth-child(2),
+/* Price Header */
+.cart-table td:nth-child(2) {
+    /* Price Data */
+    text-align: center;
+}
+
+.cart-table th:nth-child(3),
+/* Quantity Header */
+.cart-table td:nth-child(3) {
+    /* Quantity Data */
+    text-align: center;
+}
+
+.cart-table th:nth-child(4),
+/* Total Header */
+.cart-table td:nth-child(4) {
+    /* Total Data */
+    text-align: center;
+}
+
+.cart-table th:nth-child(5),
+/* Actions Header */
+.cart-table td:nth-child(5) {
+    /* Actions Data */
+    text-align: center;
+}
+
+/* Styling specific to table header cells */
+.cart-table th {
+    background-color: var(--creamy-beige);
+    /* Light background color */
+    color: var(--herb-green);
+    /* Theme color for text */
+    font-weight: 600;
+    /* Slightly bolder text */
+}
+
+/* Ensure the last header cell (Actions) has a minimum width */
+.cart-table th:last-child {
+    min-width: 100px;
+}
+
+/* Hover effect for table rows (cart items) */
+.cart-item:hover {
+    background-color: var(--soft-off-white);
+    /* Subtle background change on hover */
+}
+
+/* Container for product image and details in the first column */
+.product-info {
+    display: flex;
+    /* Use flexbox for layout */
+    align-items: center;
+    /* Vertically align items */
+}
+
+/* Styling for the product thumbnail image */
+.product-thumbnail {
+    margin-right: 15px;
+    /* Space between image and text */
+    border-radius: 4px;
+    /* Slightly rounded corners */
+    background-color: var(--creamy-beige);
+    /* Background color for padding */
+    padding: 5px;
+    /* Padding around the image */
+    width: 80px;
+    /* Fixed width */
+    height: 80px;
+    /* Fixed height */
+    object-fit: contain;
+    /* Ensure image fits within bounds without distortion */
+}
+
+/* Styling for the product name heading */
+.product-details h3 {
+    margin: 0;
+    /* Remove default margin */
+    color: var(--herb-green);
+    /* Use theme color */
+    font-size: 16px;
+    /* Product name font size */
+}
+
+/* Styling for the individual product price */
+.product-price {
+    color: var(--herb-green);
+    /* Use theme color */
+    font-weight: 500;
+    /* Medium font weight */
+}
+
+/* Styling for the total price per item (Quantity * Price) */
+.product-total {
+    min-width: 100px;
+    /* Ensure minimum width */
+    color: var(--tomato-red);
+    /* Use accent color */
+    font-weight: 600;
+    /* Slightly bolder text */
+}
+
+/* Styling for the row displaying the overall cart total */
+.cart-total td {
+    background-color: var(--soft-off-white);
+    /* Distinct background color */
+    font-weight: bold;
+    /* Bold text */
+    font-size: 16px;
+    /* Font size for total */
+}
+
+/* Styling for the final total amount cell */
+.cart-total td:last-child {
+    color: var(--tomato-red);
+    /* Use accent color */
+    text-align: center;
+    /* Center align the total amount */
+}
+
+/* Container for action buttons below the cart table */
+.cart-actions {
+    display: flex;
+    /* Use flexbox for layout */
+    justify-content: space-between;
+    /* Space out button groups */
+    margin-top: 30px;
+    /* Space above the actions */
+}
+
+/* Container specifically for the right-aligned action buttons */
+.cart-actions-right {
+    display: flex;
+    /* Use flexbox */
+    gap: 10px;
+    /* Space between buttons */
+}
+
+/* Common styles for major action buttons */
+.continue-shopping-btn,
+.checkout-btn,
+.clear-cart-btn {
+    transition: var(--transition);
+    /* Smooth transition for hover effects */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 12px 24px;
+    /* Button padding */
+    font-weight: bold;
+    /* Bold text */
+    font-size: 16px;
+    /* Button font size */
+    text-decoration: none;
+    /* Remove underline from links styled as buttons */
+}
+
+/* Alignment for the remove item button column */
+.product-actions {
+    text-align: center;
+}
+
+/* Styling for the "Remove Item" button (trash icon) */
+.remove-item-btn {
+    display: inline-flex;
+    /* Use inline-flex for alignment */
+    justify-content: center;
+    /* Center icon horizontally */
+    align-items: center;
+    /* Center icon vertically */
+    transition: var(--transition);
+    /* Smooth transition */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    border: none;
+    /* No border */
+    border-radius: 50%;
+    /* Circular button */
+    background-color: var(--creamy-beige);
+    /* Light background */
+    width: 36px;
+    /* Fixed width */
+    height: 36px;
+    /* Fixed height */
+    color: var(--tomato-red);
+    /* Icon color */
+    font-size: 16px;
+    /* Icon size */
+}
+
+/* Hover effect for the "Remove Item" button */
+.remove-item-btn:hover {
+    background-color: var(--tomato-red);
+    /* Change background on hover */
+    color: white;
+    /* Change icon color on hover */
+}
+
+/* Styling for the "Clear Cart" button */
+.clear-cart-btn {
+    cursor: pointer;
+    /* Pointer cursor */
+    border: 1px solid var(--tomato-red);
+    /* Border matching text color */
+    background-color: white;
+    /* White background */
+    color: var(--tomato-red);
+    /* Text color */
+}
+
+/* Hover effect for the "Clear Cart" button */
+.clear-cart-btn:hover {
+    transform: translateY(-2px);
+    /* Slight lift effect */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    /* Add shadow */
+    background-color: var(--tomato-red);
+    /* Fill background */
+    color: white;
+    /* Change text color */
+}
+
+/* Styling for the "Continue Shopping" button */
+.continue-shopping-btn {
+    border: 1px solid var(--dark-creamy-beige);
+    /* Border color */
+    background-color: var(--creamy-beige);
+    /* Background color */
+    color: var(--herb-green);
+    /* Text color */
+}
+
+/* Hover effect for the "Continue Shopping" button */
+.continue-shopping-btn:hover {
+    transform: translateY(-2px);
+    /* Slight lift effect */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    /* Add shadow */
+    background-color: var(--dark-creamy-beige);
+    /* Darken background */
+}
+
+/* Styling for the "Checkout" button */
+.checkout-btn {
+    border: none;
+    /* No border */
+    background-color: var(--herb-green);
+    /* Primary action color */
+    color: white;
+    /* Text color */
+}
+
+/* Hover effect for the "Checkout" button */
+.checkout-btn:hover {
+    transform: translateY(-2px);
+    /* Slight lift effect */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    /* Add shadow */
+    background-color: var(--dark-herb-green);
+    /* Darken background */
+}
+
+/* ==========================================================================
+   Modal Dialog Styles (for confirmations like clearing cart)
+   ========================================================================== */
+
+/* Base modal container (hidden by default) */
+.modal {
+    display: none;
+    /* Hidden initially */
+    position: fixed;
+    /* Fixed position relative to viewport */
+    top: 0;
+    left: 0;
+    z-index: 2000;
+    /* High z-index to appear on top */
+    width: 100%;
+    height: 100%;
+}
+
+/* Class to make the modal visible */
+.modal-visible {
+    display: flex;
+    /* Use flexbox to center content */
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
+}
+
+/* Semi-transparent backdrop behind the modal */
+.modal-backdrop {
+    position: fixed;
+    /* Fixed position */
+    top: 0;
+    left: 0;
+    z-index: 2001;
+    /* Below modal content, above page content */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent black */
+    width: 100%;
+    height: 100%;
+}
+
+/* The actual modal content box */
+.modal-content {
+    position: relative;
+    /* Needed for z-index */
+    z-index: 2002;
+    /* Above backdrop */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    /* Modal shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: white;
+    /* White background */
+    padding: 24px;
+    /* Inner padding */
+    width: 90%;
+    /* Responsive width */
+    max-width: 400px;
+    /* Maximum width */
+    text-align: center;
+    /* Center align text */
+}
+
+/* Styling for the message text within the modal */
+#modal-message {
+    margin-bottom: 20px;
+    /* Space below message */
+    color: var(--herb-green);
+    /* Text color */
+    font-size: 16px;
+    /* Font size */
+    line-height: 1.5;
+    /* Line spacing */
+}
+
+/* Container for modal action buttons (Confirm, Cancel) */
+.modal-buttons {
+    display: flex;
+    /* Use flexbox */
+    justify-content: center;
+    /* Center buttons */
+    gap: 16px;
+    /* Space between buttons */
+}
+
+/* Common styles for modal buttons */
+.modal-btn {
+    transition: var(--transition);
+    /* Smooth transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 10px 20px;
+    /* Button padding */
+    font-weight: 500;
+    /* Medium font weight */
+    font-size: 16px;
+    /* Font size */
+}
+
+/* Styling for the confirmation button (e.g., "Yes, Clear") */
+.confirm-btn {
+    border: none;
+    /* No border */
+    background-color: var(--tomato-red);
+    /* Danger/confirmation color */
+    color: white;
+    /* Text color */
+}
+
+/* Hover effect for the confirmation button */
+.confirm-btn:hover {
+    transform: translateY(-2px);
+    /* Slight lift */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Add shadow */
+    background-color: var(--dark-tomato-red);
+    /* Darken background */
+}
+
+/* Styling for the cancellation button (e.g., "No, Cancel") */
+.cancel-btn {
+    border: 1px solid #ddd;
+    /* Light border */
+    background-color: white;
+    /* White background */
+    color: var(--herb-green);
+    /* Text color */
+}
+
+/* Hover effect for the cancellation button */
+.cancel-btn:hover {
+    transform: translateY(-2px);
+    /* Slight lift */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Add shadow */
+    background-color: var(--soft-off-white);
+    /* Light background */
+}
+
+/* ==========================================================================
+   Responsive Adjustments for Cart Page
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+    /* Hide the individual product price column on smaller screens */
+    .cart-table th:nth-child(2),
+    .cart-table td:nth-child(2) {
+        display: none;
+    }
+
+    /* Reduce thumbnail size */
+    .product-thumbnail {
+        width: 60px;
+        height: 60px;
+    }
+
+    /* Stack cart action buttons vertically */
+    .cart-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Stack right-aligned buttons vertically and make them full width */
+    .cart-actions-right {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    /* Make major action buttons full width */
+    .continue-shopping-btn,
+    .checkout-btn,
+    .clear-cart-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Adjust modal padding and width */
+    .modal-content {
+        padding: 20px;
+        width: 95%;
+    }
+
+    /* Stack modal buttons vertically */
+    .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Make modal buttons full width */
+    .modal-btn {
+        width: 100%;
+    }
+}

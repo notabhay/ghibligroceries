@@ -1,0 +1,297 @@
+/* ==========================================================================
+   Categories/Products Page Specific Styles
+   ========================================================================== */
+
+/* Styles for the fixed sub-header often used on category/product listing pages */
+/* Note: .page-header and .fixed-page-header seem identical, potentially redundant */
+.page-header,
+.fixed-page-header {
+    position: fixed;
+    /* Fix the header below the main site header */
+    top: var(--header-height);
+    /* Position below the main header */
+    left: 0;
+    z-index: 999;
+    /* Ensure it's above most content but below modals */
+    margin-bottom: 0;
+    /* Remove default margin */
+    background-color: var(--creamy-beige);
+    /* Background color */
+    padding: 15px 0;
+    /* Vertical padding */
+    width: 100%;
+    /* Full width */
+}
+
+/* Main wrapper for the products page layout (sidebar + grid) */
+.products-wrapper {
+    display: grid;
+    /* Two-column layout: fixed sidebar width, flexible grid */
+    grid-template-columns: 250px 1fr;
+    gap: 30px;
+    /* Space between sidebar and grid */
+    margin: 0 12vw;
+    /* Horizontal margins (using viewport width) */
+    padding: 0 20px;
+    /* Horizontal padding */
+    /* Top padding to account for fixed main header and fixed page header */
+    padding-top: calc(var(--header-height) + 100px);
+}
+
+/* Styling for the filter sidebar */
+.filter-sidebar {
+    position: sticky;
+    /* Make the sidebar sticky */
+    top: 220px;
+    /* Distance from top when sticky (accounts for headers) */
+    align-self: start;
+    /* Align to the start of the grid row */
+    box-shadow: var(--shadow);
+    /* Standard shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: white;
+    /* White background */
+    padding: 20px;
+    /* Inner padding */
+    width: fit-content;
+    /* Adjust width to content */
+    height: fit-content;
+    /* Adjust height to content */
+}
+
+/* Styling for groups of filters within the sidebar */
+.filter-group {
+    margin-bottom: 20px;
+    /* Space below each filter group */
+}
+
+/* Styling for filter labels */
+.filter-group label {
+    display: block;
+    /* Ensure label takes full width */
+    margin-bottom: 8px;
+    /* Space below label */
+    color: var(--herb-green);
+    /* Theme color */
+    font-weight: 500;
+    /* Medium font weight */
+}
+
+/* Styling for select dropdowns used as filters */
+.filter-group select {
+    border: 1px solid #ddd;
+    /* Light border */
+    border-radius: 5px;
+    /* Rounded corners */
+    padding: 10px;
+    /* Padding inside select */
+    width: 100%;
+    /* Full width of the container */
+    font-family: "Poppins", sans-serif;
+    /* Ensure consistent font */
+}
+
+/* Container for the main product grid area */
+.products-grid {
+    margin: 0 20px;
+    /* Horizontal margins */
+    padding: 0 20px;
+    /* Horizontal padding */
+    width: 100%;
+    /* Take full width of its grid column */
+}
+
+/* Ensure category sections within the grid are block elements */
+.products-grid .category-section {
+    display: block;
+}
+
+/* Styling for main category headers */
+.category-header {
+    margin-bottom: 15px;
+    /* Space below header */
+    padding-bottom: 5px;
+    /* Padding below text */
+    width: max-content;
+    /* Adjust width to content */
+    color: var(--herb-green);
+    /* Theme color */
+    font-size: 24px;
+    /* Font size */
+}
+
+/* Container for subcategory sections */
+.subcategory-section {
+    margin-bottom: 20px;
+    /* Space below subcategory section */
+}
+
+/* Styling for subcategory headers */
+.subcategory-header {
+    margin-bottom: 15px;
+    /* Space below header */
+    color: var(--spice-gold);
+    /* Use accent color */
+    font-size: 18px;
+    /* Font size */
+}
+
+/* Grid layout for rows of products within a category/subcategory */
+.products-row {
+    display: grid;
+    /* Responsive grid: 4 columns, minimum 200px width each */
+    grid-template-columns: repeat(4, minmax(200px, 1fr));
+    gap: 20px;
+    /* Space between product cards */
+    margin-bottom: 20px;
+    /* Space below the row */
+}
+
+/* Styling for individual product cards within the grid */
+.products-grid .product-card {
+    display: flex;
+    /* Use flexbox for internal layout */
+    flex-direction: column;
+    /* Stack elements vertically */
+    align-items: center;
+    /* Center items horizontally */
+    transition: var(--transition);
+    /* Smooth transition for hover */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    box-shadow: var(--shadow);
+    /* Standard shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: white;
+    /* White background */
+    padding: 15px;
+    /* Inner padding */
+    width: 100%;
+    /* Full width of grid cell */
+    height: 280px;
+    /* Fixed height for consistent card size */
+    text-align: center;
+    /* Center align text */
+}
+
+/* Hover effect for product cards */
+.products-grid .product-card:hover {
+    transform: translateY(-5px);
+    /* Slight lift effect */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    /* Enhance shadow */
+}
+
+/* Styling for the link wrapping the product card content */
+.products-grid .product-link {
+    display: flex;
+    /* Use flexbox */
+    flex-direction: column;
+    /* Stack elements vertically */
+    justify-content: space-between;
+    /* Space out elements vertically */
+    align-items: center;
+    /* Center items horizontally */
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    color: inherit;
+    /* Inherit text color */
+    text-decoration: none;
+    /* Remove underline */
+}
+
+/* Styling for the product image within the card */
+.products-grid .product-image {
+    margin-bottom: 10px;
+    /* Space below image */
+    width: 120px;
+    /* Fixed width */
+    height: 120px;
+    /* Fixed height */
+    object-fit: contain;
+    /* Ensure image fits without distortion */
+}
+
+/* Styling for the product name */
+.products-grid .product-name {
+    display: -webkit-box;
+    /* Required for line clamping */
+    margin: 10px 0;
+    /* Vertical margin */
+    height: 40px;
+    /* Fixed height to accommodate two lines */
+    line-clamp: 2;
+    /* Limit text to 2 lines */
+    -webkit-line-clamp: 2;
+    /* Vendor prefix for line clamping */
+    overflow: hidden;
+    /* Hide overflow text */
+    color: var(--herb-green);
+    /* Theme color */
+    font-weight: 500;
+    /* Medium font weight */
+    font-size: 16px;
+    /* Font size */
+    -webkit-box-orient: vertical;
+    /* Required for line clamping */
+}
+
+/* Styling for the product price */
+.products-grid .product-price {
+    margin-top: auto;
+    /* Push price to the bottom of the card */
+    color: var(--tomato-red);
+    /* Accent color */
+    font-weight: 600;
+    /* Slightly bolder */
+    font-size: 16px;
+    /* Font size */
+}
+
+/* ==========================================================================
+   Responsive Adjustments for Categories Page
+   ========================================================================== */
+
+/* Larger tablets / Small desktops */
+@media (max-width: 1024px) {
+
+    /* Switch to single column layout (stack sidebar above grid) */
+    .products-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    /* Make sidebar non-sticky and add bottom margin */
+    .filter-sidebar {
+        position: relative;
+        /* Remove sticky positioning */
+        top: 0;
+        margin-bottom: 30px;
+    }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+
+    /* Adjust product grid to 2 columns */
+    .products-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Increase card height slightly to accommodate content better */
+    .products-grid .product-card {
+        height: 320px;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+
+    /* Adjust product grid to 1 column */
+    .products-row {
+        grid-template-columns: 1fr;
+    }
+}

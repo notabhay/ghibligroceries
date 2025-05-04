@@ -1,0 +1,2441 @@
+/* ==========================================================================
+   Global Styles & Variables
+   ========================================================================== */
+
+/* Define CSS custom properties (variables) for the color palette and common values */
+:root {
+    /* Primary & Accent Colors */
+    --tomato-red: #d94f2f;
+    /* Main accent red */
+    --dark-tomato-red: #b34226;
+    /* Darker shade for hover/active states */
+    --carrot-orange: #f08d30;
+    /* Secondary accent orange */
+    --dark-carrot-orange: #d97c2a;
+    /* Darker shade */
+    --herb-green: #5a8f50;
+    /* Main theme green (text, elements) */
+    --dark-herb-green: #4a7a40;
+    /* Darker shade */
+    --spice-gold: #c59a45;
+    /* Accent gold */
+    --dark-spice-gold: #b37e3e;
+    /* Darker shade */
+    --bread-wheat: #d89a4b;
+    /* Accent wheat/brown */
+    --dark-bread-wheat: #b37e3e;
+    /* Darker shade (same as dark gold) */
+
+    /* Neutral & Background Colors */
+    --creamy-beige: #f7e3c2;
+    /* Light beige for backgrounds, accents */
+    --dark-creamy-beige: #e3d0a8;
+    /* Darker shade */
+    --soft-off-white: #fbf3e8;
+    /* Main background color */
+    --dark-soft-off-white: #e3d0a8;
+    /* Darker shade (same as dark beige) */
+
+    /* UI Element Variables */
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    /* Standard box shadow */
+    --transition: all 0.15s ease;
+    /* Standard transition timing */
+    --header-height: 80px;
+    /* Height of the fixed header */
+}
+
+/* Global reset and box-sizing */
+* {
+    box-sizing: border-box;
+    /* Include padding and border in element's total width/height */
+    margin: 0;
+    /* Remove default margins */
+    padding: 0;
+    /* Remove default padding */
+}
+
+/* Base body styles */
+body {
+    position: relative;
+    /* Needed for absolute positioning contexts */
+    /* Subtle gradient background */
+    background-image: linear-gradient(135deg,
+            #ffffff 0%,
+            var(--soft-off-white) 100%);
+    background-color: var(--soft-off-white);
+    /* Fallback background color */
+    padding-top: var(--header-height);
+    /* Add padding to prevent content from hiding under fixed header */
+    color: var(--herb-green);
+    /* Default text color */
+    line-height: 1.2;
+    /* Default line height */
+    font-family: "Poppins", sans-serif;
+    /* Default font family */
+}
+
+/* Utility class for standard content vertical spacing */
+.content-spacing {
+    padding-top: 20px;
+    padding-bottom: 60px;
+}
+
+/* Basic container styling (adjusts padding) */
+.container {
+    margin: 0;
+    /* Reset margin (centering handled elsewhere if needed) */
+    padding: 0 30px;
+    /* Horizontal padding */
+}
+
+/* Base anchor link styles */
+a {
+    transition: var(--transition);
+    /* Apply standard transition */
+    color: var(--herb-green);
+    /* Default link color */
+    text-decoration: none;
+    /* Remove underline */
+}
+
+/* Note: Hover styles are typically applied specifically where needed */
+
+/* Remove default list styling */
+ul {
+    list-style: none;
+}
+
+/* Responsive image styling */
+img {
+    max-width: 100%;
+    /* Ensure images don't overflow their containers */
+    height: auto;
+    /* Maintain aspect ratio */
+}
+
+/* Wrapper for the main content area (potentially for layout) */
+.main-panel {
+    position: relative;
+    /* Establish positioning context */
+    z-index: 1000;
+    /* High z-index (likely related to header/footer) */
+    margin: 0;
+    /* Reset margin */
+    background-color: transparent;
+    /* No background by default */
+}
+
+/* ==========================================================================
+   Header Styles
+   ========================================================================== */
+
+/* Header element base styles */
+header {
+    padding: 20px 0;
+    /* Vertical padding */
+    /* Assuming header is fixed via .fixed-header class */
+}
+
+/* Container within the header for layout */
+header .container {
+    display: flex;
+    /* Use flexbox for layout */
+    position: relative;
+    /* Needed for absolute positioning of nav */
+    justify-content: space-between;
+    /* Space out logo, nav, actions */
+    align-items: center;
+    /* Vertically align items */
+}
+
+/* Logo container styles */
+.logo {
+    display: flex;
+    /* Align image and text */
+    align-items: center;
+    /* Vertically align */
+    color: var(--herb-green);
+    /* Default logo text color */
+    font-weight: 700;
+    /* Bold text */
+    font-size: 26px;
+    /* Logo font size */
+}
+
+/* Ensure logo link also uses flex */
+.logo a {
+    display: flex;
+    align-items: center;
+}
+
+/* Logo image styling */
+.logo img {
+    margin-right: 10px;
+    /* Space between image and text */
+    width: auto;
+    /* Auto width */
+    height: 40px;
+    /* Fixed height */
+}
+
+/* Duplicate logo image class? Consolidate if possible. */
+.logo-image {
+    vertical-align: middle;
+    /* Align with text */
+    margin-right: 10px;
+    width: auto;
+    height: 40px;
+}
+
+/* Specific color for "Finest" part of the logo text */
+.logo-text-finest {
+    color: var(--herb-green);
+}
+
+/* Specific color for "Mart" part of the logo text */
+.logo-text-mart {
+    color: var(--spice-gold);
+}
+
+/* Main navigation container */
+nav {
+    position: absolute;
+    /* Position absolutely within header container */
+    top: 50%;
+    /* Center vertically */
+    left: 50%;
+    /* Center horizontally */
+    transform: translate(-50%, -50%);
+    /* Precise centering */
+}
+
+/* Navigation list styles */
+nav ul {
+    display: flex;
+    /* Arrange items horizontally */
+    justify-content: center;
+    /* Center items */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Navigation list item styles */
+nav ul li {
+    margin: 0 10px;
+    /* Horizontal spacing between items */
+}
+
+/* Navigation link styles */
+nav ul li a {
+    position: relative;
+    /* For positioning the active indicator */
+    padding: 5px 0;
+    /* Vertical padding */
+    font-size: 16px;
+    /* Link font size */
+}
+
+/* Hover and active state for navigation links */
+nav ul li a:hover,
+nav ul li a.active {
+    color: var(--tomato-red);
+    /* Change color on hover/active */
+}
+
+/* Underline indicator for the active navigation link */
+nav ul li a.active::after {
+    position: absolute;
+    /* Position relative to the link */
+    bottom: 0;
+    /* Position at the bottom */
+    left: 0;
+    background-color: var(--tomato-red);
+    /* Use accent color */
+    width: 100%;
+    /* Full width of the link */
+    height: 2px;
+    /* Line thickness */
+    content: "";
+    /* Required for pseudo-element */
+}
+
+/* Container for header actions (cart, sign in/up) */
+.header-actions {
+    display: flex;
+    /* Arrange items horizontally */
+    align-items: center;
+    /* Vertically align items */
+}
+
+/* Cart icon container */
+.cart-icon {
+    position: relative;
+    /* For positioning the notification dot */
+    cursor: pointer;
+    /* Pointer cursor */
+    margin-right: 20px;
+    /* Space to the right */
+}
+
+/* Cart image styling */
+.cart-image {
+    width: 24px;
+    height: 24px;
+}
+
+/* Styling for the cart button (combines icon and text/count) */
+.nav-button.cart-button {
+    display: flex;
+    /* Align icon and text */
+    align-items: center;
+    /* Vertically align */
+    gap: 8px;
+    /* Space between icon and text */
+    transition: var(--transition);
+    /* Standard transition */
+    border-radius: 5px;
+    /* Rounded corners */
+    background-color: var(--tomato-red);
+    /* Accent color */
+    padding: 8px 16px;
+    /* Padding */
+    color: white;
+    /* Text color */
+    font-weight: 500;
+    /* Medium weight */
+}
+
+/* Hover effect for the cart button */
+.nav-button.cart-button:hover {
+    transform: translateY(-2px);
+    /* Slight lift */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Add shadow */
+    background-color: var(--dark-tomato-red);
+    /* Darken background */
+}
+
+/* Text/count span within the cart button */
+.nav-button.cart-button span {
+    font-size: 14px;
+    /* Smaller font size for count */
+}
+
+/* Styling for the sign-in button when using the nav-button structure */
+.nav-button.sign-in-btn {
+    display: flex;
+    /* Align icon and text */
+    align-items: center;
+    /* Vertically align */
+    gap: 8px;
+    /* Space between icon and text */
+    padding: 8px 16px;
+    /* Padding */
+}
+
+/* Text span within the sign-in button */
+.nav-button.sign-in-btn span {
+    font-size: 16px;
+    /* Standard font size */
+}
+
+/* Notification dot for the cart icon */
+.notification-dot {
+    position: absolute;
+    /* Position relative to cart-icon */
+    top: 0;
+    /* Position at the top */
+    right: -4px;
+    /* Position slightly offset to the right */
+    border-radius: 50%;
+    /* Circular shape */
+    background-color: var(--tomato-red);
+    /* Accent color */
+    width: 8px;
+    /* Small size */
+    height: 8px;
+    /* Small size */
+    /* Visibility controlled by JS adding/removing a class */
+}
+
+/* Standalone Sign In / Sign Up buttons */
+.sign-in-btn,
+.sign-up-btn {
+    transition: var(--transition);
+    /* Standard transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    margin-left: 10px;
+    /* Space to the left */
+    border: none;
+    /* No border for sign-up */
+    border-radius: 5px;
+    /* Rounded corners */
+    background-color: var(--tomato-red);
+    /* Accent color for sign-up */
+    padding: 10px 20px;
+    /* Padding */
+    color: white;
+    /* Text color for sign-up */
+    font-weight: 500;
+    /* Medium weight */
+    font-size: 16px;
+    /* Font size */
+}
+
+/* Specific styles for Sign In button (outline style) */
+.sign-in-btn {
+    border: 1px solid var(--tomato-red);
+    /* Border color */
+    background-color: transparent;
+    /* Transparent background */
+    color: var(--tomato-red);
+    /* Text color */
+}
+
+/* Hover effect for Sign In / Sign Up buttons */
+.sign-up-btn:hover,
+.sign-in-btn:hover {
+    transform: translateY(-2px);
+    /* Slight lift */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    /* Add shadow */
+}
+
+/* ==========================================================================
+   Hero Section Styles
+   ========================================================================== */
+
+/* Hero section container */
+.hero {
+    display: flex;
+    /* Use flexbox for layout */
+    justify-content: space-between;
+    /* Space out content areas */
+    /* Large horizontal padding */
+    padding: 40px 160px 40px 160px;
+    /* Consider using % or vw for more responsive padding */
+}
+
+/* Left side content (text, search, features) */
+.hero-copy {
+    flex: 0 0 50%;
+    /* Takes up 50% of the width, doesn't grow/shrink */
+    max-width: 500px;
+    /* Max width constraint */
+}
+
+/* Middle visual element (main hero image) */
+.hero-visual {
+    display: flex;
+    /* Use flexbox */
+    flex: 0 0 30%;
+    /* Takes up 30% of the width */
+    justify-content: center;
+    /* Center image horizontally */
+    align-items: center;
+    /* Center image vertically */
+}
+
+/* Title for the right-side product showcase */
+.featured-items-title {
+    width: 100%;
+    /* Full width */
+    color: var(--herb-green);
+    /* Theme color */
+    font-weight: 600;
+    /* Slightly bolder */
+    font-size: 24px;
+    /* Font size */
+    text-align: center;
+    /* Center align */
+}
+
+/* Right side content (featured product cards) */
+.product-showcase {
+    display: flex;
+    /* Use flexbox */
+    flex: 0 0 20%;
+    /* Takes up 20% of the width */
+    flex-direction: column;
+    /* Stack cards vertically */
+    align-items: center;
+    /* Center cards horizontally */
+    gap: 24px;
+    /* Space between cards */
+}
+
+/* Main hero heading (H1) */
+.hero h1 {
+    margin-bottom: 20px;
+    /* Space below heading */
+    color: var(--herb-green);
+    /* Theme color */
+    font-weight: 700;
+    /* Bold */
+    font-size: 64px;
+    /* Large font size */
+    line-height: 1;
+    /* Tight line height */
+}
+
+/* Accent color for part of the hero heading */
+.hero h1 span {
+    display: block;
+    /* Ensure span takes its own line if needed */
+    color: var(--tomato-red);
+    /* Accent color */
+    font-size: 56px;
+    /* Slightly smaller font size */
+}
+
+/* Hero paragraph text */
+.hero p {
+    margin-bottom: 30px;
+    /* Space below paragraph */
+    max-width: 440px;
+    /* Max width constraint */
+    color: var(--herb-green);
+    /* Theme color */
+    font-size: 18px;
+    /* Font size */
+}
+
+/* Search bar container */
+.search-bar {
+    display: flex;
+    /* Use flexbox */
+    margin-bottom: 25px;
+    /* Space below search bar */
+    border-radius: 5px;
+    /* Rounded corners for the container */
+    width: 460px;
+    /* Fixed width */
+    height: 52px;
+    /* Fixed height */
+    overflow: hidden;
+    /* Hide overflow for rounded corners */
+}
+
+/* Search input field */
+.search-input {
+    flex: 1;
+    /* Take remaining space */
+    border: none;
+    /* No border */
+    border-radius: 5px 0 0 5px;
+    /* Round left corners */
+    background-color: #f5f5f5;
+    /* Light background */
+    padding: 0 20px;
+    /* Horizontal padding */
+    font-size: 16px;
+    /* Font size */
+}
+
+/* Add :focus styles if needed */
+
+/* Search button */
+.search-button {
+    display: flex;
+    /* Use flexbox for centering icon */
+    justify-content: center;
+    /* Center icon horizontally */
+    align-items: center;
+    /* Center icon vertically */
+    cursor: pointer;
+    /* Pointer cursor */
+    border: none;
+    /* No border */
+    border-radius: 0 5px 5px 0;
+    /* Round right corners */
+    background-color: var(--tomato-red);
+    /* Accent color */
+    width: 20%;
+    /* Fixed percentage width */
+}
+
+/* Search button icon */
+.search-button i {
+    color: white;
+    /* Icon color */
+    font-size: 18px;
+    /* Icon size */
+}
+
+/* Grid container for feature list (e.g., "Free Shipping") */
+.feature-list {
+    display: grid;
+    /* Use grid layout */
+    grid-template-rows: repeat(2, 24px);
+    /* Two rows of fixed height */
+    grid-template-columns: 1fr 1fr;
+    /* Two equal columns */
+    gap: 10px;
+    /* Space between items */
+}
+
+/* Individual feature item */
+.feature-item {
+    display: flex;
+    /* Align icon and text */
+    align-items: center;
+    /* Vertically align */
+    font-size: 14px;
+    /* Font size */
+}
+
+/* Feature item icon container */
+.feature-icon {
+    display: flex;
+    /* Use flexbox for centering */
+    position: relative;
+    /* Positioning context if needed */
+    justify-content: center;
+    /* Center icon horizontally */
+    align-items: center;
+    /* Center icon vertically */
+    vertical-align: middle;
+    /* Align with text */
+    margin-right: 8px;
+    /* Space between icon and text */
+    width: 16px;
+    /* Icon container size */
+    height: 16px;
+    /* Icon container size */
+}
+
+/* Main hero image styling */
+.hero-image {
+    display: block;
+    /* Block display */
+    max-height: 400px;
+    /* Max height constraint */
+    object-fit: contain;
+    /* Ensure image fits without distortion */
+}
+
+/* Container for decorative background shapes */
+.accent-shapes {
+    position: absolute;
+    /* Position absolutely */
+    top: 0;
+    left: 0;
+    opacity: 0.2;
+    /* Low opacity */
+    z-index: 1;
+    /* Behind main content */
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* Prevent interaction */
+}
+
+/* Decorative square shape */
+.accent-square {
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    transform: rotate(15deg);
+    /* Rotate shape */
+    margin-top: -100px;
+    /* Adjust vertical position */
+    border: 2px solid var(--spice-gold);
+    /* Border color */
+    border-radius: 16px;
+    /* Rounded corners */
+    width: 200px;
+    height: 200px;
+}
+
+/* Decorative diamond shape */
+.accent-diamond {
+    position: absolute;
+    top: 50%;
+    left: 40%;
+    transform: rotate(45deg);
+    /* Rotate shape */
+    margin-top: -90px;
+    /* Adjust vertical position */
+    border: 2px solid var(--tomato-red);
+    /* Border color */
+    border-radius: 16px;
+    /* Rounded corners */
+    width: 180px;
+    height: 180px;
+}
+
+/* Container for the small product cards in the hero showcase */
+/* Note: This seems redundant with .product-showcase, review usage */
+.product-cards {
+    display: flex;
+    position: absolute;
+    /* Absolute positioning */
+    top: 50%;
+    right: 0;
+    flex-direction: column;
+    /* Stack vertically */
+    gap: 24px;
+    /* Space between cards */
+    transform: translateY(-50%);
+    /* Center vertically */
+    z-index: 3;
+    /* Ensure they are above accent shapes */
+}
+
+/* Styling for individual product cards (used in hero and grids) */
+.product-card {
+    display: flex;
+    /* Use flexbox */
+    flex-direction: column;
+    /* Stack vertically */
+    justify-content: center;
+    /* Center content vertically */
+    align-items: center;
+    /* Center content horizontally */
+    transition: var(--transition);
+    /* Standard transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    box-shadow: var(--shadow);
+    /* Standard shadow */
+    border: 1px solid #ededed;
+    /* Light border */
+    border-radius: 5px;
+    /* Rounded corners */
+    background-color: white;
+    /* White background */
+    padding: 15px;
+    /* Padding */
+    /* Using non-standard fill-available, fallback needed */
+    width: 100%;
+    /* Fallback width */
+    height: auto;
+    /* Fallback height */
+    /* Consider setting fixed height or aspect-ratio for consistency */
+}
+
+/* Hover effect for product cards */
+.product-card:hover {
+    transform: scale(1.03);
+    /* Slight scale up */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    /* Enhance shadow */
+}
+
+/* Image within product card */
+.product-card img {
+    margin-bottom: 10px;
+    /* Space below image */
+    border-radius: 5px;
+    /* Rounded corners */
+    background-color: var(--creamy-beige);
+    /* Background for padding */
+    padding: 5px;
+    /* Padding around image */
+    width: auto;
+    /* Auto width */
+    height: 100px;
+    /* Fixed height */
+    object-fit: contain;
+    /* Ensure image fits */
+}
+
+/* Product name within card */
+.product-name {
+    color: var(--herb-green);
+    /* Theme color */
+    font-size: 16px;
+    /* Font size */
+    /* Consider text overflow handling */
+}
+
+/* Product price within card */
+.product-price {
+    color: var(--tomato-red);
+    /* Accent color */
+    font-weight: 500;
+    /* Medium weight */
+    font-size: 14px;
+    /* Smaller font size */
+}
+
+/* ==========================================================================
+   Category Section Styles (Homepage)
+   ========================================================================== */
+
+/* Grid container for category items */
+.category-section {
+    display: grid;
+    /* Use grid layout */
+    grid-template-columns: repeat(5, 1fr);
+    /* Five equal columns */
+    gap: 20px;
+    /* Space between items */
+    padding: 40px 64px;
+    /* Vertical and horizontal padding */
+}
+
+/* Individual category item container */
+.category-item {
+    text-align: center;
+    /* Center align content */
+}
+
+/* Container for the category icon */
+.category-icon {
+    display: flex;
+    /* Use flexbox for centering */
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
+    margin-bottom: 15px;
+    /* Space below icon */
+    height: 80px;
+    /* Fixed height for alignment */
+}
+
+/* Category icon image */
+.category-icon img {
+    max-width: 80px;
+    /* Max width */
+    max-height: 80px;
+    /* Max height */
+    object-fit: contain;
+    /* Ensure icon fits */
+}
+
+/* Category title text */
+.category-title {
+    margin-bottom: 8px;
+    /* Space below title */
+    color: var(--herb-green);
+    /* Theme color */
+    font-weight: 500;
+    /* Medium weight */
+    font-size: 16px;
+    /* Font size */
+}
+
+/* Category description text */
+.category-description {
+    opacity: 0.8;
+    /* Slightly transparent */
+    color: var(--herb-green);
+    /* Theme color */
+    font-size: 14px;
+    /* Smaller font size */
+    line-height: 1.4;
+    /* Line height */
+}
+
+/* ==========================================================================
+   Footer Styles
+   ========================================================================== */
+
+/* Toggle button for showing/hiding the footer */
+.footer-toggle {
+    display: flex;
+    /* Use flexbox for centering */
+    position: relative;
+    /* Positioning context */
+    justify-content: center;
+    /* Center icon */
+    z-index: 100;
+    /* Ensure it's above footer content */
+    cursor: pointer;
+    /* Pointer cursor */
+    margin-bottom: 25px;
+    /* Space below toggle */
+}
+
+/* Icon within the footer toggle */
+.footer-toggle i {
+    transition: transform 0.3s ease;
+    /* Animate rotation */
+    border-radius: 50%;
+    /* Circular background if needed */
+    color: var(--tomato-red);
+    /* Accent color */
+    font-size: 24px;
+    /* Icon size */
+}
+
+/* Class added by JS to rotate the toggle icon */
+.footer-toggle i.rotate {
+    transform: rotate(180deg);
+    /* Rotate icon */
+}
+
+/* Footer element base styles */
+footer {
+    display: block;
+    /* Ensure block display */
+    position: relative;
+    /* Positioning context */
+    opacity: 1;
+    /* Visible by default */
+    z-index: 10;
+    /* Lower z-index than toggle */
+    /* Transition properties for smooth hide/show */
+    transition: max-height 0.5s ease, opacity 0.5s ease, padding 0.5s ease;
+    background-color: var(--soft-off-white);
+    /* Background color */
+    padding: 50px 0 20px;
+    /* Top/bottom padding */
+    max-height: 500px;
+    /* Max height when visible (adjust as needed) */
+    overflow: hidden;
+    /* Hide content when collapsed */
+    color: var(--herb-green);
+    /* Default text color */
+}
+
+/* Styles for the hidden state of the footer */
+footer.hidden {
+    visibility: hidden;
+    /* Hide element */
+    opacity: 0;
+    /* Fade out */
+    margin: 0;
+    /* Remove margin */
+    padding: 0;
+    /* Remove padding */
+    max-height: 0;
+    /* Collapse height */
+}
+
+/* Grid layout for footer content sections */
+.footer-content {
+    display: grid;
+    /* Use grid layout */
+    /* Responsive grid: columns adjust, min width 250px */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    /* Space between sections */
+    margin-bottom: 30px;
+    /* Space below grid */
+}
+
+/* Footer section headings */
+.footer-section h3 {
+    margin-bottom: 20px;
+    /* Space below heading */
+    color: var(--herb-green);
+    /* Theme color */
+    font-size: 18px;
+    /* Font size */
+}
+
+/* Paragraph text within footer sections */
+.footer-section p {
+    opacity: 0.8;
+    /* Slightly transparent */
+    margin-bottom: 10px;
+    /* Space below paragraph */
+    color: var(--herb-green);
+    /* Theme color */
+}
+
+/* List items within footer sections (for links) */
+.footer-section ul li {
+    margin-bottom: 10px;
+    /* Space below list item */
+}
+
+/* Links within footer sections */
+.footer-section a {
+    opacity: 0.8;
+    /* Slightly transparent */
+    transition: var(--transition);
+    /* Standard transition */
+    color: var(--herb-green);
+    /* Default color */
+}
+
+/* Hover effect for footer links */
+.footer-section a:hover {
+    opacity: 1;
+    /* Fully opaque */
+    color: var(--tomato-red);
+    /* Change color */
+}
+
+/* Copyright text area */
+.copyright {
+    opacity: 0.8;
+    /* Slightly transparent */
+    border-top: 1px solid var(--bread-wheat);
+    /* Top separator line */
+    padding-top: 20px;
+    /* Space above text */
+    color: var(--herb-green);
+    /* Text color */
+    text-align: center;
+    /* Center align text */
+}
+
+/* ==========================================================================
+   Product Selection/Listing Styles (e.g., on Category Pages)
+   ========================================================================== */
+
+/* Container for the product selection area */
+.product-selection {
+    padding: 40px 0;
+    /* Vertical padding */
+}
+
+/* Heading for the product selection area */
+.product-selection h2 {
+    margin-bottom: 30px;
+    /* Space below heading */
+    font-size: 24px;
+    /* Font size */
+    text-align: center;
+    /* Center align */
+}
+
+/* Container for product filters */
+.product-filters {
+    display: flex;
+    /* Use flexbox */
+    justify-content: center;
+    /* Center filters */
+    gap: 30px;
+    /* Space between filter groups */
+    margin-bottom: 30px;
+    /* Space below filters */
+}
+
+/* Individual filter group container */
+.filter-group {
+    width: 250px;
+    /* Fixed width */
+}
+
+/* Filter label styling */
+.filter-group label {
+    display: block;
+    /* Full width */
+    margin-bottom: 10px;
+    /* Space below label */
+    font-weight: 500;
+    /* Medium weight */
+}
+
+/* Filter select dropdown styling */
+.filter-group select {
+    border: 1px solid #ddd;
+    /* Light border */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 12px;
+    /* Padding */
+    width: 100%;
+    /* Full width */
+    font-family: "Poppins", sans-serif;
+    /* Consistent font */
+    /* Inherits appearance from .form-control if applied */
+}
+
+/* Message shown before products are loaded/filtered */
+.initial-message {
+    opacity: 0.8;
+    /* Slightly transparent */
+    padding: 40px 0;
+    /* Vertical padding */
+    color: var(--herb-green);
+    /* Theme color */
+    text-align: center;
+    /* Center align */
+}
+
+/* Grid container for displaying products */
+.product-grid {
+    display: grid;
+    /* Use grid layout */
+    /* Responsive grid: columns fill available space, min width 250px */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+    /* Space between product cards */
+    margin-top: 30px;
+    /* Space above grid */
+}
+
+/* Product card styling within the grid (slightly different from hero card) */
+.product-grid .product-card {
+    display: flex;
+    /* Use flexbox */
+    flex-direction: column;
+    /* Stack vertically */
+    align-items: center;
+    /* Center horizontally */
+    transition: var(--transition);
+    /* Standard transition */
+    box-shadow: var(--shadow);
+    /* Standard shadow */
+    border: 1px solid #ededed;
+    /* Light border */
+    border-radius: 16px;
+    /* More rounded corners */
+    background-color: white;
+    /* White background */
+    padding: 20px;
+    /* Padding */
+    width: 100%;
+    /* Full width of grid cell */
+    height: auto;
+    /* Auto height based on content */
+    text-align: center;
+    /* Center align text */
+}
+
+/* Hover effect for grid product cards */
+.product-grid .product-card:hover {
+    transform: translateY(-5px);
+    /* Slight lift */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    /* Enhance shadow */
+}
+
+/* Image within grid product card */
+.product-grid .product-image {
+    margin-bottom: 15px;
+    /* Space below image */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: var(--creamy-beige);
+    /* Background for padding */
+    width: 150px;
+    /* Fixed width */
+    height: 150px;
+    /* Fixed height */
+    object-fit: cover;
+    /* Cover the area, potentially cropping */
+}
+
+/* Name within grid product card */
+.product-grid .product-name {
+    margin-bottom: 8px;
+    /* Space below name */
+    color: var(--herb-green);
+    /* Theme color */
+    font-weight: 500;
+    /* Medium weight */
+    font-size: 18px;
+    /* Font size */
+    /* Add text overflow handling if names can be long */
+}
+
+/* Price within grid product card */
+.product-grid .product-price {
+    margin-bottom: 12px;
+    /* Space below price */
+    color: var(--tomato-red);
+    /* Accent color */
+    font-weight: 600;
+    /* Slightly bolder */
+    font-size: 16px;
+    /* Font size */
+}
+
+/* Description within grid product card */
+.product-grid .product-description {
+    opacity: 0.8;
+    /* Slightly transparent */
+    margin-bottom: 20px;
+    /* Space below description */
+    color: var(--herb-green);
+    /* Theme color */
+    font-size: 14px;
+    /* Smaller font size */
+    line-height: 1.4;
+    /* Line height */
+    /* Add text overflow/clamping if descriptions are long */
+}
+
+/* Buttons within grid product card (Register/Login prompt) */
+.product-grid .register-btn,
+.product-grid .login-btn {
+    margin-top: auto;
+    /* Push button to bottom */
+    padding: 10px;
+    /* Padding */
+    width: 100%;
+    /* Full width */
+}
+
+/* Loading spinner style */
+.loading-spinner {
+    margin: 30px 0;
+    /* Vertical margin */
+    color: var(--tomato-red);
+    /* Accent color */
+    font-size: 1.2rem;
+    /* Font size */
+    text-align: center;
+    /* Center align */
+    /* Add animation if using an icon font spinner */
+}
+
+/* ==========================================================================
+   Responsive Adjustments (Homepage & Global)
+   ========================================================================== */
+
+/* Larger Tablets / Small Desktops */
+@media (max-width: 1024px) {
+
+    /* Adjust hero layout to stack vertically */
+    .hero {
+        flex-direction: column;
+        /* Stack elements */
+        padding: 30px 20px;
+        /* Reduce padding */
+    }
+
+    /* Make hero sections full width */
+    .hero-copy,
+    .hero-visual,
+    .product-showcase {
+        flex: 0 0 100%;
+        /* Take full width */
+        margin-right: 0;
+        /* Remove right margin */
+        max-width: 100%;
+        /* Allow full width */
+    }
+
+    /* Center hero visual and add margin */
+    .hero-visual {
+        justify-content: center;
+        margin: 40px 0;
+        /* Add vertical margin */
+    }
+
+    /* Adjust product showcase layout */
+    .product-showcase {
+        flex-direction: row;
+        /* Arrange horizontally */
+        justify-content: center;
+        /* Center items */
+        gap: 20px;
+        /* Adjust gap */
+    }
+
+    /* Adjust hero heading size and alignment */
+    .hero h1 {
+        font-size: 36px;
+        /* Smaller font size */
+        text-align: center;
+        /* Center align */
+    }
+
+    .hero h1 span {
+        font-size: 32px;
+        /* Smaller font size */
+    }
+
+    /* Center hero paragraph */
+    .hero p {
+        margin: 0 auto 30px;
+        /* Center horizontally */
+        text-align: center;
+        /* Center align */
+    }
+
+    /* Make search bar responsive */
+    .search-bar {
+        margin: 0 auto 25px;
+        /* Center horizontally */
+        width: 100%;
+        /* Full width */
+        max-width: 460px;
+        /* Keep max width */
+    }
+
+    /* Center feature list */
+    .feature-list {
+        margin: 0 auto;
+        /* Center horizontally */
+        max-width: 460px;
+        /* Keep max width */
+    }
+
+    /* Hide desktop navigation */
+    nav {
+        display: none;
+    }
+
+    /* Show mobile menu toggle button */
+    .mobile-menu-toggle {
+        display: block;
+        /* Make visible */
+        cursor: pointer;
+        /* Pointer cursor */
+        font-size: 24px;
+        /* Icon size */
+        /* Add color if needed */
+    }
+
+    /* Adjust category section grid */
+    .category-section {
+        grid-template-columns: repeat(3, 1fr);
+        /* 3 columns */
+    }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+
+    /* Hide desktop header actions */
+    .header-actions {
+        display: none;
+    }
+
+    /* Adjust hero product showcase layout */
+    .product-showcase {
+        flex-direction: column;
+        /* Stack vertically */
+        align-items: center;
+        /* Center items */
+    }
+
+    /* Adjust hero heading size (already adjusted in previous query) */
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .hero h1 span {
+        font-size: 32px;
+    }
+
+    /* Adjust feature list grid */
+    .feature-list {
+        grid-template-columns: 1fr;
+        /* Single column */
+    }
+
+    /* Adjust category section grid */
+    .category-section {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns */
+    }
+}
+
+/* Mobile Phones */
+@media (max-width: 480px) {
+
+    /* Adjust category section grid */
+    .category-section {
+        grid-template-columns: 1fr;
+        /* Single column */
+    }
+
+    /* Adjust hero heading size (already adjusted) */
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .hero h1 span {
+        font-size: 32px;
+    }
+
+    /* Adjust search bar height */
+    .search-bar {
+        height: 44px;
+    }
+}
+
+/* ==========================================================================
+   Mobile Menu Styles
+   ========================================================================== */
+
+/* Mobile menu container (hidden by default) */
+.mobile-menu {
+    display: none;
+    /* Hidden */
+}
+
+/* Styles when mobile menu is shown (via JS adding .show class) */
+.mobile-menu.show {
+    display: block;
+    /* Make visible */
+    position: absolute;
+    /* Position below header */
+    top: var(--header-height);
+    /* Position below fixed header */
+    right: 0;
+    left: 0;
+    z-index: 100;
+    /* High z-index */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    /* Add shadow */
+    background-color: white;
+    /* White background */
+    padding: 20px;
+    /* Padding */
+}
+
+/* List items within mobile menu */
+.mobile-menu ul li {
+    margin: 15px 0;
+    /* Vertical spacing */
+
+    /* Cart button specific styling within mobile menu */
+    /* Nested CSS - consider moving this out if preprocessor not used */
+    .mobile-cart-button {
+        display: flex;
+        /* Align icon and text */
+        align-items: center;
+        /* Vertically align */
+        gap: 8px;
+        /* Space between icon and text */
+        margin: 5px 0;
+        /* Vertical margin */
+        border-radius: 5px;
+        /* Rounded corners */
+        background-color: var(--tomato-red);
+        /* Accent color */
+        padding: 8px 16px;
+        /* Padding */
+        color: white !important;
+        /* Ensure text is white */
+        font-weight: 500;
+        /* Medium weight */
+    }
+
+    .mobile-cart-button:hover {
+        background-color: var(--dark-tomato-red);
+        /* Darken background */
+        color: white !important;
+        /* Ensure text is white */
+    }
+
+    .mobile-cart-button img {
+        width: 24px;
+        /* Icon size */
+        height: 24px;
+        /* Icon size */
+    }
+
+    /* End of nested .mobile-cart-button styles */
+}
+
+/* Mobile menu toggle button (hamburger icon) - hidden by default */
+.mobile-menu-toggle {
+    display: none;
+}
+
+/* Show toggle button on smaller screens (matches nav hiding breakpoint) */
+@media (max-width: 1024px) {
+    .mobile-menu-toggle {
+        display: block;
+        /* Show the button */
+    }
+}
+
+/* ==========================================================================
+   User Actions Section (Register/Login Prompt)
+   ========================================================================== */
+
+/* Container for the prompt section */
+.user-actions {
+    background-color: #f9f9f9;
+    /* Light background */
+    padding: 20px 0 60px;
+    /* Vertical padding */
+    text-align: center;
+    /* Center align content */
+}
+
+/* Heading within the prompt section */
+.user-actions h2 {
+    margin-bottom: 20px;
+    /* Space below heading */
+    font-size: 28px;
+    /* Font size */
+}
+
+/* Paragraph text within the prompt section */
+.user-actions p {
+    opacity: 0.8;
+    /* Slightly transparent */
+    margin-right: auto;
+    /* Center horizontally */
+    margin-bottom: 30px;
+    /* Space below paragraph */
+    margin-left: auto;
+    /* Center horizontally */
+    max-width: 600px;
+    /* Max width constraint */
+    color: var(--herb-green);
+    /* Theme color */
+}
+
+/* Container for the action buttons */
+.action-buttons {
+    display: flex;
+    /* Use flexbox */
+    justify-content: center;
+    /* Center buttons */
+    gap: 20px;
+    /* Space between buttons */
+}
+
+/* Register button styling (solid style) */
+.register-btn {
+    transition: var(--transition);
+    /* Standard transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    border: none;
+    /* No border */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: var(--tomato-red);
+    /* Accent color */
+    padding: 12px 25px;
+    /* Padding */
+    color: white;
+    /* Text color */
+    font-weight: 500;
+    /* Medium weight */
+    font-size: 16px;
+    /* Font size */
+}
+
+/* Login button styling (outline style) */
+.login-btn {
+    transition: var(--transition);
+    /* Standard transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    border: 1px solid var(--tomato-red);
+    /* Border color */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: white;
+    /* White background */
+    padding: 12px 25px;
+    /* Padding */
+    color: var(--tomato-red);
+    /* Text color */
+    font-weight: 500;
+    /* Medium weight */
+    font-size: 16px;
+    /* Font size */
+}
+
+/* Hover effect for register/login buttons */
+.register-btn:hover,
+.login-btn:hover {
+    transform: translateY(-2px);
+    /* Slight lift */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    /* Add shadow */
+}
+
+/* ==========================================================================
+   Standard Button Styles (Reusable Component)
+   ========================================================================== */
+
+/* Base button class */
+.btn {
+    display: inline-block;
+    /* Inline block display */
+    transition: var(--transition);
+    /* Standard transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    border: none;
+    /* No border by default */
+    border-radius: 5px;
+    /* Rounded corners */
+    padding: 10px 20px;
+    /* Default padding */
+    font-weight: 500;
+    /* Medium weight */
+    font-size: 16px;
+    /* Font size */
+    text-align: center;
+    /* Center text */
+    text-decoration: none;
+    /* Remove underline */
+}
+
+/* Primary button style */
+.btn-primary {
+    background-color: var(--tomato-red);
+    /* Accent color */
+    color: white;
+    /* Text color */
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    /* Minimal lift */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+    background-color: var(--dark-tomato-red);
+    /* Darken background */
+}
+
+/* Secondary button style (outline) */
+.btn-secondary {
+    border: 1px solid var(--herb-green);
+    /* Border color */
+    background-color: transparent;
+    /* Transparent background */
+    color: var(--herb-green);
+    /* Text color */
+}
+
+.btn-secondary:hover {
+    transform: translateY(-1px);
+    /* Minimal lift */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+    border-color: var(--dark-herb-green);
+    /* Darken border */
+    background-color: var(--soft-off-white);
+    /* Light background */
+    color: var(--dark-herb-green);
+    /* Darken text */
+}
+
+/* Danger button style (similar to primary) */
+.btn-danger {
+    background-color: var(--tomato-red);
+    /* Accent color */
+    color: white;
+    /* Text color */
+}
+
+.btn-danger:hover {
+    transform: translateY(-1px);
+    /* Minimal lift */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+    background-color: var(--dark-tomato-red);
+    /* Darken background */
+}
+
+/* ==========================================================================
+   Standard Form Styles (Reusable Component)
+   ========================================================================== */
+
+/* Form group container (label + input) */
+.form-group {
+    margin-bottom: 20px;
+    /* Space below group */
+}
+
+/* Form label styling */
+.form-group label {
+    display: block;
+    /* Full width */
+    margin-bottom: 8px;
+    /* Space below label */
+    color: var(--herb-green);
+    /* Text color */
+    font-weight: 600;
+    /* Bolder text */
+}
+
+/* Base form control styling (input, select, textarea) */
+.form-control {
+    display: block;
+    /* Full width */
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    /* Transitions */
+    border: 1px solid #ddd;
+    /* Light border */
+    border-radius: 4px;
+    /* Rounded corners */
+    background-clip: padding-box;
+    /* Ensure background respects border */
+    background-color: #f9f9f9;
+    /* Light background */
+    padding: 12px;
+    /* Padding */
+    width: 100%;
+    /* Full width */
+    color: var(--herb-green);
+    /* Text color */
+    font-size: 1rem;
+    /* Font size */
+    line-height: 1.5;
+    /* Line height */
+    font-family: inherit;
+    /* Inherit font from body */
+    /* Reset default browser appearance */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Add dropdown arrow to select elements */
+select.form-control {
+    /* SVG arrow icon */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    /* Position arrow */
+    background-size: 16px 12px;
+    /* Arrow size */
+    background-repeat: no-repeat;
+    /* Prevent repeating */
+}
+
+/* Focus state for form controls */
+.form-control:focus {
+    outline: 0;
+    /* Remove default outline */
+    box-shadow: 0 0 0 0.2rem rgba(90, 143, 80, 0.25);
+    /* Focus ring */
+    border-color: var(--herb-green);
+    /* Highlight border */
+    background-color: #fff;
+    /* White background */
+    color: var(--herb-green);
+    /* Ensure text color remains */
+}
+
+/* Remove spinners from number inputs (Webkit) */
+.form-control[type="number"]::-webkit-outer-spin-button,
+.form-control[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Remove spinners from number inputs (Firefox) */
+.form-control[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* Textarea specific styling */
+textarea.form-control {
+    min-height: calc(1.5em + 1.5rem + 2px);
+    /* Calculate min height based on line height and padding */
+    resize: vertical;
+    /* Allow vertical resizing only */
+}
+
+/* ==========================================================================
+   Standard Quantity Input Component (Reusable)
+   ========================================================================== */
+
+/* Container for quantity controls (+/- buttons and input) */
+.quantity-controls {
+    display: flex;
+    /* Use flexbox */
+    align-items: center;
+    /* Align items vertically */
+    gap: 5px;
+    /* Space between elements */
+}
+
+/* Styling for quantity adjustment buttons (+/-) */
+.quantity-controls .quantity-btn {
+    display: inline-flex;
+    /* Use inline-flex for alignment */
+    justify-content: center;
+    /* Center icon horizontally */
+    align-items: center;
+    /* Center icon vertically */
+    transition: var(--transition);
+    /* Standard transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    border: 1px solid #ddd;
+    /* Light border */
+    border-radius: 50%;
+    /* Circular button */
+    background-color: var(--creamy-beige);
+    /* Light background */
+    padding: 0;
+    /* Remove padding */
+    width: 32px;
+    /* Fixed size */
+    height: 32px;
+    /* Fixed size */
+    color: var(--herb-green);
+    /* Default icon color */
+    font-size: 1.1rem;
+    /* Icon size */
+    line-height: 1;
+    /* Ensure icon is centered */
+}
+
+/* Hover effect for quantity buttons */
+.quantity-controls .quantity-btn:hover {
+    border-color: #ccc;
+    /* Slightly darker border */
+    background-color: var(--dark-creamy-beige);
+    /* Darken background */
+}
+
+/* Specific color for the decrease (-) button */
+.quantity-controls .quantity-btn.decrease-btn {
+    color: var(--tomato-red);
+    /* Accent color */
+}
+
+/* Specific color for the increase (+) button */
+.quantity-controls .quantity-btn.increase-btn {
+    color: var(--herb-green);
+    /* Theme color */
+}
+
+/* Styling for the quantity input field */
+.quantity-controls .quantity-input {
+    border: 1px solid #ddd;
+    /* Light border */
+    border-radius: 4px;
+    /* Rounded corners */
+    padding: 5px 8px;
+    /* Padding */
+    width: 50px;
+    /* Fixed width */
+    height: 32px;
+    /* Match button height */
+    color: var(--herb-green);
+    /* Text color */
+    font-weight: 500;
+    /* Medium weight */
+    text-align: center;
+    /* Center align text */
+    /* Remove number input spinners */
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.quantity-controls .quantity-input::-webkit-outer-spin-button,
+.quantity-controls .quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Focus state for quantity input */
+.quantity-controls .quantity-input:focus {
+    outline: none;
+    /* Remove default outline */
+    box-shadow: 0 0 0 0.2rem rgba(90, 143, 80, 0.25);
+    /* Focus ring */
+    border-color: var(--herb-green);
+    /* Highlight border */
+}
+
+/* ==========================================================================
+   Standard Alert Message Styles (Reusable Component)
+   ========================================================================== */
+
+/* Base alert styling */
+.alert {
+    margin-bottom: 20px;
+    /* Space below alert */
+    border: 1px solid transparent;
+    /* Transparent border by default */
+    border-radius: 4px;
+    /* Rounded corners */
+    padding: 15px;
+    /* Padding */
+    font-size: 0.95rem;
+    /* Slightly smaller font size */
+    text-align: center;
+    /* Center align text */
+}
+
+/* Remove default margin from paragraph inside alert */
+.alert p {
+    margin: 0;
+}
+
+/* Success alert */
+.alert-success {
+    border-color: #c3e6cb;
+    /* Light green border */
+    background-color: #d4edda;
+    /* Light green background */
+    color: #155724;
+    /* Dark green text */
+}
+
+/* Error alert */
+.alert-error {
+    border-color: #f5c6cb;
+    /* Light red border */
+    background-color: #f8d7da;
+    /* Light red background */
+    color: #721c24;
+    /* Dark red text */
+}
+
+/* Info alert */
+.alert-info {
+    border-color: #bee5eb;
+    /* Light blue border */
+    background-color: #d1ecf1;
+    /* Light blue background */
+    color: #0c5460;
+    /* Dark blue text */
+}
+
+/* Warning alert */
+.alert-warning {
+    border-color: #ffeeba;
+    /* Light yellow border */
+    background-color: #fff3cd;
+    /* Light yellow background */
+    color: #856404;
+    /* Dark yellow text */
+}
+
+/* ==========================================================================
+   Standard Page Header Styles (for subpages like About, Contact)
+   ========================================================================== */
+
+/* Container for standard page headers */
+.page-header {
+    background-color: var(--soft-off-white);
+    /* Background color */
+    padding: 40px 20px;
+    /* Padding */
+    text-align: center;
+    /* Center align content */
+}
+
+/* Main heading (H1) in page header */
+.page-header h1 {
+    margin-bottom: 10px;
+    /* Space below heading */
+    color: var(--herb-green);
+    /* Theme color */
+    font-weight: 700;
+    /* Bold */
+    font-size: 36px;
+    /* Font size */
+}
+
+/* Subtitle paragraph in page header */
+.page-header p {
+    opacity: 0.8;
+    /* Slightly transparent */
+    color: var(--herb-green);
+    /* Theme color */
+    font-size: 18px;
+    /* Font size */
+}
+
+/* ==========================================================================
+   Fixed Header Styles (Applied via JS on scroll)
+   ========================================================================== */
+
+/* Class applied to the header when it becomes fixed */
+.fixed-header {
+    position: fixed;
+    /* Fixed position */
+    top: 0;
+    /* Stick to top */
+    left: 0;
+    z-index: 1000;
+    /* Ensure it's above content */
+    transition: top 0.3s;
+    /* Smooth transition for showing/hiding */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    /* Subtle shadow */
+    background-color: var(--soft-off-white);
+    /* Background color */
+    width: 100%;
+    /* Full width */
+    height: var(--header-height);
+    /* Match original header height */
+    /* JS usually handles adding/removing this class and adjusting body padding */
+}
+
+/* ==========================================================================
+   Toast Notification Styles
+   ========================================================================== */
+
+/* Container for toast notifications */
+#toast-container {
+    display: flex;
+    /* Use flexbox */
+    position: fixed;
+    /* Fixed position */
+    right: 20px;
+    /* Position on bottom right */
+    bottom: 20px;
+    flex-direction: column;
+    /* Stack toasts vertically */
+    gap: 10px;
+    /* Space between toasts */
+    z-index: 9999;
+    /* Highest z-index */
+}
+
+/* Individual toast notification */
+.toast {
+    display: flex;
+    /* Use flexbox for layout */
+    align-items: center;
+    /* Align icon and text vertically */
+    transform: translateY(20px);
+    /* Initial position for animation */
+    opacity: 0;
+    /* Initially hidden */
+    animation: toast-in 0.3s ease forwards;
+    /* Animate in */
+    margin-bottom: 10px;
+    /* Space below toast (redundant with gap?) */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    /* Shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: white;
+    /* White background */
+    padding: 12px 16px;
+    /* Padding */
+    min-width: 280px;
+    /* Minimum width */
+    max-width: 350px;
+    /* Maximum width */
+    color: var(--herb-green);
+    /* Default text color */
+    font-size: 14px;
+    /* Font size */
+    line-height: 1.4;
+    /* Line height */
+}
+
+/* Icon within the toast */
+.toast-icon {
+    flex-shrink: 0;
+    /* Prevent icon from shrinking */
+    margin-right: 12px;
+    /* Space between icon and text */
+    font-size: 18px;
+    /* Icon size */
+}
+
+/* Text content area within the toast */
+.toast-content {
+    flex-grow: 1;
+    /* Allow text to take remaining space */
+}
+
+/* Success toast styling */
+.toast-success {
+    border-left: 4px solid var(--herb-green);
+    /* Green left border */
+}
+
+.toast-success .toast-icon {
+    color: var(--herb-green);
+    /* Green icon */
+}
+
+/* Error toast styling */
+.toast-error {
+    border-left: 4px solid var(--tomato-red);
+    /* Red left border */
+}
+
+.toast-error .toast-icon {
+    color: var(--tomato-red);
+    /* Red icon */
+}
+
+/* Info toast styling */
+.toast-info {
+    border-left: 4px solid var(--spice-gold);
+    /* Gold left border */
+}
+
+.toast-info .toast-icon {
+    color: var(--spice-gold);
+    /* Gold icon */
+}
+
+/* Class added by JS to animate toast out */
+.toast-exit {
+    animation: toast-out 0.3s ease forwards;
+    /* Animate out */
+}
+
+/* Keyframes for toast entrance animation */
+@keyframes toast-in {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Keyframes for toast exit animation */
+@keyframes toast-out {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(-20px);
+        /* Animate upwards */
+        opacity: 0;
+    }
+}
+
+/* Responsive adjustments for toasts on small screens */
+@media (max-width: 480px) {
+
+    /* Make toast container full width */
+    #toast-container {
+        right: 20px;
+        left: 20px;
+    }
+
+    /* Make individual toasts full width */
+    .toast {
+        width: 100%;
+        min-width: auto;
+        max-width: none;
+    }
+}
+
+/* ==========================================================================
+   Miscellaneous & Component-Specific Styles
+   ========================================================================== */
+
+/* Make category items clickable links */
+.category-section .category-link {
+    display: block;
+    /* Ensure link takes up block space */
+    cursor: pointer;
+    /* Pointer cursor */
+    color: inherit;
+    /* Inherit text color */
+    text-decoration: none;
+    /* Remove underline */
+}
+
+/* Add hover effect to category item when link is hovered */
+.category-section .category-link:hover .category-item {
+    background-color: #f8f8f8;
+    /* Subtle background change */
+}
+
+/* Buttons within product cards (Add to Cart / Login Prompt) */
+.product-card .add-to-cart-btn,
+.product-card .login-to-purchase-btn {
+    display: block;
+    /* Full width button */
+    transition: var(--transition);
+    /* Standard transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    margin-top: 10px;
+    /* Space above button */
+    border-radius: 4px;
+    /* Rounded corners */
+    padding: 8px 12px;
+    /* Padding */
+    width: 100%;
+    /* Full width */
+    font-weight: 500;
+    /* Medium weight */
+    font-size: 14px;
+    /* Font size */
+    font-family: "Poppins", sans-serif;
+    /* Consistent font */
+    text-align: center;
+    /* Center text */
+    text-decoration: none;
+    /* Remove underline */
+}
+
+/* "Add to Cart" button specific style */
+.product-card .add-to-cart-btn {
+    border: none;
+    /* No border */
+    background-color: var(--herb-green);
+    /* Theme color */
+    color: white;
+    /* Text color */
+}
+
+.product-card .add-to-cart-btn:hover {
+    background-color: var(--dark-herb-green);
+    /* Darken background */
+}
+
+/* "Login to Purchase" button specific style */
+.product-card .login-to-purchase-btn {
+    border: none;
+    /* No border */
+    background-color: var(--bread-wheat);
+    /* Accent color */
+    color: white;
+    /* Text color */
+}
+
+.product-card .login-to-purchase-btn:hover {
+    background-color: var(--dark-bread-wheat);
+    /* Darken background */
+}
+
+/* Cart count badge in header */
+#cart-count-badge {
+    display: flex;
+    /* Use flex for centering */
+    display: none;
+    /* Hidden by default */
+    position: absolute;
+    /* Position relative to cart icon */
+    top: -8px;
+    /* Position above icon */
+    right: -8px;
+    /* Position to the right */
+    justify-content: center;
+    /* Center number horizontally */
+    align-items: center;
+    /* Center number vertically */
+    z-index: 1;
+    /* Above cart icon */
+    border-radius: 50%;
+    /* Circular shape */
+    background-color: var(--tomato-red);
+    /* Accent color */
+    width: 18px;
+    /* Size */
+    height: 18px;
+    /* Size */
+    color: white;
+    /* Text color */
+    font-weight: bold;
+    /* Bold number */
+    font-size: 10px;
+    /* Small font size */
+    line-height: 1;
+    /* Ensure single line */
+}
+
+/* Class added by JS to show the badge */
+#cart-count-badge.visible {
+    display: flex;
+    /* Make visible */
+}
+
+/* ==========================================================================
+   Standard Confirmation Modal Styles (Reusable Component)
+   ========================================================================== */
+
+/* Base modal container (hidden by default) */
+#confirmation-modal {
+    display: none;
+    /* Hidden */
+    position: fixed;
+    /* Fixed position */
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    /* High z-index */
+    outline: 0;
+    /* Remove outline */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Prevent scrolling */
+}
+
+/* Class to show the modal */
+#confirmation-modal.modal-visible {
+    display: flex;
+    /* Use flex for centering */
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
+}
+
+/* Modal backdrop (semi-transparent background) */
+.modal-backdrop {
+    position: fixed;
+    /* Fixed position */
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    /* Below modal content */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent black */
+    width: 100vw;
+    /* Full viewport width */
+    height: 100vh;
+    /* Full viewport height */
+}
+
+/* Modal content box */
+.modal-content {
+    position: relative;
+    /* Needed for z-index */
+    z-index: 1050;
+    /* Above backdrop */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    /* Shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: #fff;
+    /* White background */
+    padding: 30px;
+    /* Padding */
+    width: 90%;
+    /* Responsive width */
+    max-width: 400px;
+    /* Max width */
+    text-align: center;
+    /* Center text */
+}
+
+/* Paragraph text within modal */
+.modal-content p {
+    margin-bottom: 20px;
+    /* Space below text */
+    color: var(--herb-green);
+    /* Theme color */
+    font-size: 16px;
+    /* Font size */
+}
+
+/* Container for modal buttons */
+.modal-buttons {
+    display: flex;
+    /* Use flexbox */
+    justify-content: center;
+    /* Center buttons */
+    gap: 15px;
+    /* Space between buttons */
+}
+
+/* Base modal button styling */
+.modal-btn {
+    transition: var(--transition);
+    /* Standard transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    border: none;
+    /* No border by default */
+    border-radius: 5px;
+    /* Rounded corners */
+    padding: 10px 20px;
+    /* Padding */
+    font-weight: 500;
+    /* Medium weight */
+    font-size: 14px;
+    /* Font size */
+}
+
+/* Confirmation button style */
+.modal-btn.confirm-btn {
+    background-color: var(--tomato-red);
+    /* Accent color */
+    color: white;
+    /* Text color */
+}
+
+.modal-btn.confirm-btn:hover {
+    background-color: var(--dark-tomato-red);
+    /* Darken background */
+}
+
+/* Cancellation button style (outline) */
+.modal-btn.cancel-btn {
+    border: 1px solid var(--herb-green);
+    /* Border color */
+    background-color: transparent;
+    /* Transparent background */
+    color: var(--herb-green);
+    /* Text color */
+}
+
+.modal-btn.cancel-btn:hover {
+    background-color: var(--soft-off-white);
+    /* Light background */
+}
+
+/* ==========================================================================
+   Empty State Styles (Reusable Component)
+   ========================================================================== */
+
+/* Container for empty state messages (e.g., No Orders, Empty Cart) */
+.empty-state-container {
+    margin: 40px auto;
+    /* Vertical margin, center horizontally */
+    box-shadow: var(--shadow);
+    /* Standard shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: #fff;
+    /* White background */
+    padding: 40px 20px;
+    /* Padding */
+    max-width: 500px;
+    /* Max width */
+    text-align: center;
+    /* Center content */
+}
+
+/* Container for the illustration */
+.empty-state-illustration {
+    margin-bottom: 25px;
+    /* Space below illustration */
+}
+
+/* Illustration image styling */
+.empty-state-illustration img {
+    opacity: 0.8;
+    /* Slightly transparent */
+    max-width: 120px;
+    /* Max width */
+    height: auto;
+    /* Maintain aspect ratio */
+}
+
+/* Heading for the empty state */
+.empty-state-heading {
+    margin-bottom: 10px;
+    /* Space below heading */
+    color: var(--herb-green);
+    /* Theme color */
+    font-weight: 600;
+    /* Slightly bolder */
+    font-size: 24px;
+    /* Font size */
+}
+
+/* Text description for the empty state */
+.empty-state-text {
+    opacity: 0.8;
+    /* Slightly transparent */
+    margin-bottom: 25px;
+    /* Space below text */
+    color: var(--herb-green);
+    /* Theme color */
+    font-size: 16px;
+    /* Font size */
+    line-height: 1.6;
+    /* Line height */
+}
+
+/* Call-to-action button in the empty state */
+.empty-state-cta {
+    padding: 12px 30px;
+    /* Button padding */
+    /* Inherits .btn styles if class is applied */
+}

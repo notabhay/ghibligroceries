@@ -1,0 +1,299 @@
+/* ==========================================================================
+   Contact Page Specific Styles
+   ========================================================================== */
+
+/* Main container for the contact section */
+.contact-section {
+    padding: 20px 0 60px;
+    /* Top/bottom padding */
+}
+
+/* Grid layout for the main content area (info + form) */
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Two equal columns */
+    gap: 30px;
+    /* Space between columns */
+    margin-top: 30px;
+    /* Space above the grid */
+}
+
+/* Common styling for the contact info and form wrapper blocks */
+.contact-info,
+.contact-form-wrapper {
+    box-shadow: var(--shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
+    /* Standard shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: #fff;
+    /* White background */
+    padding: 30px;
+    /* Inner padding */
+}
+
+/* Common styling for H3 headings in info, form, and map sections */
+.contact-info h3,
+.contact-form-wrapper h3,
+.location-map h3 {
+    margin-bottom: 20px;
+    /* Space below headings */
+    color: var(--herb-green, #5a8f50);
+    /* Theme color */
+    font-size: 1.5rem;
+    /* Heading font size */
+}
+
+/* Styling for individual contact information items (e.g., address, phone) */
+.info-item {
+    display: flex;
+    /* Use flexbox for icon and text alignment */
+    margin-bottom: 20px;
+    /* Space below each item */
+}
+
+/* Styling for icons within info items */
+.info-item i {
+    margin-top: 5px;
+    /* Align icon slightly lower */
+    margin-right: 15px;
+    /* Space between icon and text */
+    color: var(--herb-green, #5a8f50);
+    /* Theme color */
+    font-size: 1.5rem;
+    /* Icon size */
+}
+
+/* Styling for H4 subheadings within info items */
+.info-item h4 {
+    margin-bottom: 5px;
+    /* Space below subheading */
+    color: var(--herb-green, #5a8f50);
+    /* Theme color */
+}
+
+/* Styling for paragraph text within info items */
+.info-item p {
+    opacity: 0.8;
+    /* Slightly transparent text */
+    margin-bottom: 5px;
+    /* Space below paragraph */
+    color: var(--herb-green, #5a8f50);
+    /* Theme color */
+}
+
+/* Container for social media links */
+.social-media {
+    margin-top: 30px;
+    /* Space above the social media section */
+}
+
+/* Flex container for social media icons */
+.social-icons {
+    display: flex;
+    /* Arrange icons horizontally */
+    gap: 15px;
+    /* Space between icons */
+    margin-top: 10px;
+    /* Space above icons */
+}
+
+/* Styling for individual social media icons */
+.social-icon {
+    display: flex;
+    /* Use flexbox for centering */
+    justify-content: center;
+    /* Center icon horizontally */
+    align-items: center;
+    /* Center icon vertically */
+    transition: var(--transition, all 0.3s ease);
+    /* Smooth transition */
+    border-radius: 50%;
+    /* Circular shape */
+    background-color: var(--herb-green, #5a8f50);
+    /* Background color */
+    width: 40px;
+    /* Fixed width */
+    height: 40px;
+    /* Fixed height */
+    color: white;
+    /* Icon color */
+}
+
+/* Hover effect for social media icons */
+.social-icon:hover {
+    transform: translateY(-3px);
+    /* Slight lift effect */
+    background-color: var(--tomato-red, #d94f2f);
+    /* Change background color */
+}
+
+/* Styling for the contact form itself */
+.contact-form {
+    display: flex;
+    /* Use flexbox */
+    flex-direction: column;
+    /* Stack form elements vertically */
+}
+
+/* Styling for form groups (label + input) */
+.contact-form .form-group {
+    margin-bottom: 20px;
+    /* Space below each form group */
+}
+
+/* Styling for form labels */
+.contact-form label {
+    display: block;
+    /* Ensure label takes full width */
+    margin-bottom: 8px;
+    /* Space below label */
+    font-weight: 600;
+    /* Bolder label text */
+}
+
+/* Common styling for text inputs and textareas */
+.contact-form input,
+.contact-form textarea {
+    border: 1px solid #ddd;
+    /* Light border */
+    border-radius: 4px;
+    /* Rounded corners */
+    background-color: #f9f9f9;
+    /* Light background */
+    padding: 12px;
+    /* Inner padding */
+    width: 100%;
+    /* Full width */
+    font-size: 1rem;
+    /* Font size */
+}
+
+/* Focus state styling for inputs and textareas */
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    /* Remove default outline */
+    border-color: var(--herb-green, #5a8f50);
+    /* Highlight border with theme color */
+}
+
+/* Styling for the form submission button */
+.contact-form button {
+    align-self: flex-start;
+    /* Align button to the left */
+    transition: var(--transition);
+    /* Smooth transition */
+    cursor: pointer;
+    /* Pointer cursor */
+    margin-top: 10px;
+    /* Space above button */
+    border: none;
+    /* No border */
+    border-radius: 5px;
+    /* Rounded corners */
+    background-color: var(--tomato-red);
+    /* Accent color */
+    padding: 12px 25px;
+    /* Button padding */
+    color: white;
+    /* Text color */
+}
+
+/* Hover effect for the submission button */
+.contact-form button:hover {
+    box-shadow: var(--shadow);
+    /* Add shadow */
+    background-color: var(--dark-tomato-red);
+    /* Darken background */
+}
+
+/* Container for the location map section */
+.location-map {
+    margin-top: 30px;
+    /* Space above the map section */
+    box-shadow: var(--shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
+    /* Standard shadow */
+    border-radius: 8px;
+    /* Rounded corners */
+    background-color: #fff;
+    /* White background */
+    padding: 30px;
+    /* Inner padding */
+}
+
+/* Container specifically for the map element (e.g., iframe or div) */
+.map-container {
+    margin-top: 15px;
+    /* Space above the map */
+    border-radius: 8px;
+    /* Rounded corners */
+    height: 300px;
+    /* Fixed height for the map */
+    overflow: hidden;
+    /* Hide any overflow */
+}
+
+/* Placeholder style for when the map is loading or unavailable */
+.map-placeholder {
+    display: flex;
+    /* Use flexbox for centering */
+    flex-direction: column;
+    /* Stack icon and text vertically */
+    justify-content: center;
+    /* Center vertically */
+    align-items: center;
+    /* Center horizontally */
+    opacity: 0.7;
+    /* Slightly transparent */
+    background-color: #f0f0f0;
+    /* Light gray background */
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    color: var(--herb-green, #5a8f50);
+    /* Text/icon color */
+}
+
+/* Icon styling within the map placeholder */
+.map-placeholder i {
+    margin-bottom: 10px;
+    /* Space below icon */
+    font-size: 2.5rem;
+    /* Icon size */
+}
+
+/* ==========================================================================
+   Responsive Adjustments for Contact Page
+   ========================================================================== */
+
+/* Medium screens (tablets) */
+@media (max-width: 992px) {
+
+    /* Stack info and form blocks vertically */
+    .contact-content {
+        grid-template-columns: 1fr;
+        /* Single column layout */
+    }
+}
+
+/* Smaller screens (large mobiles / small tablets) */
+@media (max-width: 768px) {
+
+    /* Reduce padding for main content blocks */
+    .contact-info,
+    .contact-form-wrapper,
+    .location-map {
+        padding: 20px;
+    }
+}
+
+/* Small screens (mobiles) */
+@media (max-width: 576px) {
+
+    /* Make the form submission button full width */
+    .contact-form button {
+        width: 100%;
+    }
+}

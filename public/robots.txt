@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+Disallow: /ajax_handlers/
+Disallow: /includes/
+Disallow: /config/
+Disallow: /controllers/
+Disallow: /models/
+Disallow: /api/
+Disallow: /utils/
+Disallow: /captcha_image.php
+
+Disallow: /logs/
+Disallow: /*.sql$
+Disallow: /*.md$
+Disallow: /*.txt$
+Disallow: /*.json$
+Disallow: /*.htaccess$
+Disallow: /*.config$
+
+Allow: /assets/css/
+Allow: /assets/js/
+Allow: /assets/images/
+
+Sitemap: http://localhost/grocery-store/sitemap.xml
