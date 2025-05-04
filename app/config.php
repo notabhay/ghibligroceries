@@ -33,6 +33,7 @@ $displayErrors = $debugMode ? 1 : 0;
 
 // Apply the error reporting settings.
 error_reporting($errorLevel);
+// Original setting based on debug mode
 ini_set('display_errors', $displayErrors);
 
 // Return the main configuration array.
@@ -47,7 +48,7 @@ return [
     'DB_HOST' => 'localhost', // Database host address (e.g., 'localhost' or IP address).
     'DB_NAME' => 'ghibligroceriesdb', // Name of the database to connect to.
     'DB_USER' => 'ghibli_app_user', // Database username for the application.
-    'DB_PASS' => 'keeleteachingserversucks', // Database password for the application user. **CHANGE THIS!**
+    'DB_PASS' => 'YOUR_STRONG_PASSWORD_HERE', // Database password for the application user. **CHANGE THIS!**
 
     // --- Security and Authentication ---
     'AUTH_TIMEOUT' => 3600, // Session timeout in seconds for authenticated users (1 hour).
