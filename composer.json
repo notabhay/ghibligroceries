@@ -3,8 +3,8 @@
     "description": "GhibliGroceries - PHP Based online grocery store application for Advanced Web Technologies module.",
     "type": "project",
     "require": {
-        "php": "~8.4",
-        "monolog/monolog": "~3.9.0"
+        "php": ">8",
+        "monolog/monolog": ">3"
     },
     "autoload": {
         "psr-4": {
