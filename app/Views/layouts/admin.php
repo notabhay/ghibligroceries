@@ -33,153 +33,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Main application stylesheet -->
     <link rel="stylesheet" href="/assets/css/styles.css">
-
-    <!-- Inline Styles specific to the Admin Layout -->
-    <style>
-        /* CSS Variables for admin theme */
-        :root {
-            --admin-primary: #3498db;
-            --admin-secondary: #2c3e50;
-            --admin-accent: #e74c3c;
-            --admin-bg: #f8f9fa;
-            --admin-text: #333;
-            --admin-sidebar-width: 250px;
-        }
-
-        /* Basic body styling */
-        body {
-            background-color: var(--admin-bg);
-            color: var(--admin-text);
-            display: flex;
-            /* Enables flex layout for sidebar and content */
-            min-height: 100vh;
-            /* Ensure body takes full viewport height */
-            margin: 0;
-            /* Remove default body margin */
-            padding: 0;
-        }
-
-        /* Main container for the admin interface */
-        .admin-container {
-            display: flex;
-            width: 100%;
-            min-height: 100vh;
-        }
-
-        /* Sidebar styling */
-        .admin-sidebar {
-            width: var(--admin-sidebar-width);
-            background-color: var(--admin-secondary);
-            color: white;
-            padding: 1rem 0;
-            flex-shrink: 0;
-            /* Prevent sidebar from shrinking */
-        }
-
-        /* Sidebar header section */
-        .admin-sidebar-header {
-            padding: 0 1rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 1rem;
-        }
-
-        .admin-sidebar-header h1 {
-            font-size: 1.5rem;
-            margin: 0;
-        }
-
-        /* Sidebar navigation list */
-        .admin-sidebar-nav {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .admin-sidebar-nav li {
-            padding: 0;
-        }
-
-        /* Sidebar navigation links */
-        .admin-sidebar-nav a {
-            display: block;
-            padding: 0.75rem 1rem;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        /* Sidebar navigation link hover/active state */
-        .admin-sidebar-nav a:hover,
-        .admin-sidebar-nav a.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        /* Sidebar navigation link icons */
-        .admin-sidebar-nav i {
-            width: 20px;
-            margin-right: 8px;
-            text-align: center;
-        }
-
-        /* Main content area styling */
-        .admin-content {
-            flex-grow: 1;
-            /* Allow content area to take remaining space */
-            padding: 1rem;
-            overflow-y: auto;
-            /* Add scrollbar if content overflows */
-        }
-
-        /* Header within the main content area */
-        .admin-header {
-            background-color: white;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .admin-header-title h1 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        /* User info section in the content header */
-        .admin-user-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .admin-user-info span {
-            margin-right: 1rem;
-        }
-
-        /* Container for the specific page content */
-        .admin-main {
-            background-color: white;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-        }
-
-        /* Container for toast notifications */
-        #toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-        }
-    </style>
+    <!-- Admin-specific stylesheet -->
+    <link rel="stylesheet" href="/assets/css/admin-styles.css">
 
     <?php
     // Conditionally include additional CSS files if specified by the controller
     if (!empty($additional_css_files) && is_array($additional_css_files)):
         foreach ($additional_css_files as $css_file): ?>
-            <link rel="stylesheet" href="<?php echo htmlspecialchars($css_file); ?>">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars($css_file); ?>">
     <?php endforeach;
     endif;
     ?>
@@ -246,12 +107,27 @@
                     </a>
                 </li>
             </ul>
+
+            <!-- Dark Mode Toggle in Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="dark-mode-toggle-container">
+                    <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
+                        <i class="fas fa-sun light-icon"></i>
+                        <i class="fas fa-moon dark-icon"></i>
+                        <span class="toggle-text">Dark Mode</span>
+                    </button>
+                </div>
+            </div>
         </aside> <!-- End Sidebar -->
 
         <!-- Main Content Area -->
         <div class="admin-content">
             <!-- Content Header -->
             <header class="admin-header">
+                <!-- Sidebar Toggle Button (only visible on mobile) -->
+                <button id="sidebar-toggle" class="sidebar-toggle-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <!-- Page Title Area -->
                 <div class="admin-header-title">
                     <!-- Display the dynamic page title, default to 'Dashboard' -->
@@ -262,8 +138,16 @@
                     <?php
                     // Display a welcome message if the admin user's data is available
                     if (isset($admin_user) && is_array($admin_user)): ?>
-                        <span>Welcome, <?php echo htmlspecialchars($admin_user['name']); ?></span>
+                    <span>Welcome, <?php echo htmlspecialchars($admin_user['name']); ?></span>
                     <?php endif; ?>
+
+                    <!-- Dark Mode Toggle in Header (Alternative location) -->
+                    <div class="dark-mode-toggle-header">
+                        <button id="dark-mode-toggle-header" class="dark-mode-toggle-btn" aria-label="Toggle Dark Mode">
+                            <i class="fas fa-sun light-icon"></i>
+                            <i class="fas fa-moon dark-icon"></i>
+                        </button>
+                    </div>
                 </div>
             </header> <!-- End Content Header -->
 
@@ -296,11 +180,17 @@
 
     <!-- Basic script block, currently empty but could be used for admin-specific JS -->
     <script>
-        // Ensure DOM is loaded before running any potential future JS
-        document.addEventListener('DOMContentLoaded', function() {
-            // Admin layout specific JavaScript could go here
-        });
+    // Ensure DOM is loaded before running any potential future JS
+    document.addEventListener('DOMContentLoaded', function() {
+        // Admin layout specific JavaScript could go here
+    });
     </script>
+
+    <!-- Include the admin layout JavaScript for sidebar toggle functionality -->
+    <script src="/assets/js/admin-layout.js"></script>
+
+    <!-- Include the dark mode JavaScript -->
+    <script src="/assets/js/dark-mode.js"></script>
 </body>
 
 </html>

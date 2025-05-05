@@ -86,7 +86,7 @@ Expected PHP Variables:
 
             <!-- Pending Orders Stat Card -->
             <div class="stat-card">
-                <div class="stat-icon" style="background-color: rgba(255, 193, 7, 0.1); color: #ffc107;">
+                <div class="stat-icon pending">
                     <i class="fas fa-clock"></i>
                 </div>
                 <div class="stat-content">
@@ -100,7 +100,7 @@ Expected PHP Variables:
 
             <!-- Processing Orders Stat Card -->
             <div class="stat-card">
-                <div class="stat-icon" style="background-color: rgba(0, 123, 255, 0.1); color: #007bff;">
+                <div class="stat-icon processing">
                     <i class="fas fa-spinner"></i>
                 </div>
                 <div class="stat-content">
@@ -114,7 +114,7 @@ Expected PHP Variables:
 
             <!-- Completed Orders Stat Card -->
             <div class="stat-card">
-                <div class="stat-icon" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745;">
+                <div class="stat-icon completed">
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="stat-content">
@@ -128,7 +128,7 @@ Expected PHP Variables:
 
             <!-- Low Stock Products Stat Card -->
             <div class="stat-card">
-                <div class="stat-icon" style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545;">
+                <div class="stat-icon low-stock">
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div class="stat-content">
@@ -223,38 +223,38 @@ Expected PHP Variables:
                     <?php // Check if there are any recent orders to display 
                     ?>
                     <?php if (empty($recent_orders)): ?>
-                        <!-- Display message if no recent orders -->
-                        <tr>
-                            <td colspan="6" class="no-orders">No recent orders found</td>
-                        </tr>
+                    <!-- Display message if no recent orders -->
+                    <tr>
+                        <td colspan="6" class="no-orders">No recent orders found</td>
+                    </tr>
                     <?php else: ?>
-                        <?php // Loop through each recent order and display its details 
+                    <?php // Loop through each recent order and display its details 
                         ?>
-                        <?php foreach ($recent_orders as $order): ?>
-                            <tr>
-                                <td>#<?= $order['order_id'] // Display Order ID 
+                    <?php foreach ($recent_orders as $order): ?>
+                    <tr>
+                        <td>#<?= $order['order_id'] // Display Order ID 
                                         ?></td>
-                                <td><?= htmlspecialchars($order['user_name']) // Display Customer Name (escaped) 
+                        <td><?= htmlspecialchars($order['user_name']) // Display Customer Name (escaped) 
                                     ?></td>
-                                <td><?= date('M d, Y', strtotime($order['order_date'])) // Format and display Order Date 
+                        <td><?= date('M d, Y', strtotime($order['order_date'])) // Format and display Order Date 
                                     ?></td>
-                                <td>$<?= number_format($order['total_amount'], 2) // Format and display Total Amount 
+                        <td>$<?= number_format($order['total_amount'], 2) // Format and display Total Amount 
                                         ?></td>
-                                <td>
-                                    <!-- Display Order Status with dynamic class for styling -->
-                                    <span class="order-status status-<?= strtolower($order['status']) ?>">
-                                        <?= ucfirst($order['status']) // Display capitalized status 
+                        <td>
+                            <!-- Display Order Status with dynamic class for styling -->
+                            <span class="order-status status-<?= strtolower($order['status']) ?>">
+                                <?= ucfirst($order['status']) // Display capitalized status 
                                         ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <!-- Link to view the full order details -->
-                                    <a href="/admin/orders/<?= $order['order_id'] ?>" class="view-order-btn">
-                                        View
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                            </span>
+                        </td>
+                        <td>
+                            <!-- Link to view the full order details -->
+                            <a href="/admin/orders/<?= $order['order_id'] ?>" class="view-order-btn">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -266,283 +266,3 @@ Expected PHP Variables:
     </div>
     <!-- /Recent Orders Section -->
 </div>
-
-<!-- Embedded CSS for Dashboard Styling -->
-<!-- Note: It's generally better practice to keep CSS in separate files, -->
-<!-- but embedding can be acceptable for view-specific styles in smaller applications. -->
-<style>
-    /* Body */
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Main container for the dashboard content */
-    .dashboard-container {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-        /* Spacing between dashboard sections */
-    }
-
-    /* Styling for the welcome message box */
-    .dashboard-welcome {
-        background-color: #f8f9fa;
-        border-left: 4px solid var(--admin-primary);
-        /* Accent border */
-        padding: 1.5rem;
-        border-radius: 4px;
-    }
-
-    .dashboard-welcome h2 {
-        margin-top: 0;
-        color: var(--admin-secondary);
-    }
-
-    /* Common styling for section headings (Stats, Quick Actions) */
-    .stats-heading,
-    .quick-actions-heading {
-        margin-bottom: 1rem;
-    }
-
-    .stats-heading h3,
-    .quick-actions-heading h3 {
-        margin-bottom: 0.25rem;
-        color: var(--admin-secondary);
-    }
-
-    .stats-heading p,
-    .quick-actions-heading p {
-        margin-top: 0;
-        color: #6c757d;
-        /* Subdued text color */
-    }
-
-    /* Grid layout for statistics and quick action cards */
-    .stats-grid,
-    .quick-actions-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        /* Responsive grid */
-        gap: 1.5rem;
-    }
-
-    /* Styling for individual statistic and action cards */
-    .stat-card,
-    .action-card {
-        display: flex;
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        /* Subtle shadow */
-        padding: 1.5rem;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        /* Hover effect transition */
-    }
-
-    /* Specific styling for action cards (links) */
-    .action-card {
-        text-decoration: none;
-        color: inherit;
-        /* Inherit text color */
-    }
-
-    /* Hover effect for cards */
-    .stat-card:hover,
-    .action-card:hover {
-        transform: translateY(-5px);
-        /* Slight lift effect */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        /* Enhanced shadow */
-    }
-
-    /* Styling for icons within cards */
-    .stat-icon,
-    .action-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        background-color: rgba(52, 152, 219, 0.1);
-        /* Light background for icon */
-        color: var(--admin-primary);
-        border-radius: 8px;
-        margin-right: 1rem;
-        font-size: 1.5rem;
-    }
-
-    /* Content area within cards */
-    .stat-content,
-    .action-content {
-        flex: 1;
-        /* Allow content to take remaining space */
-    }
-
-    .stat-content h4,
-    .action-content h4 {
-        margin-top: 0;
-        margin-bottom: 0.5rem;
-        color: var(--admin-secondary);
-    }
-
-    /* Styling for the main statistic value */
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin: 0.5rem 0;
-        color: var(--admin-primary);
-    }
-
-    /* Styling for descriptions within cards */
-    .stat-description,
-    .action-content p {
-        margin: 0;
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-
-    /* Responsive adjustments for smaller screens */
-    @media (max-width: 768px) {
-
-        .stats-grid,
-        .quick-actions-grid {
-            grid-template-columns: 1fr;
-            /* Stack cards vertically */
-        }
-    }
-
-    /* Styling for the Recent Orders section */
-    .dashboard-recent-orders {
-        margin-top: 2rem;
-    }
-
-    .recent-orders-heading h3 {
-        margin-bottom: 0.25rem;
-        color: var(--admin-secondary);
-    }
-
-    .recent-orders-heading p {
-        margin-top: 0;
-        color: #6c757d;
-        margin-bottom: 1rem;
-    }
-
-    /* Container for the recent orders table */
-    .recent-orders-table-container {
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-        /* Ensures border radius applies correctly */
-    }
-
-    /* Styling for the recent orders table */
-    .recent-orders-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .recent-orders-table th,
-    .recent-orders-table td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid #f0f0f0;
-        /* Light border between rows */
-    }
-
-    .recent-orders-table th {
-        background-color: #f8f9fa;
-        /* Light header background */
-        font-weight: 600;
-        color: var(--admin-secondary);
-    }
-
-    .recent-orders-table tr:last-child td {
-        border-bottom: none;
-        /* Remove border from last row */
-    }
-
-    /* Base styling for order status badges */
-    .order-status {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        border-radius: 50px;
-        /* Pill shape */
-        font-size: 0.8rem;
-        font-weight: 500;
-    }
-
-    /* Specific styles for different order statuses */
-    .status-pending {
-        background-color: rgba(255, 193, 7, 0.1);
-        /* Yellow */
-        color: #ffc107;
-    }
-
-    .status-processing {
-        background-color: rgba(0, 123, 255, 0.1);
-        /* Blue */
-        color: #007bff;
-    }
-
-    .status-completed {
-        background-color: rgba(40, 167, 69, 0.1);
-        /* Green */
-        color: #28a745;
-    }
-
-    .status-cancelled {
-        background-color: rgba(220, 53, 69, 0.1);
-        /* Red */
-        color: #dc3545;
-    }
-
-    /* Styling for the 'View' order button */
-    .view-order-btn {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        background-color: var(--admin-primary);
-        color: white;
-        border-radius: 4px;
-        text-decoration: none;
-        font-size: 0.8rem;
-        transition: background-color 0.2s ease;
-    }
-
-    .view-order-btn:hover {
-        background-color: var(--admin-secondary);
-    }
-
-    /* Styling for the 'No recent orders' message */
-    .no-orders {
-        text-align: center;
-        color: #6c757d;
-        padding: 2rem !important;
-        /* Ensure padding overrides */
-    }
-
-    /* Container for the 'View All Orders' link below the table */
-    .view-all-orders {
-        padding: 1rem;
-        text-align: center;
-        border-top: 1px solid #f0f0f0;
-        /* Separator line */
-    }
-
-    .view-all-link {
-        color: var(--admin-primary);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.2s ease;
-    }
-
-    .view-all-link:hover {
-        color: var(--admin-secondary);
-    }
-
-    .view-all-link i {
-        margin-left: 0.5rem;
-        font-size: 0.8rem;
-    }
-</style>

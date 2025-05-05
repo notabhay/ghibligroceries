@@ -1,0 +1,1552 @@
+/* ==========================================================================
+   Admin Dashboard Styles
+   ========================================================================== */
+
+/* CSS Variables for admin theme - using the main site's warm palette */
+:root {
+    /* Using the main site's color palette */
+    --admin-primary: var(--herb-green, #5a8f50);
+    --admin-secondary: var(--tomato-red, #d94f2f);
+    --admin-accent: var(--carrot-orange, #f08d30);
+    --admin-bg: var(--soft-off-white, #fbf3e8);
+    --admin-text: #3d6035;
+    /* Darkened from #5a8f50 for better contrast */
+    --admin-sidebar-width: 250px;
+    --admin-sidebar-collapsed-width: 0px;
+
+    /* Animation variables for consistency */
+    --transition-speed-fast: 0.2s;
+    --transition-speed-medium: 0.3s;
+    --transition-speed-slow: 0.4s;
+    --transition-timing: ease;
+
+    /* Status colors */
+    --status-pending: #e67e00;
+    /* Darkened from #f08d30 for better contrast */
+    --status-processing: #a67b28;
+    /* Darkened from #c59a45 for better contrast */
+    --status-completed: #3d6035;
+    /* Darkened from #5a8f50 for better contrast */
+    --status-cancelled: #c13c1e;
+    /* Darkened from #d94f2f for better contrast */
+}
+
+/* Dark Mode Variables */
+.dark-mode {
+    /* Dark mode color palette */
+    --admin-primary: #7db273;
+    /* Lightened from #6fa664 for better contrast */
+    /* Lighter herb green for better contrast */
+    --admin-secondary: #f07a5e;
+    /* Lightened from #e86a4d for better contrast */
+    /* Brighter tomato red */
+    --admin-accent: #ffb05d;
+    /* Lightened from #f5a04d for better contrast */
+    /* Brighter carrot orange */
+    --admin-bg: #1e2124;
+    /* Dark background */
+    --admin-text: #ffffff;
+    /* Changed from #e8e8e8 to white for better contrast */
+    /* Light text */
+    --admin-dark-bg: #16181a;
+    /* Darker background for cards */
+    --admin-card-bg: #2a2d31;
+    /* Slightly lighter than main bg for cards */
+    --admin-border: #4a4d52;
+    /* Lightened from #3a3d42 for better contrast */
+    /* Border color for dark mode */
+    --admin-hover: #4a4d52;
+    /* Lightened from #3a3d42 for better contrast */
+    /* Hover background color */
+
+    /* Status colors - slightly brighter for dark mode */
+    --status-pending: #ffb05d;
+    /* Lightened for better contrast */
+    --status-processing: #ecc066;
+    /* Lightened from #d9b050 for better contrast */
+    --status-completed: #8bc280;
+    /* Lightened from #6fa664 for better contrast */
+    --status-cancelled: #f07a5e;
+    /* Lightened from #e86a4d for better contrast */
+}
+
+/* Basic body styling */
+body {
+    background-color: var(--admin-bg);
+    color: var(--admin-text);
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Main container for the admin interface */
+.admin-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    transition: background-color 0.3s ease;
+}
+
+/* Sidebar styling */
+.admin-sidebar {
+    width: var(--admin-sidebar-width);
+    background-color: var(--admin-primary);
+    color: white;
+    padding: 1rem 0;
+    flex-shrink: 0;
+    box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.07));
+    border-radius: 0 16px 16px 0;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Dark mode sidebar */
+.dark-mode .admin-sidebar {
+    background-color: var(--admin-dark-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar header section */
+.admin-sidebar-header {
+    padding: 0 1rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 1rem;
+}
+
+.admin-sidebar-header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: white;
+}
+
+.admin-sidebar-header p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0.5rem 0 0;
+}
+
+/* Sidebar navigation list */
+.admin-sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.admin-sidebar-nav li {
+    padding: 0;
+    margin: 0.5rem 0;
+}
+
+/* Sidebar navigation links */
+.admin-sidebar-nav a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: white;
+    /* Changed from rgba(255, 255, 255, 0.9) to white for better contrast */
+    text-decoration: none;
+    transition: all var(--transition-speed-fast) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing),
+        background-color var(--transition-speed-fast) var(--transition-timing);
+    border-radius: 0 8px 8px 0;
+    margin-right: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Sidebar navigation link hover/active state */
+.admin-sidebar-nav a:hover,
+.admin-sidebar-nav a.active {
+    background-color: rgba(255, 255, 255, 0.25);
+    /* Increased from 0.15 for better contrast */
+    color: white;
+    transform: translateX(5px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode sidebar navigation hover/active */
+.dark-mode .admin-sidebar-nav a:hover,
+.dark-mode .admin-sidebar-nav a.active {
+    background-color: var(--admin-hover);
+}
+
+/* Sidebar navigation link icons */
+.admin-sidebar-nav i {
+    width: 20px;
+    margin-right: 8px;
+    text-align: center;
+    transition: transform var(--transition-speed-fast) var(--transition-timing);
+}
+
+.admin-sidebar-nav a:hover i {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Sidebar footer for dark mode toggle */
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: auto;
+}
+
+/* Dark mode toggle in sidebar */
+.dark-mode-toggle-container {
+    display: flex;
+    justify-content: center;
+}
+
+.dark-mode-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.25);
+    /* Increased from 0.15 for better contrast */
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.35);
+    /* Increased from 0.25 for better contrast */
+}
+
+.dark-mode-toggle i {
+    margin-right: 0.5rem;
+}
+
+.dark-mode-toggle .dark-icon {
+    display: none;
+}
+
+.dark-mode .dark-mode-toggle .light-icon {
+    display: none;
+}
+
+.dark-mode .dark-mode-toggle .dark-icon {
+    display: inline-block;
+}
+
+/* Dark mode toggle in header */
+.dark-mode-toggle-header {
+    margin-left: 1rem;
+}
+
+.dark-mode-toggle-btn {
+    background: transparent;
+    color: var(--admin-primary);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-speed-fast) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing);
+    font-size: 1.2rem;
+}
+
+.dark-mode-toggle-btn:hover {
+    background: rgba(90, 143, 80, 0.1);
+    transform: rotate(15deg) scale(1.1);
+}
+
+.dark-mode .dark-mode-toggle-btn {
+    color: var(--admin-text);
+}
+
+.dark-mode .dark-mode-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode-toggle-btn .dark-icon {
+    display: none;
+}
+
+.dark-mode .dark-mode-toggle-btn .light-icon {
+    display: none;
+}
+
+.dark-mode .dark-mode-toggle-btn .dark-icon {
+    display: inline-block;
+}
+
+/* Main content area styling */
+.admin-content {
+    flex-grow: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    background-color: var(--admin-bg);
+    transition: background-color 0.3s ease;
+}
+
+/* Header within the main content area */
+.admin-header {
+    background-color: white;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.07));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid var(--admin-primary);
+    transition: background-color var(--transition-speed-medium) var(--transition-timing),
+        box-shadow var(--transition-speed-medium) var(--transition-timing),
+        border-color var(--transition-speed-medium) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing);
+}
+
+.admin-header:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode header */
+.dark-mode .admin-header {
+    background-color: var(--admin-card-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-left: 4px solid var(--admin-primary);
+}
+
+.dark-mode .admin-header:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.admin-header-title h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--admin-primary);
+    transition: color 0.3s ease;
+}
+
+/* User info section in the content header */
+.admin-user-info {
+    display: flex;
+    align-items: center;
+}
+
+.admin-user-info span {
+    margin-right: 1rem;
+    color: var(--admin-text);
+    transition: color 0.3s ease;
+}
+
+/* Container for the specific page content */
+.admin-main {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.07));
+    padding: 1.5rem;
+    transition: background-color var(--transition-speed-medium) var(--transition-timing),
+        box-shadow var(--transition-speed-medium) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing);
+}
+
+.admin-main:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode main content */
+.dark-mode .admin-main {
+    background-color: var(--admin-card-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .admin-main:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Container for toast notifications */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+/* Dashboard Specific Styles */
+
+/* Main container for the dashboard content */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Styling for the welcome message box */
+.dashboard-welcome {
+    background-color: var(--admin-bg);
+    border-left: 4px solid var(--admin-primary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: background-color var(--transition-speed-medium) var(--transition-timing),
+        border-color var(--transition-speed-medium) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-medium) var(--transition-timing);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-welcome:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode welcome box */
+.dark-mode .dashboard-welcome {
+    background-color: var(--admin-dark-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .dashboard-welcome:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.dashboard-welcome h2 {
+    margin-top: 0;
+    color: var(--admin-primary);
+    transition: color 0.3s ease;
+}
+
+/* Common styling for section headings (Stats, Quick Actions) */
+.stats-heading,
+.quick-actions-heading,
+.recent-orders-heading {
+    margin-bottom: 1rem;
+}
+
+.stats-heading h3,
+.quick-actions-heading h3,
+.recent-orders-heading h3 {
+    margin-bottom: 0.25rem;
+    color: var(--admin-primary);
+    transition: color 0.3s ease;
+}
+
+.stats-heading p,
+.quick-actions-heading p,
+.recent-orders-heading p {
+    margin-top: 0;
+    color: var(--admin-text);
+    opacity: 0.9;
+    /* Increased from 0.8 for better contrast */
+    transition: color 0.3s ease;
+}
+
+/* Grid layout for statistics and quick action cards */
+.stats-grid,
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Styling for individual statistic cards */
+.stat-card {
+    display: flex;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.07));
+    padding: 1.5rem;
+    transition: transform var(--transition-speed-medium) var(--transition-timing),
+        box-shadow var(--transition-speed-medium) var(--transition-timing),
+        background-color var(--transition-speed-medium) var(--transition-timing);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    animation: fadeIn var(--transition-speed-slow) var(--transition-timing);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dark mode stat cards */
+.dark-mode .stat-card {
+    background-color: var(--admin-card-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--admin-border);
+}
+
+/* Hover effect for stat cards */
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode hover effect for stat cards */
+.dark-mode .stat-card:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Styling for action cards (links) */
+.action-card {
+    display: flex;
+    text-decoration: none;
+    color: var(--admin-text);
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.07));
+    padding: 1.5rem;
+    transition: transform var(--transition-speed-medium) var(--transition-timing),
+        box-shadow var(--transition-speed-medium) var(--transition-timing),
+        background-color var(--transition-speed-medium) var(--transition-timing),
+        color var(--transition-speed-medium) var(--transition-timing);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    animation: fadeIn var(--transition-speed-slow) var(--transition-timing);
+    animation-fill-mode: both;
+}
+
+/* Staggered animation for cards */
+.action-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.action-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.action-card:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+/* Dark mode action cards */
+.dark-mode .action-card {
+    background-color: var(--admin-card-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--admin-border);
+}
+
+/* Hover effect for action cards */
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    color: var(--admin-secondary);
+}
+
+/* Dark mode hover effect for action cards */
+.dark-mode .action-card:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Styling for icons within cards */
+.stat-icon,
+.action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: var(--creamy-beige, #f7e3c2);
+    color: var(--admin-primary);
+    border-radius: 12px;
+    margin-right: 1rem;
+    font-size: 1.5rem;
+    transition: background-color var(--transition-speed-medium) var(--transition-timing),
+        color var(--transition-speed-medium) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing);
+}
+
+.stat-card:hover .stat-icon,
+.action-card:hover .action-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Dark mode icons */
+.dark-mode .stat-icon,
+.dark-mode .action-icon {
+    background-color: rgba(247, 227, 194, 0.15);
+    /* Increased from 0.1 for better contrast */
+}
+
+/* Custom icon colors for different stats */
+.stat-icon.pending {
+    background-color: rgba(240, 141, 48, 0.2);
+    /* Increased from 0.15 for better contrast */
+    color: var(--status-pending);
+}
+
+.stat-icon.processing {
+    background-color: rgba(197, 154, 69, 0.2);
+    /* Increased from 0.15 for better contrast */
+    color: var(--status-processing);
+}
+
+.stat-icon.completed {
+    background-color: rgba(90, 143, 80, 0.2);
+    /* Increased from 0.15 for better contrast */
+    color: var(--status-completed);
+}
+
+.stat-icon.low-stock {
+    background-color: rgba(217, 79, 47, 0.2);
+    /* Increased from 0.15 for better contrast */
+    color: var(--status-cancelled);
+}
+
+/* Dark mode custom icon colors */
+.dark-mode .stat-icon.pending {
+    background-color: rgba(240, 141, 48, 0.25);
+    /* Increased from 0.2 for better contrast */
+}
+
+.dark-mode .stat-icon.processing {
+    background-color: rgba(197, 154, 69, 0.25);
+    /* Increased from 0.2 for better contrast */
+}
+
+.dark-mode .stat-icon.completed {
+    background-color: rgba(90, 143, 80, 0.25);
+    /* Increased from 0.2 for better contrast */
+}
+
+.dark-mode .stat-icon.low-stock {
+    background-color: rgba(217, 79, 47, 0.25);
+    /* Increased from 0.2 for better contrast */
+}
+
+/* Content area within cards */
+.stat-content,
+.action-content {
+    flex: 1;
+}
+
+.stat-content h4,
+.action-content h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--admin-primary);
+    transition: color 0.3s ease;
+}
+
+/* Styling for the main statistic value */
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+    color: var(--admin-secondary);
+    transition: color 0.3s ease;
+}
+
+/* Styling for descriptions within cards */
+.stat-description,
+.action-content p {
+    margin: 0;
+    color: var(--admin-text);
+    opacity: 0.9;
+    /* Increased from 0.8 for better contrast */
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+/* Container for the recent orders table */
+.recent-orders-table-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.07));
+    overflow: hidden;
+    transition: background-color var(--transition-speed-medium) var(--transition-timing),
+        box-shadow var(--transition-speed-medium) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing);
+    animation: fadeIn var(--transition-speed-slow) var(--transition-timing);
+    animation-delay: 0.2s;
+    animation-fill-mode: both;
+}
+
+.recent-orders-table-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode table container */
+.dark-mode .recent-orders-table-container {
+    background-color: var(--admin-card-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .recent-orders-table-container:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Styling for the recent orders table */
+.recent-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.recent-orders-table th,
+.recent-orders-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--creamy-beige, #f7e3c2);
+    transition: border-color var(--transition-speed-medium) var(--transition-timing),
+        background-color var(--transition-speed-fast) var(--transition-timing);
+}
+
+/* Row hover effect */
+.recent-orders-table tr:not(:first-child):hover td {
+    background-color: rgba(90, 143, 80, 0.05);
+}
+
+.dark-mode .recent-orders-table tr:not(:first-child):hover td {
+    background-color: rgba(111, 166, 100, 0.1);
+}
+
+/* Dark mode table borders */
+.dark-mode .recent-orders-table th,
+.dark-mode .recent-orders-table td {
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.recent-orders-table th {
+    background-color: var(--admin-bg);
+    font-weight: 600;
+    color: var(--admin-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode table headers */
+.dark-mode .recent-orders-table th {
+    background-color: var(--admin-dark-bg);
+}
+
+.recent-orders-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Base styling for order status badges */
+.order-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: transform var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing);
+}
+
+.order-status:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Specific styles for different order statuses */
+.status-pending {
+    background-color: rgba(240, 141, 48, 0.25);
+    /* Increased from 0.15 for better contrast */
+    color: var(--status-pending);
+    transition: background-color var(--transition-speed-medium) var(--transition-timing),
+        color var(--transition-speed-medium) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing);
+}
+
+.status-processing {
+    background-color: rgba(197, 154, 69, 0.25);
+    /* Increased from 0.15 for better contrast */
+    color: var(--status-processing);
+    transition: background-color var(--transition-speed-medium) var(--transition-timing),
+        color var(--transition-speed-medium) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing);
+}
+
+.status-completed {
+    background-color: rgba(90, 143, 80, 0.25);
+    /* Increased from 0.15 for better contrast */
+    color: var(--status-completed);
+    transition: background-color var(--transition-speed-medium) var(--transition-timing),
+        color var(--transition-speed-medium) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing);
+}
+
+.status-cancelled {
+    background-color: rgba(217, 79, 47, 0.25);
+    /* Increased from 0.15 for better contrast */
+    color: var(--status-cancelled);
+    transition: background-color var(--transition-speed-medium) var(--transition-timing),
+        color var(--transition-speed-medium) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing);
+}
+
+/* Dark mode status badges */
+.dark-mode .status-pending {
+    background-color: rgba(240, 141, 48, 0.3);
+    /* Increased from 0.2 for better contrast */
+}
+
+.dark-mode .status-processing {
+    background-color: rgba(197, 154, 69, 0.3);
+    /* Increased from 0.2 for better contrast */
+}
+
+.dark-mode .status-completed {
+    background-color: rgba(90, 143, 80, 0.3);
+    /* Increased from 0.2 for better contrast */
+}
+
+.dark-mode .status-cancelled {
+    background-color: rgba(217, 79, 47, 0.3);
+    /* Increased from 0.2 for better contrast */
+}
+
+/* Styling for the 'View' order button */
+.view-order-btn {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: var(--admin-primary);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: background-color var(--transition-speed-fast) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing);
+    position: relative;
+    overflow: hidden;
+}
+
+.view-order-btn:hover {
+    background-color: var(--admin-secondary);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.view-order-btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for the 'No recent orders' message */
+.no-orders {
+    text-align: center;
+    color: var(--admin-text);
+    opacity: 0.7;
+    padding: 2rem !important;
+    transition: color 0.3s ease;
+}
+
+/* Container for the 'View All Orders' link below the table */
+.view-all-orders {
+    padding: 1rem;
+    text-align: center;
+    border-top: 1px solid var(--creamy-beige, #f7e3c2);
+    transition: border-color 0.3s ease;
+}
+
+/* Dark mode view all orders border */
+.dark-mode .view-all-orders {
+    border-top: 1px solid var(--admin-border);
+}
+
+.view-all-link {
+    color: var(--admin-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition-speed-fast) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing);
+    display: inline-block;
+}
+
+.view-all-link:hover {
+    color: var(--admin-secondary);
+    transform: translateX(3px);
+}
+
+.view-all-link i {
+    margin-left: 0.5rem;
+    font-size: 0.8rem;
+    transition: transform var(--transition-speed-fast) var(--transition-timing);
+}
+
+.view-all-link:hover i {
+    transform: translateX(3px);
+}
+
+/* Modal styling */
+#confirmation-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 9999;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.07));
+    padding: 1.5rem;
+    max-width: 500px;
+    margin: 2rem auto;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark mode modal */
+.dark-mode .modal-content {
+    background-color: var(--admin-card-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.modal-btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-speed-fast) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing);
+}
+
+.modal-btn.confirm-btn {
+    background-color: var(--admin-secondary);
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.modal-btn.confirm-btn:hover {
+    background-color: var(--dark-tomato-red, #b34226);
+    transform: translateY(-2px);
+}
+
+.modal-btn.cancel-btn {
+    background-color: transparent;
+    color: var(--admin-primary);
+    border: 1px solid var(--admin-primary);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.modal-btn.cancel-btn:hover {
+    background-color: var(--admin-bg);
+    transform: translateY(-2px);
+}
+
+/* Dark mode cancel button */
+.dark-mode .modal-btn.cancel-btn {
+    background-color: transparent;
+    color: var(--admin-text);
+    border: 1px solid var(--admin-text);
+}
+
+.dark-mode .modal-btn.cancel-btn:hover {
+    background-color: var(--admin-hover);
+}
+
+/* ==========================================================================
+   Admin Form Styles - Consistent with GhibliGroceries theme
+   ========================================================================== */
+
+/* Form group container (label + input) */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* Form label styling */
+.form-group label,
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--admin-text);
+    font-weight: 600;
+    font-family: "Poppins", sans-serif;
+    transition: color 0.3s ease;
+}
+
+/* Base form control styling (input, select, textarea) */
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--admin-text);
+    background-color: white;
+    background-clip: padding-box;
+    border: 1px solid var(--creamy-beige, #f7e3c2);
+    border-radius: 6px;
+    transition: border-color var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing),
+        background-color var(--transition-speed-medium) var(--transition-timing),
+        color var(--transition-speed-medium) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing);
+    font-family: "Poppins", sans-serif;
+}
+
+/* Dark mode form controls */
+.dark-mode .form-control {
+    background-color: var(--admin-card-bg);
+    border: 1px solid var(--admin-border);
+    color: var(--admin-text);
+}
+
+/* Focus state for form controls */
+.form-control:focus {
+    border-color: var(--admin-primary);
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(90, 143, 80, 0.25);
+    transform: translateY(-1px);
+    transition: border-color var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing);
+}
+
+/* Dark mode focus state */
+.dark-mode .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(111, 166, 100, 0.25);
+}
+
+/* Styling for disabled/readonly inputs */
+.form-control:disabled,
+.form-control[readonly] {
+    background-color: var(--soft-off-white, #fbf3e8);
+    opacity: 0.8;
+}
+
+/* Dark mode disabled/readonly inputs */
+.dark-mode .form-control:disabled,
+.dark-mode .form-control[readonly] {
+    background-color: var(--admin-dark-bg);
+    opacity: 0.8;
+}
+
+/* Textarea specific styling */
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Select dropdown styling */
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%235a8f50' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+}
+
+/* Dark mode select dropdown */
+.dark-mode select.form-control {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236fa664' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* Helper text styling */
+.form-text {
+    display: block;
+    margin-top: 0.25rem;
+    color: rgba(90, 143, 80, 0.8);
+    font-size: 0.875rem;
+    transition: color 0.3s ease;
+}
+
+/* Dark mode helper text */
+.dark-mode .form-text {
+    color: rgba(111, 166, 100, 0.8);
+}
+
+/* Required field indicator */
+.text-danger {
+    color: var(--tomato-red, #d94f2f) !important;
+}
+
+/* Dark mode required field indicator */
+.dark-mode .text-danger {
+    color: var(--admin-secondary) !important;
+}
+
+/* Card styling for form containers */
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    margin-bottom: 1.5rem;
+    border: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark mode card */
+.dark-mode .card {
+    background-color: var(--admin-card-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-header {
+    padding: 1rem 1.5rem;
+    background-color: var(--soft-off-white, #fbf3e8);
+    border-bottom: 1px solid var(--creamy-beige, #f7e3c2);
+    border-radius: 8px 8px 0 0;
+}
+
+/* Button styling */
+.btn {
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 6px;
+    transition: all var(--transition-speed-fast) var(--transition-timing),
+        transform var(--transition-speed-fast) var(--transition-timing),
+        box-shadow var(--transition-speed-fast) var(--transition-timing);
+    font-family: "Poppins", sans-serif;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Primary button (Save/Submit) */
+.btn-primary {
+    background-color: var(--admin-primary);
+    border: 1px solid var(--admin-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--dark-herb-green, #4a7a40);
+    border-color: var(--dark-herb-green, #4a7a40);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Secondary button (Cancel/Back) */
+.btn-secondary {
+    background-color: #6c757d;
+    border: 1px solid #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Outline secondary button */
+.btn-outline-secondary {
+    background-color: transparent;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    color: #5a6268;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-secondary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Danger button (Delete) */
+.btn-danger {
+    background-color: var(--tomato-red, #d94f2f);
+    border: 1px solid var(--tomato-red, #d94f2f);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: var(--dark-tomato-red, #b34226);
+    border-color: var(--dark-tomato-red, #b34226);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-danger:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Info button */
+.btn-info {
+    background-color: var(--carrot-orange, #f08d30);
+    border: 1px solid var(--carrot-orange, #f08d30);
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: var(--dark-carrot-orange, #d97c2a);
+    border-color: var(--dark-carrot-orange, #d97c2a);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-info:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Button spacing */
+.btn+.btn {
+    margin-left: 0.5rem;
+}
+
+/* Alert styling */
+.alert {
+    position: relative;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid transparent;
+    border-radius: 6px;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    border-left: 4px solid var(--tomato-red, #d94f2f);
+}
+
+/* Custom file input styling */
+.custom-file {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: calc(1.5em + 1.5rem + 2px);
+    margin-bottom: 0;
+}
+
+.custom-file-input {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: calc(1.5em + 1.5rem + 2px);
+    margin: 0;
+    opacity: 0;
+}
+
+.custom-file-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1;
+    height: calc(1.5em + 1.5rem + 2px);
+    padding: 0.75rem 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--admin-text);
+    background-color: white;
+    border: 1px solid var(--creamy-beige, #f7e3c2);
+    border-radius: 6px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.custom-file-label::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    display: block;
+    height: calc(1.5em + 1.5rem);
+    padding: 0.75rem 1rem;
+    line-height: 1.5;
+    color: white;
+    content: "Browse";
+    background-color: var(--admin-primary);
+    border-left: inherit;
+    border-radius: 0 6px 6px 0;
+}
+
+/* Custom switch styling */
+.custom-switch {
+    padding-left: 2.25rem;
+}
+
+.custom-control {
+    position: relative;
+    display: block;
+    min-height: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.custom-control-input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
+
+.custom-control-label {
+    position: relative;
+    margin-bottom: 0;
+    vertical-align: top;
+    cursor: pointer;
+}
+
+.custom-control-label::before {
+    position: absolute;
+    top: 0.25rem;
+    left: -1.5rem;
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+    content: "";
+    background-color: white;
+    border: 1px solid var(--creamy-beige, #f7e3c2);
+    border-radius: 0.25rem;
+}
+
+.custom-switch .custom-control-label::before {
+    left: -2.25rem;
+    width: 1.75rem;
+    border-radius: 0.875rem;
+    background-color: var(--soft-off-white, #fbf3e8);
+}
+
+.custom-switch .custom-control-label::after {
+    top: calc(0.25rem + 2px);
+    left: calc(-2.25rem + 2px);
+    width: calc(1rem - 4px);
+    height: calc(1rem - 4px);
+    background-color: var(--creamy-beige, #f7e3c2);
+    border-radius: 0.5rem;
+    transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.custom-switch .custom-control-input:checked~.custom-control-label::after {
+    background-color: white;
+    transform: translateX(0.75rem);
+}
+
+.custom-switch .custom-control-input:checked~.custom-control-label::before {
+    background-color: var(--admin-primary);
+    border-color: var(--admin-primary);
+}
+
+/* Current image container styling */
+.current-image-container {
+    margin-bottom: 1rem;
+}
+
+.current-product-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 6px;
+    border: 1px solid var(--creamy-beige, #f7e3c2);
+    padding: 5px;
+    background-color: var(--soft-off-white, #fbf3e8);
+}
+
+/* Admin content header styling */
+.admin-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.admin-content-header h2 {
+    margin: 0;
+    color: var(--admin-primary);
+    font-family: "Poppins", sans-serif;
+}
+
+.admin-content-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Form row styling */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+}
+
+.form-row>.col,
+.form-row>[class*="col-"] {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+}
+
+.col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle-btn {
+    display: none;
+    /* Hidden by default on larger screens */
+    background-color: var(--admin-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-right: 1rem;
+}
+
+.sidebar-toggle-btn:hover {
+    background-color: var(--admin-secondary);
+}
+
+/* Collapsed sidebar styles */
+.sidebar-collapsed .admin-sidebar {
+    width: var(--admin-sidebar-collapsed-width);
+    overflow: hidden;
+    transform: translateX(-100%);
+}
+
+.sidebar-collapsed .admin-content {
+    width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+
+    .stats-grid,
+    .quick-actions-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-container {
+        flex-direction: row;
+        /* Keep as row for the collapsible sidebar */
+    }
+
+    .sidebar-toggle-btn {
+        display: flex;
+        /* Show the toggle button on smaller screens */
+        align-items: center;
+        justify-content: center;
+    }
+
+    .admin-sidebar {
+        position: absolute;
+        height: 100%;
+        z-index: 100;
+        border-radius: 0;
+    }
+
+    /* Default state - sidebar visible but can be collapsed */
+    .admin-sidebar {
+        width: var(--admin-sidebar-width);
+        transform: translateX(0);
+    }
+
+    .admin-sidebar-nav a {
+        border-radius: 8px;
+        margin: 0 1rem;
+    }
+
+    .admin-content {
+        padding: 1rem;
+        width: 100%;
+    }
+
+    .stats-grid,
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card,
+    .action-card {
+        padding: 1.25rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .admin-content-header {
+        flex-direction: row;
+        /* Keep as row to accommodate the toggle button */
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .admin-content-actions {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn+.btn {
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+
+    .form-actions,
+    .admin-content-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .form-actions .btn,
+    .admin-content-actions .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}

@@ -6,8 +6,7 @@
  * image upload, and an active status toggle.
  * Includes basic client-side validation hints (required fields, max length) and
  * server-side validation error display.
- * Contains embedded CSS for styling the form elements and layout, and JavaScript
- * for updating the file input label.
+ * Contains embedded JavaScript for updating the file input label.
  *
  * Expected variables:
  * - $categories (array): An array of available product categories, each with 'category_id' and 'category_name'.
@@ -31,26 +30,26 @@
 <?php // Display general flash error message if set 
 ?>
 <?php if (isset($_SESSION['flash_error'])): ?>
-    <div class="alert alert-danger">
-        <?php echo htmlspecialchars($_SESSION['flash_error']); // Escape HTML 
+<div class="alert alert-danger">
+    <?php echo htmlspecialchars($_SESSION['flash_error']); // Escape HTML 
         ?>
-    </div>
-    <?php // unset($_SESSION['flash_error']); // Optional: Unset after display 
+</div>
+<?php // unset($_SESSION['flash_error']); // Optional: Unset after display 
     ?>
 <?php endif; ?>
 
 <?php // Display specific validation errors if set 
 ?>
 <?php if (isset($_SESSION['flash_errors']) && is_array($_SESSION['flash_errors'])): ?>
-    <div class="alert alert-danger">
-        <ul class="mb-0">
-            <?php foreach ($_SESSION['flash_errors'] as $error): ?>
-                <li><?php echo htmlspecialchars($error); // Escape HTML 
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        <?php foreach ($_SESSION['flash_errors'] as $error): ?>
+        <li><?php echo htmlspecialchars($error); // Escape HTML 
                     ?></li>
-            <?php endforeach; ?>
-        </ul>
-    </div>
-    <?php // unset($_SESSION['flash_errors']); // Optional: Unset after display 
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php // unset($_SESSION['flash_errors']); // Optional: Unset after display 
     ?>
 <?php endif; ?>
 
@@ -66,8 +65,8 @@
             <div class="form-group">
                 <label for="name">Product Name <span class="text-danger">*</span></label>
                 <input type="text" id="name" name="name" class="form-control" maxlength="100" required value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; // Repopulate if validation failed 
-                                                                                                                ?>">
-                <small class="form-text text-muted">Maximum 100 characters</small>
+                                                                                                                 ?>">
+                <small class="form-text">Maximum 100 characters</small>
             </div>
 
             <!-- Product Description Textarea -->
@@ -103,12 +102,12 @@
                     <?php // Populate options from the $categories array 
                     ?>
                     <?php foreach ($categories as $category): ?>
-                        <option value="<?php echo $category['category_id']; ?>" <?php // Select the category if repopulating from failed validation 
+                    <option value="<?php echo $category['category_id']; ?>" <?php // Select the category if repopulating from failed validation 
                                                                                 ?>
-                            <?php echo (isset($_POST['category_id']) && $_POST['category_id'] == $category['category_id']) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($category['category_name']); // Escape HTML 
+                        <?php echo (isset($_POST['category_id']) && $_POST['category_id'] == $category['category_id']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($category['category_name']); // Escape HTML 
                             ?>
-                        </option>
+                    </option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -123,7 +122,7 @@
                         accept="image/jpeg,image/png,image/gif,image/webp" required>
                     <label class="custom-file-label" for="image">Choose file</label>
                 </div>
-                <small class="form-text text-muted">Accepted formats: JPG, PNG, GIF, WEBP. Maximum size: 5MB.</small>
+                <small class="form-text">Accepted formats: JPG, PNG, GIF, WEBP. Maximum size: 5MB.</small>
             </div>
 
             <!-- Active Status Switch -->
@@ -141,222 +140,27 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> Save Product
                 </button>
-                <a href="/admin/products" class="btn btn-secondary">Cancel</a>
+                <a href="/admin/products" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </form>
     </div> <!-- End card-body -->
 </div> <!-- End card -->
 
-<!-- Embedded CSS for form styling -->
-<style>
-    /* Body */
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Styles for the header section (Title and Back button) */
-    .admin-content-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Standard margin for form groups */
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    /* Flexbox layout for form rows (e.g., Price and Stock) */
-    .form-row {
-        display: flex;
-        flex-wrap: wrap;
-        margin-right: -15px;
-        /* Negative margin for gutter spacing */
-        margin-left: -15px;
-    }
-
-    /* Padding for columns within a form row */
-    .form-row>.col,
-    .form-row>[class*="col-"] {
-        padding-right: 15px;
-        padding-left: 15px;
-    }
-
-    /* Half-width column for medium devices and up */
-    .col-md-6 {
-        flex: 0 0 50%;
-        max-width: 50%;
-    }
-
-    /* Styling for the custom file input container */
-    .custom-file {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        height: calc(1.5em + 0.75rem + 2px);
-        /* Bootstrap standard input height */
-        margin-bottom: 0;
-    }
-
-    /* Hides the default file input appearance */
-    .custom-file-input {
-        position: relative;
-        z-index: 2;
-        width: 100%;
-        height: calc(1.5em + 0.75rem + 2px);
-        margin: 0;
-        opacity: 0;
-        /* Make the actual input invisible */
-    }
-
-    /* Styles the visible label that replaces the default file input */
-    .custom-file-label {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        z-index: 1;
-        height: calc(1.5em + 0.75rem + 2px);
-        padding: 0.375rem 0.75rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: #495057;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        overflow: hidden;
-        /* Prevent text overflow */
-        white-space: nowrap;
-        /* Keep label text on one line */
-    }
-
-    /* Styles the "Browse" button part of the custom file input */
-    .custom-file-label::after {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 3;
-        display: block;
-        height: calc(1.5em + 0.75rem);
-        /* Adjust height to match padding */
-        padding: 0.375rem 0.75rem;
-        line-height: 1.5;
-        color: #495057;
-        content: "Browse";
-        /* Text for the button */
-        background-color: #e9ecef;
-        border-left: inherit;
-        border-radius: 0 0.25rem 0.25rem 0;
-    }
-
-    /* Styling for the custom switch container */
-    .custom-switch {
-        padding-left: 2.25rem;
-        /* Space for the switch */
-    }
-
-    /* Base styling for custom controls (checkboxes, radios, switches) */
-    .custom-control {
-        position: relative;
-        display: block;
-        min-height: 1.5rem;
-        padding-left: 1.5rem;
-    }
-
-    /* Hides the default checkbox input */
-    .custom-control-input {
-        position: absolute;
-        z-index: -1;
-        opacity: 0;
-    }
-
-    /* Styles the label associated with the custom control */
-    .custom-control-label {
-        position: relative;
-        margin-bottom: 0;
-        vertical-align: top;
-    }
-
-    /* Creates the background/box of the custom control */
-    .custom-control-label::before {
-        position: absolute;
-        top: 0.25rem;
-        left: -1.5rem;
-        /* Position left of the label text */
-        display: block;
-        width: 1rem;
-        height: 1rem;
-        pointer-events: none;
-        content: "";
-        background-color: #fff;
-        border: 1px solid #adb5bd;
-    }
-
-    /* Specific styles for the switch background */
-    .custom-switch .custom-control-label::before {
-        left: -2.25rem;
-        /* Adjust position for switch */
-        width: 1.75rem;
-        /* Wider background for switch */
-        border-radius: 0.5rem;
-        /* Rounded corners for switch */
-    }
-
-    /* Styles the switch handle (the moving part) when checked */
-    .custom-switch .custom-control-input:checked~.custom-control-label::after {
-        background-color: #fff;
-        transform: translateX(0.75rem);
-        /* Move handle to the right */
-    }
-
-    /* Creates the handle of the switch */
-    .custom-switch .custom-control-label::after {
-        top: calc(0.25rem + 2px);
-        left: calc(-2.25rem + 2px);
-        /* Position inside the switch background */
-        width: calc(1rem - 4px);
-        /* Size of the handle */
-        height: calc(1rem - 4px);
-        background-color: #adb5bd;
-        /* Default color of the handle */
-        border-radius: 0.5rem;
-        /* Rounded handle */
-        transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        /* Smooth transition */
-    }
-
-    /* Base styles for the ::after pseudo-element (used for checkmark/handle) */
-    .custom-control-label::after {
-        position: absolute;
-        top: 0.25rem;
-        left: -1.5rem;
-        display: block;
-        width: 1rem;
-        height: 1rem;
-        content: "";
-        background: no-repeat 50% / 50% 50%;
-        /* Used for checkmark background image in checkboxes/radios */
-    }
-</style>
-
 <!-- Embedded JavaScript for custom file input label update -->
 <script>
-    // Find the custom file input element
-    const fileInput = document.querySelector('.custom-file-input');
-    if (fileInput) {
-        // Add an event listener for the 'change' event (when a file is selected)
-        fileInput.addEventListener('change', function(e) {
-            // Get the name of the selected file
-            const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose file';
-            // Find the corresponding label element
-            const label = e.target.nextElementSibling;
-            // Update the label's text content with the file name
-            if (label) {
-                label.textContent = fileName;
-            }
-        });
-    }
+// Find the custom file input element
+const fileInput = document.querySelector('.custom-file-input');
+if (fileInput) {
+    // Add an event listener for the 'change' event (when a file is selected)
+    fileInput.addEventListener('change', function(e) {
+        // Get the name of the selected file
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose file';
+        // Find the corresponding label element
+        const label = e.target.nextElementSibling;
+        // Update the label's text content with the file name
+        if (label) {
+            label.textContent = fileName;
+        }
+    });
+}
 </script>
