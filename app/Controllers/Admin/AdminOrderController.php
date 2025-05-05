@@ -131,12 +131,28 @@ class AdminOrderController extends BaseController
      */
     public function show(int $id): void
     {
-        // Fetch detailed order information (includes items, user, etc.)
-        $order = $this->orderModel->findOrderWithDetails($id);
-
-        // Redirect if order not found
-        if (!$order) {
-            $this->session->flash('error', 'Order not found.');
+        // Add logging to diagnose issues
+        error_log("AdminOrderController::show - Starting with order ID: {$id}");
+        
+        try {
+            // Fetch detailed order information (includes items, user, etc.)
+            $order = $this->orderModel->findOrderWithDetails($id);
+            
+            error_log("AdminOrderController::show - Order data: " . ($order ? "Found" : "Not found"));
+            
+            // Redirect if order not found
+            if (!$order) {
+                error_log("AdminOrderController::show - Order not found, redirecting");
+                $this->session->flash('error', 'Order not found.');
+                Redirect::to('/admin/orders');
+                exit();
+            }
+            
+            error_log("AdminOrderController::show - Order retrieved successfully");
+        } catch (\Exception $e) {
+            // Log any exceptions that occur
+            error_log("AdminOrderController::show - Exception: " . $e->getMessage());
+            $this->session->flash('error', 'An error occurred while retrieving the order.');
             Redirect::to('/admin/orders');
             exit();
         }
@@ -152,9 +168,25 @@ class AdminOrderController extends BaseController
             'order' => $order, // The detailed order object/array
             'csrf_token' => $this->session->generateCsrfToken() // CSRF token for the status update form
         ];
+        
+        // Log the data being passed to the view
+        error_log("AdminOrderController::show - Data for view: " . json_encode([
+            'has_admin_user' => isset($adminUser),
+            'has_order' => isset($order),
+            'has_items' => isset($order['items']),
+            'item_count' => isset($order['items']) ? count($order['items']) : 0,
+            'has_csrf_token' => !empty($data['csrf_token'])
+        ]));
 
         // Render the view using the admin layout
-        $this->viewWithAdminLayout('admin/orders/show', $data);
+        try {
+            error_log("AdminOrderController::show - About to render view");
+            $this->viewWithAdminLayout('admin/orders/show', $data);
+            error_log("AdminOrderController::show - View rendered successfully");
+        } catch (\Throwable $e) {
+            error_log("AdminOrderController::show - Error rendering view: " . $e->getMessage());
+            echo "Error rendering order details. Please check the logs.";
+        }
     }
 
     /**
@@ -228,12 +260,18 @@ class AdminOrderController extends BaseController
      */
     protected function viewWithAdminLayout(string $view, array $data = []): void
     {
+        error_log("AdminOrderController::viewWithAdminLayout - Starting for view: {$view}");
+        
         // Construct full paths to the view and layout files
         $viewPath = __DIR__ . '/../../Views/' . str_replace('.', '/', $view) . '.php';
         $layoutPath = __DIR__ . '/../../Views/layouts/admin.php';
+        
+        error_log("AdminOrderController::viewWithAdminLayout - View path: {$viewPath}");
+        error_log("AdminOrderController::viewWithAdminLayout - Layout path: {$layoutPath}");
 
         // Check if the view file exists
         if (!file_exists($viewPath)) {
+            error_log("AdminOrderController::viewWithAdminLayout - View file not found: {$viewPath}");
             trigger_error("View file not found: {$viewPath}", E_USER_WARNING);
             echo "Error: View file '{$view}' not found.";
             exit; // Stop execution if view is missing
@@ -241,50 +279,69 @@ class AdminOrderController extends BaseController
 
         // Check if the admin layout file exists
         if (!file_exists($layoutPath)) {
+            error_log("AdminOrderController::viewWithAdminLayout - Layout file not found: {$layoutPath}");
             trigger_error("Layout file not found: {$layoutPath}", E_USER_WARNING);
             echo "Error: Admin layout file not found.";
             exit; // Stop execution if layout is missing
         }
+        
+        error_log("AdminOrderController::viewWithAdminLayout - Both view and layout files exist");
 
         // Attempt to get the current request path for navigation highlighting
         try {
             // Retrieve the request object from the registry (if available)
+            error_log("AdminOrderController::viewWithAdminLayout - Getting request from registry");
             $request = \App\Core\Registry::get('request');
             $uri = $request->uri();
             // Prepend slash for consistency
             $currentPath = '/' . ($uri ?: '');
             $data['currentPath'] = $currentPath;
+            error_log("AdminOrderController::viewWithAdminLayout - Current path: {$currentPath}");
         } catch (\Exception $e) {
             // Fallback if request object is not available or URI fails
+            error_log("AdminOrderController::viewWithAdminLayout - Exception getting request: " . $e->getMessage());
             $data['currentPath'] = '/';
         }
 
         // Extract the data array into individual variables accessible by the view and layout
+        error_log("AdminOrderController::viewWithAdminLayout - Extracting data with keys: " . implode(', ', array_keys($data)));
         extract($data);
 
         // Start output buffering to capture the view's content
+        error_log("AdminOrderController::viewWithAdminLayout - Starting output buffering for view");
         ob_start();
         try {
             // Include the specific view file
+            error_log("AdminOrderController::viewWithAdminLayout - Including view file: {$viewPath}");
             include $viewPath;
+            error_log("AdminOrderController::viewWithAdminLayout - View file included successfully");
         } catch (\Throwable $e) {
             // Clean buffer and display error if view rendering fails
             ob_end_clean();
-            error_log("Error rendering view '{$view}': " . $e->getMessage()); // Log the actual error
+            error_log("AdminOrderController::viewWithAdminLayout - Error rendering view '{$view}': " . $e->getMessage() . "\n" . $e->getTraceAsString()); // Log the actual error with stack trace
             echo "Error rendering view '{$view}'. Please check the logs.";
             exit;
         }
         // Get the captured content from the buffer
         $content = ob_get_clean();
+        error_log("AdminOrderController::viewWithAdminLayout - View content captured, length: " . strlen($content));
 
         // Make the captured view content available to the layout file
         $data['content'] = $content;
 
         // Extract data again to ensure $content is available in the layout's scope
+        error_log("AdminOrderController::viewWithAdminLayout - Re-extracting data with content");
         extract($data);
 
         // Include the main admin layout file, which will render the overall structure
         // and incorporate the $content variable.
-        include $layoutPath;
+        error_log("AdminOrderController::viewWithAdminLayout - Including layout file: {$layoutPath}");
+        try {
+            include $layoutPath;
+            error_log("AdminOrderController::viewWithAdminLayout - Layout rendered successfully");
+        } catch (\Throwable $e) {
+            error_log("AdminOrderController::viewWithAdminLayout - Error rendering layout: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+            echo "Error rendering admin layout. Please check the logs.";
+        }
     }
 }

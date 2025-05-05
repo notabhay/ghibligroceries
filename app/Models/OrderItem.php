@@ -216,23 +216,41 @@ class OrderItem
      */
     public function readByOrder(int $orderId)
     {
+        error_log("OrderItem::readByOrder - Starting with order ID: {$orderId}");
+        
         $sql = "SELECT oi.item_id, oi.order_id, oi.product_id, oi.quantity, oi.price,
                        p.name as product_name, p.image_path as product_image
                 FROM order_items oi
                 JOIN products p ON oi.product_id = p.product_id
                 WHERE oi.order_id = :order_id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':order_id', $orderId, PDO::PARAM_INT);
-
+        
+        error_log("OrderItem::readByOrder - SQL: " . $sql);
+        
         try {
+            error_log("OrderItem::readByOrder - Preparing statement");
+            $stmt = $this->db->prepare($sql);
+            
+            error_log("OrderItem::readByOrder - Binding parameter order_id: {$orderId}");
+            $stmt->bindParam(':order_id', $orderId, PDO::PARAM_INT);
+
+            error_log("OrderItem::readByOrder - Executing statement");
             if ($stmt->execute()) {
+                error_log("OrderItem::readByOrder - Statement executed successfully");
                 return $stmt; // Return the statement for fetching
             } else {
-                $this->error_message = "Failed to execute query for order items: " . implode(", ", $stmt->errorInfo());
+                $errorInfo = implode(", ", $stmt->errorInfo());
+                error_log("OrderItem::readByOrder - Failed to execute query: " . $errorInfo);
+                $this->error_message = "Failed to execute query for order items: " . $errorInfo;
                 return false;
             }
         } catch (\PDOException $e) {
+            error_log("OrderItem::readByOrder - PDOException: " . $e->getMessage() . "\n" . $e->getTraceAsString());
             $this->error_message = "Database error fetching order items: " . $e->getMessage();
+            Registry::get('logger')->error($this->error_message, ['exception' => $e, 'order_id' => $orderId]);
+            return false;
+        } catch (\Throwable $e) {
+            error_log("OrderItem::readByOrder - Throwable: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+            $this->error_message = "Unexpected error fetching order items: " . $e->getMessage();
             Registry::get('logger')->error($this->error_message, ['exception' => $e, 'order_id' => $orderId]);
             return false;
         }

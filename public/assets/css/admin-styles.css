@@ -101,6 +101,16 @@ body {
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
+    height: 100vh;
+    /* Ensure full height */
+    position: sticky;
+    /* Make sidebar sticky */
+    top: 0;
+    /* Stick to the top */
+    left: 0;
+    /* Stick to the left */
+    overflow-y: auto;
+    /* Allow scrolling for content */
 }
 
 /* Dark mode sidebar */
@@ -190,6 +200,14 @@ body {
     padding: 1rem;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     margin-top: auto;
+    position: sticky;
+    /* Make the footer sticky */
+    bottom: 0;
+    /* Stick to the bottom */
+    background-color: inherit;
+    /* Inherit background color from sidebar */
+    z-index: 10;
+    /* Ensure it stays on top */
 }
 
 /* Dark mode toggle in sidebar */
@@ -287,6 +305,8 @@ body {
     overflow-y: auto;
     background-color: var(--admin-bg);
     transition: background-color 0.3s ease;
+    position: relative;
+    /* Add position relative for proper stacking */
 }
 
 /* Header within the main content area */
@@ -350,6 +370,10 @@ body {
     transition: background-color var(--transition-speed-medium) var(--transition-timing),
         box-shadow var(--transition-speed-medium) var(--transition-timing),
         transform var(--transition-speed-fast) var(--transition-timing);
+    position: relative;
+    /* Add position relative for proper stacking */
+    overflow: hidden;
+    /* Prevent content from bleeding outside */
 }
 
 .admin-main:hover {
@@ -1525,6 +1549,220 @@ select.form-control {
         /* Keep as row to accommodate the toggle button */
         align-items: center;
         gap: 1rem;
+
+        /* Dark mode styles for admin tables */
+        .dark-mode .users-table th,
+        .dark-mode .table thead th,
+        .dark-mode thead th {
+            background-color: var(--admin-dark-bg);
+            color: var(--admin-text);
+            border-color: var(--admin-border);
+        }
+
+        /* Dark mode styles for filter containers */
+        .dark-mode .filter-container,
+        .dark-mode .card-header {
+            background-color: var(--admin-dark-bg);
+            color: var(--admin-text);
+            border-color: var(--admin-border);
+        }
+
+        /* Dark mode styles for badges */
+        .dark-mode .badge-success {
+            background-color: var(--status-completed);
+            color: white;
+        }
+
+        .dark-mode .badge-danger {
+            background-color: var(--status-cancelled);
+            color: white;
+        }
+
+        /* Dark mode styles for pagination */
+        .dark-mode .pagination .page-link {
+            background-color: var(--admin-card-bg);
+            border-color: var(--admin-border);
+            color: var(--admin-text);
+        }
+
+        .dark-mode .pagination .page-item.active .page-link {
+            background-color: var(--admin-primary);
+            border-color: var(--admin-primary);
+            color: white;
+            /* Dark mode styles for specific admin pages */
+
+            /* Orders page */
+            .dark-mode .card {
+                background-color: var(--admin-card-bg);
+                border-color: var(--admin-border);
+            }
+
+            .dark-mode .card-body {
+                background-color: var(--admin-card-bg);
+                color: var(--admin-text);
+            }
+
+            .dark-mode .table-responsive {
+                background-color: var(--admin-card-bg);
+                border-radius: 8px;
+            }
+
+            /* Products page */
+            .dark-mode .filter-form {
+                color: var(--admin-text);
+            }
+
+            .dark-mode .filter-form label {
+                color: var(--admin-text);
+            }
+
+            .dark-mode .product-thumbnail {
+                border: 1px solid var(--admin-border);
+                background-color: var(--admin-dark-bg);
+            }
+
+            /* Categories page */
+            .dark-mode .text-muted {
+                color: rgba(255, 255, 255, 0.6) !important;
+            }
+
+            /* Consistent button styling in dark mode */
+            .dark-mode .btn-primary {
+                background-color: var(--admin-primary);
+                border-color: var(--admin-primary);
+                color: white;
+            }
+
+            .dark-mode .btn-secondary {
+                background-color: #6c757d;
+                border-color: #6c757d;
+                color: white;
+            }
+
+            .dark-mode .btn-outline-secondary {
+                background-color: transparent;
+                border-color: #6c757d;
+                color: #adb5bd;
+            }
+
+            .dark-mode .btn-outline-secondary:hover {
+                background-color: #6c757d;
+                color: white;
+            }
+
+            .dark-mode .btn-success {
+                background-color: var(--status-completed);
+                border-color: var(--status-completed);
+            }
+
+            .dark-mode .btn-warning {
+                background-color: var(--status-pending);
+                border-color: var(--status-pending);
+                color: #212529;
+
+                /* Form controls in dark mode */
+                .dark-mode .form-control {
+                    background-color: var(--admin-dark-bg);
+                    border-color: var(--admin-border);
+                    color: var(--admin-text);
+                }
+
+                .dark-mode .form-control:focus {
+                    background-color: var(--admin-dark-bg);
+                    border-color: var(--admin-primary);
+                    box-shadow: 0 0 0 0.2rem rgba(125, 178, 115, 0.25);
+                    color: var(--admin-text);
+                }
+
+                .dark-mode .form-select {
+                    background-color: var(--admin-dark-bg);
+                    border-color: var(--admin-border);
+                    color: var(--admin-text);
+                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+                }
+
+                .dark-mode .form-select:focus {
+                    border-color: var(--admin-primary);
+                    box-shadow: 0 0 0 0.2rem rgba(125, 178, 115, 0.25);
+                }
+
+                .dark-mode .form-label {
+                    color: var(--admin-text);
+                }
+
+                /* Fix for table striping in dark mode */
+                .dark-mode .table {
+                    color: var(--admin-text);
+                    border-color: var(--admin-border);
+                }
+
+                .dark-mode .table td,
+                .dark-mode .table th {
+                    border-color: var(--admin-border);
+                }
+
+                /* Fix for code readability in dark mode */
+                .dark-mode code,
+                .dark-mode pre {
+                    background-color: var(--admin-dark-bg);
+                    color: #e9ecef;
+                    border-color: var(--admin-border);
+                }
+
+                /* Fix for horizontal rules in dark mode */
+                .dark-mode hr {
+                    border-color: var(--admin-border);
+                }
+            }
+
+            .dark-mode .btn-danger {
+                background-color: var(--status-cancelled);
+                border-color: var(--status-cancelled);
+            }
+
+            .dark-mode .btn-info {
+                background-color: var(--status-processing);
+                border-color: var(--status-processing);
+            }
+
+            /* Fix for alert messages in dark mode */
+            .dark-mode .alert {
+                border-left-width: 4px;
+            }
+
+            .dark-mode .alert-success {
+                background-color: rgba(40, 167, 69, 0.2);
+                border-color: rgba(40, 167, 69, 0.4);
+                color: #8bc280;
+            }
+
+            .dark-mode .alert-danger {
+                background-color: rgba(220, 53, 69, 0.2);
+                border-color: rgba(220, 53, 69, 0.4);
+                color: #f07a5e;
+            }
+
+            .dark-mode .alert-info {
+                background-color: rgba(23, 162, 184, 0.2);
+                border-color: rgba(23, 162, 184, 0.4);
+                color: #8bdee9;
+            }
+        }
+
+        .dark-mode .pagination .page-item.disabled .page-link {
+            background-color: var(--admin-dark-bg);
+            border-color: var(--admin-border);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Dark mode styles for table rows */
+        .dark-mode .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .dark-mode .table-hover tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.075);
+        }
     }
 
     .admin-content-actions {

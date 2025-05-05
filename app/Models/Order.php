@@ -651,28 +651,58 @@ class Order
      */
     public function findOrderWithDetails(int $orderId): array|false
     {
+        error_log("Order::findOrderWithDetails - Starting with order ID: {$orderId}");
+        
         try {
             // 1. Fetch the basic order details (including user info)
+            error_log("Order::findOrderWithDetails - Calling readOne for order ID: {$orderId}");
             $order = $this->readOne($orderId);
+            
+            error_log("Order::findOrderWithDetails - readOne result: " . ($order ? "Found" : "Not found"));
+            
             if (!$order) {
                 // error_message should be set by readOne if it failed due to DB error
                 if (empty($this->error_message)) {
                     $this->error_message = "Order not found."; // Set specific message if readOne returned false (not found)
                 }
+                error_log("Order::findOrderWithDetails - Order not found, error: " . $this->error_message);
                 return false;
             }
+            
+            error_log("Order::findOrderWithDetails - Order basic details retrieved successfully");
 
             // 2. Fetch associated order items
-            $orderItemModel = new OrderItem($this->db); // Assuming OrderItem model exists
+            error_log("Order::findOrderWithDetails - Creating OrderItem model");
+            try {
+                $orderItemModel = new OrderItem($this->db); // Assuming OrderItem model exists
+                error_log("Order::findOrderWithDetails - OrderItem model created successfully");
+            } catch (\Throwable $e) {
+                error_log("Order::findOrderWithDetails - Error creating OrderItem model: " . $e->getMessage());
+                $this->error_message = "Failed to create OrderItem model: " . $e->getMessage();
+                return false;
+            }
+            
+            error_log("Order::findOrderWithDetails - Calling readByOrder for order ID: {$orderId}");
             $itemsStmt = $orderItemModel->readByOrder($orderId);
 
             if (!$itemsStmt) {
                 // If fetching items failed, use the error message from OrderItem model
-                $this->error_message = "Failed to fetch order items: " . $orderItemModel->getErrorMessage();
+                $errorMsg = $orderItemModel->getErrorMessage();
+                error_log("Order::findOrderWithDetails - Failed to fetch order items: " . $errorMsg);
+                $this->error_message = "Failed to fetch order items: " . $errorMsg;
                 return false;
             }
 
-            $items = $itemsStmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Order::findOrderWithDetails - Successfully retrieved order items statement");
+            
+            try {
+                $items = $itemsStmt->fetchAll(PDO::FETCH_ASSOC);
+                error_log("Order::findOrderWithDetails - Fetched " . count($items) . " order items");
+            } catch (\PDOException $e) {
+                error_log("Order::findOrderWithDetails - Error fetching order items: " . $e->getMessage());
+                $this->error_message = "Error fetching order items: " . $e->getMessage();
+                return false;
+            }
 
             // 3. Calculate total amount from items for verification
             $calculatedTotalAmount = 0.0;
@@ -681,37 +711,57 @@ class Order
                 if (isset($item['price']) && is_numeric($item['price']) && isset($item['quantity']) && is_numeric($item['quantity'])) {
                     $calculatedTotalAmount += (float) $item['price'] * (int) $item['quantity'];
                 } else {
-                    Registry::get('logger')->warning("Invalid price or quantity for item in order.", [
-                        'order_id' => $orderId,
-                        'item_id' => $item['item_id'] ?? 'N/A',
-                        'item_price' => $item['price'] ?? 'N/A',
-                        'item_quantity' => $item['quantity'] ?? 'N/A'
-                    ]);
+                    $warning = "Invalid price or quantity for item in order: " . 
+                               "order_id={$orderId}, " .
+                               "item_id=" . ($item['item_id'] ?? 'N/A') . ", " .
+                               "price=" . ($item['price'] ?? 'N/A') . ", " .
+                               "quantity=" . ($item['quantity'] ?? 'N/A');
+                    error_log("Order::findOrderWithDetails - " . $warning);
+                    Registry::get('logger')->warning($warning);
                 }
             }
+            
+            error_log("Order::findOrderWithDetails - Calculated total amount: {$calculatedTotalAmount}");
 
             // 4. Add items to the order array
             $order['items'] = $items;
+            error_log("Order::findOrderWithDetails - Added items to order array");
 
             // 5. Compare stored total with calculated total (optional check)
-            if (isset($order['total_amount']) && abs((float)$order['total_amount'] - $calculatedTotalAmount) > 0.01) { // Use a small tolerance for float comparison
-                Registry::get('logger')->warning("Order total discrepancy detected.", [
-                    'order_id' => $orderId,
-                    'stored_total' => $order['total_amount'],
-                    'calculated_total' => $calculatedTotalAmount
-                ]);
-                // Decide if this should be an error or just a warning
+            if (isset($order['total_amount'])) {
+                error_log("Order::findOrderWithDetails - Stored total amount: " . $order['total_amount']);
+                
+                if (abs((float)$order['total_amount'] - $calculatedTotalAmount) > 0.01) { // Use a small tolerance for float comparison
+                    $warning = "Order total discrepancy detected: " .
+                               "order_id={$orderId}, " .
+                               "stored_total=" . $order['total_amount'] . ", " .
+                               "calculated_total={$calculatedTotalAmount}";
+                    error_log("Order::findOrderWithDetails - " . $warning);
+                    Registry::get('logger')->warning($warning);
+                    // Decide if this should be an error or just a warning
+                }
+            } else {
+                error_log("Order::findOrderWithDetails - No stored total amount found in order data");
             }
 
+            error_log("Order::findOrderWithDetails - Successfully completed, returning order with items");
             return $order;
         } catch (\PDOException $e) {
             // Catch potential exceptions from readOne or OrderItem instantiation/methods if they throw
             $this->error_message = "Database error fetching order with details: " . $e->getMessage();
+            error_log("Order::findOrderWithDetails - PDOException: " . $e->getMessage() . "\n" . $e->getTraceAsString());
             Registry::get('logger')->error($this->error_message, ['exception' => $e, 'order_id' => $orderId]);
             return false;
         } catch (\Exception $e) {
             // Catch other potential errors (e.g., OrderItem class not found)
             $this->error_message = "Application error fetching order details: " . $e->getMessage();
+            error_log("Order::findOrderWithDetails - Exception: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+            Registry::get('logger')->error($this->error_message, ['exception' => $e, 'order_id' => $orderId]);
+            return false;
+        } catch (\Throwable $e) {
+            // Catch any other errors that might not be caught by the above
+            $this->error_message = "Unexpected error fetching order details: " . $e->getMessage();
+            error_log("Order::findOrderWithDetails - Throwable: " . $e->getMessage() . "\n" . $e->getTraceAsString());
             Registry::get('logger')->error($this->error_message, ['exception' => $e, 'order_id' => $orderId]);
             return false;
         }

@@ -50,11 +50,45 @@ class User
      */
     public function findById(int $id): ?array
     {
-        $stmt = $this->db->prepare("SELECT user_id, name, phone, email, password, role, registration_date FROM users WHERE user_id = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result === false ? null : $result; // Return null if fetch fails
+        error_log("User::findById - Starting with user ID: {$id}");
+        
+        try {
+            $sql = "SELECT user_id, name, phone, email, password, role, registration_date, account_status FROM users WHERE user_id = :id";
+            error_log("User::findById - SQL: " . $sql);
+            
+            $stmt = $this->db->prepare($sql);
+            error_log("User::findById - Statement prepared");
+            
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            error_log("User::findById - Parameter bound: id={$id}");
+            
+            error_log("User::findById - Executing statement");
+            $stmt->execute();
+            error_log("User::findById - Statement executed");
+            
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            error_log("User::findById - Result: " . ($result ? "User found" : "User not found"));
+            
+            if ($result) {
+                error_log("User::findById - User data: " . json_encode([
+                    'user_id' => $result['user_id'] ?? null,
+                    'name' => $result['name'] ?? null,
+                    'email' => $result['email'] ?? null,
+                    'role' => $result['role'] ?? null,
+                    'account_status' => $result['account_status'] ?? null,
+                    'has_password' => isset($result['password']),
+                    'has_registration_date' => isset($result['registration_date'])
+                ]));
+            }
+            
+            return $result === false ? null : $result; // Return null if fetch fails
+        } catch (\PDOException $e) {
+            error_log("User::findById - PDOException: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+            return null;
+        } catch (\Throwable $e) {
+            error_log("User::findById - Throwable: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+            return null;
+        }
     }
 
     /**
