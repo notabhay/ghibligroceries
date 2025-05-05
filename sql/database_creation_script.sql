@@ -1302,35 +1302,35 @@ VALUES
         110 -- Initial stock quantity: 110 units
     );
 
--- ---------------------------------------------------------------------
--- Insert ONLY the Admin User
--- ---------------------------------------------------------------------
-INSERT INTO
-    users (
-        user_id,
-        name,
-        phone,
-        email,
-        password,
-        role,
-        registration_date
-    )
-VALUES
-    (
-        1,
-        -- Use ID 1 for the admin user for simplicity
-        'Admin User',
-        -- Name
-        '0000000000',
-        -- Placeholder Phone
-        'admin@ghibligroceries.com',
-        -- Email (unique)
-        '$2y$12$YNkTKqBBzX/1JGkXgHNVM.JGQIIpa1LOBuVFBLLOshZ1hAg2Ks1py',
-        -- Correct bcrypt hash for 'Admin123!'
-        'admin',
-        -- Set role directly to admin
-        NOW() -- Use current timestamp for registration
-    );
+-- -- ---------------------------------------------------------------------
+-- -- Insert ONLY the Admin User
+-- -- ---------------------------------------------------------------------
+-- INSERT INTO
+--     users (
+--         user_id,
+--         name,
+--         phone,
+--         email,
+--         password,
+--         role,
+--         registration_date
+--     )
+-- VALUES
+--     (
+--         1,
+--         -- Use ID 1 for the admin user for simplicity
+--         'Admin User',
+--         -- Name
+--         '0000000000',
+--         -- Placeholder Phone
+--         'admin@ghibligroceries.com',
+--         -- Email (unique)
+--         '$2y$12$YNkTKqBBzX/1JGkXgHNVM.JGQIIpa1LOBuVFBLLOshZ1hAg2Ks1py',
+--         -- Correct bcrypt hash for 'Admin123!'
+--         'admin',
+--         -- Set role directly to admin
+--         NOW() -- Use current timestamp for registration
+--     );
 
 -- Note: No other sample data (categories, products, orders, etc.) is inserted.
 -- =====================================================================
