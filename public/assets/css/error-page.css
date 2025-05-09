@@ -1,0 +1,58 @@
+.error-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    /* Adjust as needed to fit within your layout */
+    text-align: center;
+    padding: 20px;
+}
+
+.error-content {
+    background-color: #fff;
+    /* Or your site's card background color */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Consistent with other elements if applicable */
+    max-width: 600px;
+    width: 100%;
+}
+
+.error-title {
+    font-size: 2.5rem;
+    /* Adjust to match your H1 styling */
+    color: #333;
+    /* Or your site's primary heading color */
+    margin-bottom: 20px;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    /* Adjust to match your paragraph styling */
+    color: #555;
+    /* Or your site's text color */
+    margin-bottom: 30px;
+}
+
+.btn-primary {
+    /* Assuming you have a .btn-primary class in styles.css */
+    /* If not, define styles here or ensure it matches your global button styles */
+    /* Example:
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #007bff; // Your primary button color
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    */
+}
+
+.btn-primary:hover {
+    /* Example:
+    background-color: #0056b3; // Darker shade for hover
+    */
+}

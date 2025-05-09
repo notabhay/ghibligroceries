@@ -28,6 +28,8 @@
     <meta name="robots" content="noindex, nofollow">
     <meta name="description" content="GhibliGroceries Admin Panel">
 
+    <meta name="csrf-token"
+        content="<?php echo isset($csrf_token_for_layout) ? htmlspecialchars($csrf_token_for_layout) : ''; ?>">
     <!-- External Stylesheets -->
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">

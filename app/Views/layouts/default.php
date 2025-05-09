@@ -34,6 +34,8 @@
         content="<?php echo isset($meta_keywords) ? htmlspecialchars($meta_keywords) : 'grocery, food, online shopping, delivery, ghibli'; ?>">
     <meta name="author" content="GhibliGroceries Team">
 
+    <meta name="csrf-token"
+        content="<?php echo isset($csrf_token_for_layout) ? htmlspecialchars($csrf_token_for_layout) : ''; ?>">
     <!-- External Stylesheets -->
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -44,7 +46,7 @@
     // Conditionally include additional CSS files if specified by the controller
     if (!empty($additional_css_files) && is_array($additional_css_files)):
         foreach ($additional_css_files as $css_file): ?>
-            <link rel="stylesheet" href="<?php echo htmlspecialchars($css_file); ?>">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars($css_file); ?>">
     <?php endforeach;
     endif;
     ?>

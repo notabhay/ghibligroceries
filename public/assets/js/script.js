@@ -2,8 +2,23 @@
  * Main script file for general site interactions.
  * Handles mobile menu toggle, footer toggle, category/product filtering,
  * cart management (add, update, remove, clear), toast notifications,
- * and confirmation modals (generic and order cancellation).
+ * confirmation modals (generic and order cancellation), and reusable quantity controls.
  */
+/**
+ * Retrieves the CSRF token from the meta tag.
+ * @returns {string|null} The CSRF token or null if not found.
+ */
+function getCsrfToken() {
+    const tokenElement = document.querySelector('meta[name="csrf-token"]');
+    if (tokenElement) {
+        return tokenElement.getAttribute('content');
+    }
+    console.error('CSRF token meta tag not found.');
+    return null; // Or an empty string, depending on how you want to handle missing token
+}
+// Optionally, make it available on the window object if needed by other separate scripts,
+// though direct function call should work if script.js is loaded first.
+// window.getCsrfToken = getCsrfToken;
 document.addEventListener('DOMContentLoaded', function () {
 
     // --- Homepage Search Loading Indicator ---
@@ -115,13 +130,57 @@ document.addEventListener('DOMContentLoaded', function () {
      * Displays the generic confirmation modal with a specific message and callback.
      * @param {string} message - The message to display in the modal.
      * @param {function} confirmCallback - The function to execute when the confirm button is clicked.
+     * @param {function} [cancelCallback] - Optional function to execute when cancel button is clicked or modal is dismissed.
      */
-    function showConfirmationModal(message, confirmCallback) {
+    function showConfirmationModal(message, confirmCallback, cancelCallback) {
         console.log('Showing confirmation modal. Message:', message);
         if (confirmationModal && modalMessage) {
             modalMessage.textContent = message; // Set the message text
             currentModalConfirmCallback = confirmCallback; // Store the callback
             console.log('Callback stored. Type:', typeof currentModalConfirmCallback);
+
+            // Enhance cancel button to also call cancelCallback if provided
+            const enhancedCancelHandler = () => {
+                if (typeof cancelCallback === 'function') {
+                    try {
+                        cancelCallback();
+                    } catch (error) {
+                        console.error("Error executing modal cancel callback:", error);
+                    }
+                }
+                confirmationModal.classList.remove('modal-visible');
+                currentModalConfirmCallback = null; // Clear confirm callback too
+                // Remove this specific listener to avoid stacking if modal is reused
+                modalCancelButton.removeEventListener('click', enhancedCancelHandler);
+            };
+            // Remove any old listener before adding a new one for cancel
+            // This is a bit tricky if the original listener is anonymous.
+            // For simplicity, we assume the persistent one is okay, or we manage it carefully.
+            // Let's assume the persistent one handles basic hide, and this adds to it.
+            // A better way would be a single, more complex persistent cancel handler.
+            // For now, let's ensure the cancelCallback is called.
+            // The persistent cancel listener already handles hiding and clearing currentModalConfirmCallback.
+            // We just need to ensure cancelCallback is invoked.
+            // So, we'll modify the persistent confirm and cancel.
+            // This is getting complex. Let's simplify: the `showConfirmationModal` will set a temporary cancel callback.
+
+            // Re-assigning the persistent listener's callback is not ideal.
+            // Instead, the persistent listener for cancel should check for a temporary cancel callback.
+            // Let's store cancelCallback similarly to currentModalConfirmCallback.
+            // This requires modifying the persistent cancel listener.
+            // For now, let's stick to the provided structure and call cancelCallback from here if modal is dismissed.
+            // This is tricky. The original persistent cancel listener will fire.
+            // We need a way for *that* listener to know about *this* specific cancelCallback.
+
+            // Simpler approach for now: The `confirmCallback` is primary.
+            // If the user cancels, the generic cancel handler (lines 102-112) runs.
+            // If a specific cancel action is needed (like resetting an input),
+            // it should be passed to `showConfirmationModal` and handled.
+
+            // Let's make the persistent cancel listener smarter.
+            // We'll add a temporary reference for the specific cancel action.
+            confirmationModal._currentCancelCallback = cancelCallback; // Store temporary cancel callback
+
             confirmationModal.classList.add('modal-visible'); // Show the modal
             console.log('Added "modal-visible" class. Modal classList:', confirmationModal.classList);
         } else {
@@ -131,6 +190,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Modified persistent listener for the Cancel button to handle specific cancel callbacks
+    if (modalCancelButton && confirmationModal) {
+        modalCancelButton.addEventListener('click', () => {
+            console.log('Persistent Cancel Listener Fired.');
+            if (typeof confirmationModal._currentCancelCallback === 'function') {
+                try {
+                    confirmationModal._currentCancelCallback();
+                } catch (error) {
+                    console.error("Error executing specific modal cancel callback:", error);
+                }
+            }
+            // Clear callbacks and hide the modal
+            currentModalConfirmCallback = null;
+            confirmationModal._currentCancelCallback = null;
+            confirmationModal.classList.remove('modal-visible');
+        });
+    }
 
     // --- Category and Product Filtering ---
     const mainCategorySelect = document.getElementById('main-category');
@@ -476,13 +552,132 @@ document.addEventListener('DOMContentLoaded', function () {
         }, duration);
     }
 
+    // --- Reusable Quantity Controls ---
+    /**
+     * Initializes a set of quantity controls (increase, decrease, input).
+     * @param {HTMLElement} containerElement - The DOM element containing the quantity controls.
+     * @param {object} options - Configuration options.
+     * @param {string} options.productId - The ID of the product.
+     * @param {number} [options.minQuantity=1] - Minimum allowed quantity.
+     * @param {number} [options.maxQuantity=99] - Maximum allowed quantity.
+     * @param {function} [options.onQuantityChange] - Callback: (productId, newQuantity) => void.
+     * @param {function} [options.onQuantityZero] - Callback: (productId, inputElement, previousValue) => void.
+     */
+    function initializeQuantityControls(containerElement, options) {
+        const quantityInput = containerElement.querySelector('.quantity-input');
+        const decreaseBtn = containerElement.querySelector('.decrease-btn');
+        const increaseBtn = containerElement.querySelector('.increase-btn');
+
+        if (!quantityInput || !decreaseBtn || !increaseBtn) {
+            console.error('Quantity control elements not found in container:', containerElement);
+            return;
+        }
+
+        const productId = options.productId;
+        const minQty = options.minQuantity !== undefined ? parseInt(options.minQuantity, 10) : (parseInt(quantityInput.min, 10) || 1);
+        const maxQty = options.maxQuantity !== undefined ? parseInt(options.maxQuantity, 10) : (parseInt(quantityInput.max, 10) || 99);
+
+        // Ensure minQty is not less than 1 for general use, unless explicitly set lower and handled by callbacks
+        const effectiveMinQty = Math.max(1, minQty);
+
+        // Store initial value for potential revert by onQuantityZero callback
+        quantityInput.dataset.previousValue = quantityInput.value;
+
+        increaseBtn.addEventListener('click', function () {
+            let currentValue = parseInt(quantityInput.value, 10);
+            if (isNaN(currentValue)) currentValue = effectiveMinQty;
+
+            const newValue = Math.min(maxQty, currentValue + 1);
+            if (newValue !== currentValue) {
+                quantityInput.value = newValue;
+                quantityInput.dataset.previousValue = newValue.toString(); // Update previous value
+                if (options.onQuantityChange) {
+                    options.onQuantityChange(productId, newValue);
+                }
+            }
+        });
+
+        decreaseBtn.addEventListener('click', function () {
+            let currentValue = parseInt(quantityInput.value, 10);
+            if (isNaN(currentValue)) currentValue = effectiveMinQty;
+
+            const newValue = currentValue - 1;
+
+            if (newValue < effectiveMinQty) { // Handles 0 or less, or below a specific minQty if it was > 1
+                if (options.onQuantityZero) {
+                    // Pass the value that was about to be set (e.g., 0)
+                    options.onQuantityZero(productId, quantityInput, currentValue.toString()); // Pass current valid value as previous
+                } else {
+                    // Default behavior if no onQuantityZero: clamp to minQty
+                    quantityInput.value = effectiveMinQty;
+                    quantityInput.dataset.previousValue = effectiveMinQty.toString();
+                    if (options.onQuantityChange && effectiveMinQty !== currentValue) { // Only call if changed
+                        options.onQuantityChange(productId, effectiveMinQty);
+                    }
+                }
+            } else {
+                quantityInput.value = newValue;
+                quantityInput.dataset.previousValue = newValue.toString();
+                if (options.onQuantityChange) {
+                    options.onQuantityChange(productId, newValue);
+                }
+            }
+        });
+
+        quantityInput.addEventListener('change', function () {
+            let currentValue = parseInt(quantityInput.value, 10);
+            const previousValue = quantityInput.dataset.previousValue || effectiveMinQty.toString();
+
+            if (isNaN(currentValue)) {
+                currentValue = effectiveMinQty;
+                showToast(`Quantity must be a valid number. Set to ${effectiveMinQty}.`, 'info');
+            }
+
+            if (currentValue < effectiveMinQty) {
+                if (options.onQuantityZero) {
+                    options.onQuantityZero(productId, quantityInput, previousValue);
+                    // onQuantityZero is responsible for the final input value or action
+                } else {
+                    quantityInput.value = effectiveMinQty;
+                    showToast(`Minimum quantity is ${effectiveMinQty}.`, 'info');
+                    if (options.onQuantityChange && quantityInput.value !== previousValue) {
+                        options.onQuantityChange(productId, effectiveMinQty);
+                    }
+                }
+            } else if (currentValue > maxQty) {
+                quantityInput.value = maxQty;
+                showToast(`Maximum quantity is ${maxQty}.`, 'info');
+                if (options.onQuantityChange && quantityInput.value !== previousValue) {
+                    options.onQuantityChange(productId, maxQty);
+                }
+            } else {
+                // Valid quantity within bounds (or handled by onQuantityZero if it was < effectiveMinQty)
+                if (options.onQuantityChange && currentValue.toString() !== previousValue) {
+                    options.onQuantityChange(productId, currentValue);
+                }
+            }
+            quantityInput.dataset.previousValue = quantityInput.value; // Update after all changes
+        });
+
+        // Initial check for stock limits (e.g. product detail page)
+        if (maxQty === 0 || maxQty < effectiveMinQty) {
+            const form = containerElement.closest('form');
+            if (form) {
+                const addToCartBtn = form.querySelector('.add-to-cart-btn-detail');
+                if (addToCartBtn) addToCartBtn.disabled = true;
+            }
+            quantityInput.disabled = true;
+            decreaseBtn.disabled = true;
+            increaseBtn.disabled = true;
+        }
+    }
 
     // --- Cart Management ---
 
     // Global event listener for adding items to the cart (delegated)
     document.addEventListener('click', function (event) {
         // Check if the clicked element is an "Add to Cart" button
-        if (event.target.matches('.add-to-cart-btn')) {
+        if (event.target.matches('.add-to-cart-btn') || event.target.matches('.add-to-cart-btn-detail')) {
             event.preventDefault(); // Prevent default button action if any
             const button = event.target;
             const productId = button.getAttribute('data-product-id');
@@ -499,10 +694,34 @@ document.addEventListener('DOMContentLoaded', function () {
             button.disabled = true;
 
             // Prepare data for API request
+            let quantity = 1;
+            let csrfToken = '';
+
+            if (button.classList.contains('add-to-cart-btn-detail')) {
+                const form = button.closest('.add-to-cart-form-detail');
+                if (form) {
+                    const quantityInput = form.querySelector('.quantity-input');
+                    const csrfInput = form.querySelector('input[name="csrf_token"]');
+                    if (quantityInput) {
+                        quantity = parseInt(quantityInput.value, 10) || 1;
+                    }
+                    if (csrfInput) {
+                        csrfToken = csrfInput.value;
+                    }
+                }
+            }
+
             const data = {
                 product_id: productId,
-                quantity: 1 // Always add 1 quantity from product listings
+                quantity: quantity
             };
+
+            if (csrfToken) {
+                data.csrf_token = csrfToken;
+            } else {
+                // For generic add to cart buttons, try to get CSRF token using the helper
+                data.csrf_token = getCsrfToken();
+            }
 
             // Send request to the add-to-cart API endpoint
             fetch('/api/cart/add', {
@@ -519,7 +738,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (response.ok && contentType && contentType.indexOf("application/json") !== -1) {
                         return response.json(); // Parse JSON if successful
                     } else if (!response.ok) {
-                        // Handle HTTP errors by reading the response text
+                        if (response.status === 403) {
+                            showToast("Your session may have expired or the request was tampered with. Please refresh the page and try again.", "error");
+                            // Re-enable button and reset text, then throw to prevent further processing
+                            button.textContent = button.classList.contains('add-to-cart-btn-detail') ? 'Add to Cart' : 'Add to Cart'; // Keep original text based on class
+                            button.disabled = false;
+                            return Promise.reject(new Error('CSRF validation failed (403)')); // Stop further .then()
+                        }
+                        // Handle other HTTP errors by reading the response text
                         return response.text().then(text => {
                             throw new Error(`Add to cart failed: ${response.status} ${response.statusText}. ${text}`);
                         });
@@ -530,7 +756,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .then(data => {
                     // Re-enable button and reset text
-                    button.textContent = 'Add to Cart';
+                    button.textContent = button.classList.contains('add-to-cart-btn-detail') ? 'Add to Cart' : 'Add to Cart'; // Keep original text
                     button.disabled = false;
                     // Handle API response (success or error)
                     if (data.success) {
@@ -543,11 +769,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(error => {
                     // Handle fetch errors (network, etc.)
-                    console.error('Add to Cart Fetch error:', error);
-                    // Re-enable button and reset text
-                    button.textContent = 'Add to Cart';
-                    button.disabled = false;
-                    showToast(`An error occurred: ${error.message}. Please try again.`, 'error');
+                    // Check if the error is the one we threw for 403, if so, message is already shown
+                    if (error.message !== 'CSRF validation failed (403)') {
+                        console.error('Add to Cart Fetch error:', error);
+                        showToast(`An error occurred: ${error.message}. Please try again.`, 'error');
+                    }
+                    // Re-enable button and reset text (already handled for 403, but good for other errors)
+                    if (!button.disabled) { // Avoid resetting if already handled by 403 block
+                        button.textContent = button.classList.contains('add-to-cart-btn-detail') ? 'Add to Cart' : 'Add to Cart';
+                        button.disabled = false;
+                    }
                 });
         }
     });
@@ -556,158 +787,46 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event listeners specifically for the cart page (.cart-container)
     const cartContainer = document.querySelector('.cart-container');
     if (cartContainer) {
-        // Listener for quantity input changes
-        cartContainer.addEventListener('change', function (event) {
-            if (event.target.matches('.quantity-input')) {
-                const input = event.target;
-                const productId = input.getAttribute('data-product-id');
-                let newQuantity = parseInt(input.value, 10);
 
-                // Validate and clamp quantity
-                if (isNaN(newQuantity)) {
-                    newQuantity = 1; // Default to 1 if invalid
-                    input.value = 1;
-                    showToast('Quantity must be a valid number', 'info');
-                } else if (newQuantity > 99) {
-                    newQuantity = 99; // Max quantity
-                    input.value = 99;
-                    showToast('Maximum quantity is 99', 'info');
-                }
+        function setupCartQuantityControls() {
+            const quantityControlElements = cartContainer.querySelectorAll('.quantity-controls');
+            quantityControlElements.forEach(controlsContainer => {
+                const quantityInput = controlsContainer.querySelector('.quantity-input');
+                if (!quantityInput) return;
 
-                // Get the previous value to detect actual change
-                const previousValue = parseInt(input.getAttribute('data-previous-value') || input.defaultValue, 10);
+                const productId = quantityInput.dataset.productId;
+                if (!productId) return;
 
-                // Only update if the value has actually changed
-                if (newQuantity !== previousValue) {
-                    if (newQuantity <= 0) {
-                        // If quantity is 0 or less, confirm removal
+                initializeQuantityControls(controlsContainer, {
+                    productId: productId,
+                    minQuantity: 1, // Cart items usually have a min of 1 before removal
+                    maxQuantity: 99, // Default max for cart items
+                    onQuantityChange: (pid, newQuantity) => {
+                        updateCartItemQuantity(pid, newQuantity);
+                    },
+                    onQuantityZero: (pid, inputEl, previousVal) => {
                         showConfirmationModal(
                             'Are you sure you want to remove this item from your cart?',
-                            function () {
-                                removeCartItem(productId); // Call remove function on confirmation
+                            function () { // Confirm callback
+                                removeCartItem(pid);
+                            },
+                            function () { // Cancel callback
+                                // Restore previous quantity if removal is cancelled
+                                inputEl.value = previousVal; // Use the passed previous value
+                                inputEl.dataset.previousValue = previousVal;
+                                // No AJAX update needed as it's a revert to a known state
                             }
                         );
-                        // Reset input to previous value temporarily until confirmed/cancelled
-                        input.value = previousValue;
-                    } else {
-                        // If quantity is valid and positive, update it
-                        updateCartItemQuantity(productId, newQuantity);
-                        // Store the new value as the previous value for next change detection
-                        input.setAttribute('data-previous-value', newQuantity.toString());
                     }
-                }
-            }
-        });
+                });
+            });
+        }
 
-        // Listener for button clicks within the cart (increase, decrease, remove, clear)
+        setupCartQuantityControls(); // Initial setup
+
+        // Listener for button clicks within the cart (remove, clear)
+        // Increase/Decrease are handled by initializeQuantityControls
         cartContainer.addEventListener('click', function (event) {
-            // --- Increase Quantity Button ---
-            if (event.target.matches('.increase-btn')) {
-                event.preventDefault();
-                const productId = event.target.getAttribute('data-product-id');
-                const quantityInput = event.target.parentElement.querySelector('.quantity-input');
-                let currentQuantity = parseInt(quantityInput.value, 10);
-                if (isNaN(currentQuantity)) currentQuantity = 1; // Handle potential NaN
-                const newQuantity = Math.min(99, currentQuantity + 1); // Increase, capped at 99
-                quantityInput.value = newQuantity; // Update input visually
-                updateCartItemQuantity(productId, newQuantity); // Update via API
-            }
-
-            // --- Decrease Quantity Button ---
-            if (event.target.matches('.decrease-btn')) {
-                event.preventDefault();
-                const productId = event.target.getAttribute('data-product-id');
-                const quantityInput = event.target.parentElement.querySelector('.quantity-input');
-                let currentQuantity = parseInt(quantityInput.value, 10);
-                if (isNaN(currentQuantity)) currentQuantity = 1; // Handle potential NaN
-                const newQuantity = Math.max(0, currentQuantity - 1); // Decrease, minimum 0
-
-                if (newQuantity > 0) {
-                    // If quantity still positive, update input and call API
-                    quantityInput.value = newQuantity;
-                    updateCartItemQuantity(productId, newQuantity);
-                } else {
-                    // If quantity becomes 0, show confirmation modal for removal
-                    console.log('Quantity reached zero, showing confirmation modal.');
-                    showConfirmationModal(
-                        'Are you sure you want to remove this item from your cart?',
-                        function () {
-                            // --- Confirmation Callback for Decrease-to-Zero ---
-                            console.log('*** Confirm Callback Entered for product ID (decrease):', productId, '***');
-                            // Disable buttons during operation
-                            const allButtons = document.querySelectorAll('button');
-                            allButtons.forEach(btn => { btn.disabled = true; });
-
-                            const deleteUrl = `/api/cart/item/${productId}`;
-                            console.log('Making DELETE request from decrease-to-zero callback to:', deleteUrl);
-                            // Use POST with empty body for item removal (as per API design)
-                            fetch(deleteUrl, {
-                                method: 'POST',
-                                headers: {
-                                    'Accept': 'application/json',
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({}) // Empty body often needed for POST/DELETE APIs
-                            })
-                                .then(response => {
-                                    console.log('Received response from DELETE request. Status:', response.status);
-                                    const contentType = response.headers.get("content-type");
-                                    // Handle response validation (similar to other fetches)
-                                    if (response.ok && contentType && contentType.indexOf("application/json") !== -1) {
-                                        return response.json();
-                                    } else if (!response.ok) {
-                                        return response.text().then(text => {
-                                            throw new Error(`Remove item failed: ${response.status} ${response.statusText}. ${text}`);
-                                        });
-                                    } else {
-                                        return response.text().then(text => {
-                                            throw new Error("Expected JSON response from remove item, got non-JSON: " + text);
-                                        });
-                                    }
-                                })
-                                .then(data => {
-                                    console.log('Parsed response data:', data);
-                                    if (data.success) {
-                                        console.log('Attempting to update UI after deletion...');
-                                        // Remove the item row from the DOM
-                                        const itemRow = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
-                                        if (itemRow) itemRow.remove();
-
-                                        // Update total price display
-                                        const cartTotalElement = document.getElementById('cart-total-price');
-                                        if (cartTotalElement && data.total_price !== undefined) {
-                                            const totalPrice = parseFloat(data.total_price);
-                                            cartTotalElement.textContent = !isNaN(totalPrice) ? `$${totalPrice.toFixed(2)}` : '$--.--';
-                                        } else if (cartTotalElement) {
-                                            cartTotalElement.textContent = '$0.00'; // Fallback if price missing
-                                        }
-
-                                        // Check if cart is now empty and update UI accordingly
-                                        if (data.is_empty) {
-                                            updateCartUI({ is_empty: true, total_items: 0, total_price: 0 });
-                                        } else {
-                                            // Update icon and badge if cart still has items
-                                            updateCartIcon(!data.is_empty);
-                                            updateCartBadge();
-                                        }
-                                        showToast('Item removed from cart.', 'success');
-                                    } else {
-                                        showToast('Error: ' + (data.message || 'Could not remove item from cart.'), 'error');
-                                    }
-                                    // Re-enable buttons
-                                    allButtons.forEach(btn => { btn.disabled = false; });
-                                })
-                                .catch(error => {
-                                    console.error('Error details during delete fetch operation (decrease-to-zero):', error);
-                                    showToast(`An error occurred: ${error.message}. Please try again.`, 'error');
-                                    // Re-enable buttons on error
-                                    allButtons.forEach(btn => { btn.disabled = false; });
-                                });
-                        } // End of confirmation callback
-                    ); // End of showConfirmationModal call
-                } // End of else (newQuantity <= 0)
-            } // End of decrease-btn match
-
             // --- Remove Item Button ---
             // Handles clicks directly on the button or its icon/children
             if (event.target.matches('.remove-item-btn') || event.target.closest('.remove-item-btn')) {
@@ -744,6 +863,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     const allButtons = document.querySelectorAll('button');
                     allButtons.forEach(btn => { btn.disabled = true; });
 
+                    const csrfToken = getCsrfToken();
+
                     // Send request to the clear cart API endpoint
                     fetch('/api/cart/clear', {
                         method: 'POST',
@@ -751,7 +872,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({}) // Empty body
+                        body: JSON.stringify({ csrf_token: csrfToken })
                     })
                         .then(response => {
                             console.log('Received response from clear cart request. Status:', response.status);
@@ -760,6 +881,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (response.ok && contentType && contentType.indexOf("application/json") !== -1) {
                                 return response.json();
                             } else if (!response.ok) {
+                                if (response.status === 403) {
+                                    showToast("Your session may have expired or the request was tampered with. Please refresh the page and try again.", "error");
+                                    allButtons.forEach(btn => { btn.disabled = false; });
+                                    return Promise.reject(new Error('CSRF validation failed (403)'));
+                                }
                                 return response.text().then(text => {
                                     throw new Error(`Clear cart failed: ${response.status} ${response.statusText}. ${text}`);
                                 });
@@ -790,9 +916,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         })
                         .catch(error => {
-                            console.error('Error during clear cart fetch operation:', error);
-                            showToast(`An error occurred: ${error.message}. Please try again.`, 'error');
-                            // Re-enable buttons on error
+                            if (error.message !== 'CSRF validation failed (403)') {
+                                console.error('Error during clear cart fetch operation:', error);
+                                showToast(`An error occurred: ${error.message}. Please try again.`, 'error');
+                            }
+                            // Re-enable buttons on error (even if it was a CSRF error, as the user might want to try again after refresh)
                             allButtons.forEach(btn => { btn.disabled = false; });
                         });
                 }; // End of confirmCallback definition
@@ -815,15 +943,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Disable quantity controls to prevent concurrent updates
-        const quantityButtons = document.querySelectorAll('.quantity-btn');
-        const quantityInputs = document.querySelectorAll('.quantity-input');
-        quantityButtons.forEach(btn => { btn.disabled = true; });
-        quantityInputs.forEach(input => { input.disabled = true; });
+        const quantityControlsContainer = document.querySelector(`.cart-item[data-product-id="${productId}"] .quantity-controls`);
+        let quantityButtons = [];
+        if (quantityControlsContainer) {
+            quantityButtons = quantityControlsContainer.querySelectorAll('.quantity-btn, .quantity-input');
+            quantityButtons.forEach(el => { el.disabled = true; });
+        }
+
+        const csrfToken = getCsrfToken();
 
         // Prepare data for API
         const data = {
             product_id: productId,
-            quantity: newQuantity
+            quantity: newQuantity,
+            csrf_token: csrfToken
         };
 
         // Send request to update cart API endpoint
@@ -841,6 +974,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (response.ok && contentType && contentType.indexOf("application/json") !== -1) {
                     return response.json();
                 } else if (!response.ok) {
+                    if (response.status === 403) {
+                        showToast("Your session may have expired or the request was tampered with. Please refresh the page and try again.", "error");
+                        if (quantityControlsContainer) { // Re-enable specific controls
+                            quantityButtons.forEach(el => { el.disabled = false; });
+                        }
+                        return Promise.reject(new Error('CSRF validation failed (403)'));
+                    }
                     return response.text().then(text => {
                         throw new Error(`Update cart failed: ${response.status} ${response.statusText}. ${text}`);
                     });
@@ -853,7 +993,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.success) {
                     // Update the cart UI based on the response data
-                    updateCartUI(data);
+                    updateCartUI(data); // This will re-enable controls if successful
                     // Show appropriate toast message
                     if (data.updated_product) {
                         if (data.updated_product.new_quantity <= 0) {
@@ -866,24 +1006,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     showToast('Error: ' + (data.message || 'Could not update cart.'), 'error');
                     // Re-enable controls if update failed
-                    quantityButtons.forEach(btn => { btn.disabled = false; });
-                    quantityInputs.forEach(input => { input.disabled = false; });
+                    if (quantityControlsContainer) {
+                        quantityButtons.forEach(el => { el.disabled = false; });
+                    }
                 }
-                // Note: Controls are re-enabled within updateCartUI on success
             })
             .catch(error => {
-                console.error('Update Cart Fetch error:', error);
-                showToast(`An error occurred: ${error.message}. Please try again.`, 'error');
+                if (error.message !== 'CSRF validation failed (403)') {
+                    console.error('Update Cart Fetch error:', error);
+                    showToast(`An error occurred: ${error.message}. Please try again.`, 'error');
+                }
                 // Re-enable controls on fetch error
-                quantityButtons.forEach(btn => { btn.disabled = false; });
-                quantityInputs.forEach(input => { input.disabled = false; });
+                if (quantityControlsContainer) {
+                    quantityButtons.forEach(el => { el.disabled = false; });
+                }
             });
     }
 
     /**
      * Updates the entire cart page UI based on data received from API calls (update, remove, clear).
      * Handles displaying the empty cart message or updating item details and totals.
-     * Re-enables quantity controls after successful updates.
+     * Re-enables quantity controls after successful updates and re-initializes them if needed.
      * @param {object} data - The data object received from the cart API. Expected properties:
      *                        `total_items` (number), `is_empty` (boolean), `total_price` (number),
      *                        `updated_product` (object, optional - contains `product_id`, `new_quantity`, `new_total`).
@@ -893,11 +1036,12 @@ document.addEventListener('DOMContentLoaded', function () {
         updateCartIcon(data.total_items > 0);
         updateCartBadge(); // Fetches count internally
 
+        const currentCartContainer = document.querySelector('.cart-container'); // Re-fetch in case it was replaced
+
         // If the cart is empty, replace the container content with the empty message
         if (data.is_empty) {
-            const cartContainer = document.querySelector('.cart-container');
-            if (cartContainer) {
-                cartContainer.innerHTML = `
+            if (currentCartContainer) {
+                currentCartContainer.innerHTML = `
                     <h1>Your Shopping Cart</h1>
                     <div class="empty-cart">
                         <img src="/assets/images/cart/empty_shopping_cart.png" alt="Empty Shopping Cart" class="empty-cart-image">
@@ -911,9 +1055,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // If an item was specifically updated (not a full clear/load)
         const updatedProduct = data.updated_product;
-        if (updatedProduct) {
+        if (updatedProduct && currentCartContainer) {
             const productId = updatedProduct.product_id;
-            const itemRow = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
+            const itemRow = currentCartContainer.querySelector(`.cart-item[data-product-id="${productId}"]`);
 
             // If the new quantity is zero or less, remove the row
             if (updatedProduct.new_quantity <= 0 && itemRow) {
@@ -926,25 +1070,43 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (quantityInput) {
                     quantityInput.value = updatedProduct.new_quantity;
                     // Update the data attribute used for change detection
-                    quantityInput.setAttribute('data-previous-value', updatedProduct.new_quantity.toString());
+                    quantityInput.dataset.previousValue = updatedProduct.new_quantity.toString();
                 }
                 if (totalElement && updatedProduct.new_total !== undefined) {
-                    totalElement.textContent = `$${updatedProduct.new_total.toFixed(2)}`;
+                    totalElement.textContent = `$${parseFloat(updatedProduct.new_total).toFixed(2)}`;
                 }
             }
         }
 
         // Update the overall cart total price
-        const cartTotalElement = document.getElementById('cart-total-price');
-        if (cartTotalElement && data.total_price !== undefined) {
-            cartTotalElement.textContent = `$${data.total_price.toFixed(2)}`;
+        if (currentCartContainer) {
+            const cartTotalElement = currentCartContainer.querySelector('#cart-total-price');
+            if (cartTotalElement && data.total_price !== undefined) {
+                cartTotalElement.textContent = `$${parseFloat(data.total_price).toFixed(2)}`;
+            }
         }
 
-        // Re-enable quantity controls after a successful update
-        const quantityButtons = document.querySelectorAll('.quantity-btn');
-        const quantityInputs = document.querySelectorAll('.quantity-input');
-        quantityButtons.forEach(btn => { btn.disabled = false; });
-        quantityInputs.forEach(input => { input.disabled = false; });
+        // Re-enable all quantity controls after a successful update
+        // and re-initialize them if they were not part of a full page replacement
+        if (currentCartContainer) {
+            const allQuantityControls = currentCartContainer.querySelectorAll('.quantity-controls');
+            allQuantityControls.forEach(qc => {
+                const qInput = qc.querySelector('.quantity-input');
+                const qDec = qc.querySelector('.decrease-btn');
+                const qInc = qc.querySelector('.increase-btn');
+                if (qInput) qInput.disabled = false;
+                if (qDec) qDec.disabled = false;
+                if (qInc) qInc.disabled = false;
+            });
+
+            // If cart items were re-rendered by PHP and reloaded via AJAX,
+            // or if this function is called after a full cart load,
+            // it might be necessary to re-run setupCartQuantityControls.
+            // For now, assume individual updates don't require full re-init,
+            // but a full cart load (e.g. after clear then add) would.
+            // The initial setupCartQuantityControls handles the load.
+            // This re-enabling is for after an AJAX update.
+        }
     }
 
     /**
@@ -981,17 +1143,21 @@ document.addEventListener('DOMContentLoaded', function () {
         const allButtons = document.querySelectorAll('button');
         allButtons.forEach(btn => { btn.disabled = true; });
 
-        const deleteUrl = `/api/cart/item/${productId}`;
-        console.log('Making DELETE request to:', deleteUrl);
+        const csrfToken = getCsrfToken();
+        const deleteUrl = `/api/cart/item/${productId}`; // This is for the removeItem method in controller
+        // If using the /api/cart/remove endpoint, the body would be { product_id: productId, csrf_token: csrfToken }
+        // For /api/cart/item/{product_id}, the product_id is in the URL, body just needs csrf_token
+
+        console.log('Making POST request to:', deleteUrl);
 
         // Send request to remove item API endpoint (using POST as per previous logic)
-        fetch(deleteUrl, {
-            method: 'POST', // Or 'DELETE' if API supports it
+        fetch(deleteUrl, { // Using the removeItem route
+            method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({}) // Empty body
+            body: JSON.stringify({ csrf_token: csrfToken }) // Body for removeItem
         })
             .then(response => {
                 console.log('Received response from DELETE request. Status:', response.status);
@@ -1000,6 +1166,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (response.ok && contentType && contentType.indexOf("application/json") !== -1) {
                     return response.json();
                 } else if (!response.ok) {
+                    if (response.status === 403) {
+                        showToast("Your session may have expired or the request was tampered with. Please refresh the page and try again.", "error");
+                        allButtons.forEach(btn => { btn.disabled = false; });
+                        return Promise.reject(new Error('CSRF validation failed (403)'));
+                    }
                     return response.text().then(text => {
                         throw new Error(`Remove item failed: ${response.status} ${response.statusText}. ${text}`);
                     });
@@ -1014,17 +1185,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     console.log('Attempting to update UI after deletion...');
                     // Remove the item row from the DOM
-                    const itemRow = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
-                    if (itemRow) itemRow.remove();
+                    const currentCartContainer = document.querySelector('.cart-container');
+                    if (currentCartContainer) {
+                        const itemRow = currentCartContainer.querySelector(`.cart-item[data-product-id="${productId}"]`);
+                        if (itemRow) itemRow.remove();
+                    }
 
                     // Update the total price display
-                    const cartTotalElement = document.getElementById('cart-total-price');
-                    if (cartTotalElement && data.total_price !== undefined) {
-                        // Note: API response for single item removal might not include total_price consistently.
-                        // It might be better to rely on updateCartBadge/fetchCartCount or a full cart refresh.
-                        // For now, updating based on provided data if available.
-                        const totalPrice = parseFloat(data.total_price);
-                        cartTotalElement.textContent = !isNaN(totalPrice) ? `$${totalPrice.toFixed(2)}` : '$--.--'; // Display formatted price or placeholder
+                    if (currentCartContainer) {
+                        const cartTotalElement = currentCartContainer.querySelector('#cart-total-price');
+                        if (cartTotalElement && data.total_price !== undefined) {
+                            const totalPrice = parseFloat(data.total_price);
+                            cartTotalElement.textContent = !isNaN(totalPrice) ? `$${totalPrice.toFixed(2)}` : '$--.--';
+                        }
                     }
 
                     // If the cart is now empty, update the entire UI
@@ -1035,22 +1208,32 @@ document.addEventListener('DOMContentLoaded', function () {
                             total_price: 0
                         });
                     } else {
-                        // Otherwise, just update icon and badge
+                        // Otherwise, just update icon and badge, and re-enable controls
                         updateCartIcon(true); // Cart is not empty
                         updateCartBadge();
+                        // Re-enable relevant controls after successful removal of one item
+                        if (currentCartContainer) {
+                            const allQuantityControls = currentCartContainer.querySelectorAll('.quantity-controls .quantity-btn, .quantity-controls .quantity-input');
+                            allQuantityControls.forEach(el => el.disabled = false);
+                        }
                     }
                     showToast('Item removed from cart.', 'success');
 
                 } else {
                     showToast('Error: ' + (data.message || 'Could not remove item from cart.'), 'error');
                 }
-                // Re-enable buttons after operation completes (success or error)
-                allButtons.forEach(btn => { btn.disabled = false; });
+                // Re-enable all buttons after operation completes (success or error),
+                // unless cart became empty (UI replaced)
+                if (!data.is_empty) {
+                    allButtons.forEach(btn => { btn.disabled = false; });
+                }
             })
             .catch(error => {
-                console.error('Error details during delete fetch operation:', error);
-                console.error('Remove Cart Item Fetch error:', error);
-                showToast(`An error occurred: ${error.message}. Please try again.`, 'error');
+                if (error.message !== 'CSRF validation failed (403)') {
+                    console.error('Error details during delete fetch operation:', error);
+                    console.error('Remove Cart Item Fetch error:', error);
+                    showToast(`An error occurred: ${error.message}. Please try again.`, 'error');
+                }
                 // Re-enable buttons on fetch error
                 allButtons.forEach(btn => { btn.disabled = false; });
             });
@@ -1127,6 +1310,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial update of the cart badge on page load
     updateCartBadge();
+
+    // --- Product Detail Page Quantity Controls ---
+    const productDetailForms = document.querySelectorAll('.add-to-cart-form-detail');
+
+    productDetailForms.forEach(form => {
+        const controlsContainer = form.querySelector('.quantity-controls');
+        const quantityInput = form.querySelector('.quantity-input'); // For getting min/max
+
+        if (!controlsContainer || !quantityInput) {
+            console.warn('Could not find quantity controls or input for product detail form:', form);
+            return;
+        }
+
+        const productId = form.dataset.productId;
+        if (!productId) {
+            console.warn('Product ID not found on product detail form:', form);
+            return;
+        }
+
+        const minQuantity = parseInt(quantityInput.min, 10) || 1;
+        const maxQuantity = parseInt(quantityInput.max, 10) || 99; // Stock quantity
+
+        initializeQuantityControls(controlsContainer, {
+            productId: productId,
+            minQuantity: minQuantity,
+            maxQuantity: maxQuantity
+            // No onQuantityChange or onQuantityZero needed for product detail page,
+            // as it only updates the input locally before "Add to Cart" is clicked.
+        });
+    });
 
 
     // --- Initial Sub-category Load ---

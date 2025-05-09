@@ -21,6 +21,12 @@ class User
     private $db;
 
     /**
+     * The logger instance.
+     * @var \Psr\Log\LoggerInterface
+     */
+    private \Psr\Log\LoggerInterface $logger;
+
+    /**
      * Constructor for the User model.
      *
      * Accepts either a Database wrapper object or a direct PDO connection.
@@ -37,6 +43,7 @@ class User
         } else {
             throw new \InvalidArgumentException("Invalid database connection provided.");
         }
+        $this->logger = \App\Core\Registry::get('logger');
     }
 
     /**
@@ -50,43 +57,42 @@ class User
      */
     public function findById(int $id): ?array
     {
-        error_log("User::findById - Starting with user ID: {$id}");
+        $this->logger->debug("User::findById - Starting", ['user_id' => $id]);
         
         try {
             $sql = "SELECT user_id, name, phone, email, password, role, registration_date, account_status FROM users WHERE user_id = :id";
-            error_log("User::findById - SQL: " . $sql);
+            $this->logger->debug("User::findById - SQL", ['sql' => $sql]);
             
             $stmt = $this->db->prepare($sql);
-            error_log("User::findById - Statement prepared");
+            $this->logger->debug("User::findById - Statement prepared");
             
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            error_log("User::findById - Parameter bound: id={$id}");
+            $this->logger->debug("User::findById - Parameter bound", ['id' => $id]);
             
-            error_log("User::findById - Executing statement");
+            $this->logger->debug("User::findById - Executing statement");
             $stmt->execute();
-            error_log("User::findById - Statement executed");
+            $this->logger->debug("User::findById - Statement executed");
             
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            error_log("User::findById - Result: " . ($result ? "User found" : "User not found"));
+            $this->logger->debug("User::findById - Fetch result", ['found' => (bool)$result]);
             
             if ($result) {
-                error_log("User::findById - User data: " . json_encode([
+                $this->logger->debug("User::findById - User data found", [
                     'user_id' => $result['user_id'] ?? null,
                     'name' => $result['name'] ?? null,
                     'email' => $result['email'] ?? null,
                     'role' => $result['role'] ?? null,
                     'account_status' => $result['account_status'] ?? null,
-                    'has_password' => isset($result['password']),
-                    'has_registration_date' => isset($result['registration_date'])
-                ]));
+                    // Do not log password hash or full registration date unless necessary for specific debugging
+                ]);
             }
             
             return $result === false ? null : $result; // Return null if fetch fails
         } catch (\PDOException $e) {
-            error_log("User::findById - PDOException: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+            $this->logger->error("User::findById - PDOException", ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return null;
         } catch (\Throwable $e) {
-            error_log("User::findById - Throwable: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+            $this->logger->error("User::findById - Throwable", ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return null;
         }
     }
@@ -237,29 +243,23 @@ class User
         // Check if user exists and has a password set
         if ($user && isset($user['password'])) {
             // Log password verification attempt details (for debugging)
-            if (\App\Core\Registry::has('logger')) {
-                $logger = \App\Core\Registry::get('logger');
-                $logger->debug("Password verification attempt", [
-                    'email' => $email,
-                    'password_length' => strlen($password),
-                    'stored_hash' => $user['password'],
-                    'hash_length' => strlen($user['password']),
-                    'hash_starts_with' => substr($user['password'], 0, 7)
-                ]);
+            $this->logger->debug("Password verification attempt", [
+                'email' => $email,
+                'password_length' => strlen($password),
+                'stored_hash' => $user['password'], // Be cautious logging hashes, even partial, in production
+                'hash_length' => strlen($user['password']),
+                'hash_starts_with' => substr($user['password'], 0, 7) // Be cautious
+            ]);
 
-                // Verify the provided plain password against the stored hash
-                $result = password_verify($password, $user['password']);
+            // Verify the provided plain password against the stored hash
+            $result = password_verify($password, $user['password']);
 
-                $logger->debug("Password verification result", [
-                    'email' => $email,
-                    'result' => $result ? 'success' : 'failure'
-                ]);
+            $this->logger->debug("Password verification result", [
+                'email' => $email,
+                'result' => $result ? 'success' : 'failure'
+            ]);
 
-                return $result;
-            }
-
-            // Original verification if logger not available
-            return password_verify($password, $user['password']);
+            return $result;
         }
         return false; // User not found or password not set
     }

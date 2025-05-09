@@ -23,6 +23,12 @@ class Product
     private $db;
 
     /**
+     * The logger instance.
+     * @var \Psr\Log\LoggerInterface
+     */
+    private \Psr\Log\LoggerInterface $logger;
+
+    /**
      * Constructor for the Product model.
      *
      * Accepts either a Database wrapper object or a direct PDO connection.
@@ -39,6 +45,7 @@ class Product
         } else {
             throw new \InvalidArgumentException("Invalid database connection provided.");
         }
+        $this->logger = \App\Core\Registry::get('logger');
     }
 
     /**
@@ -81,7 +88,7 @@ class Product
      */
     public function findByCategory(int $categoryId): array
     {
-        $logger = Registry::get('logger');
+        $logger = $this->logger;
         $logger->info('Product::findByCategory called.', ['categoryId' => $categoryId]);
 
         $childCategoryIds = [];
@@ -209,8 +216,8 @@ class Product
             return $stmt->fetchAll(PDO::FETCH_ASSOC | PDO::FETCH_UNIQUE);
         } catch (\PDOException $e) {
             // Log the error appropriately
-            Registry::get('logger')->error("Error fetching multiple products by ID", ['exception' => $e, 'ids' => $ids]);
-            // error_log("Error fetching multiple products by ID: " . $e->getMessage()); // Keep original logging if desired
+            $this->logger->error("Error fetching multiple products by ID", ['exception' => $e, 'ids' => $ids]);
+            
             return []; // Return empty array on error
         }
     }
@@ -310,7 +317,7 @@ class Product
                 'pagination' => $pagination
             ];
         } catch (\PDOException $e) {
-            Registry::get('logger')->error("Error fetching paginated products", [
+            $this->logger->error("Error fetching paginated products", [
                 'exception' => $e,
                 'page' => $page,
                 'perPage' => $perPage,
@@ -360,8 +367,8 @@ class Product
             ]);
             return (int) $this->db->lastInsertId(); // Return the new product ID
         } catch (\PDOException $e) {
-            Registry::get('logger')->error("Error creating product", ['exception' => $e, 'data' => $data]);
-            // error_log("Error creating product: " . $e->getMessage()); // Keep if needed
+            $this->logger->error("Error creating product", ['exception' => $e, 'data' => $data]);
+            
             return false;
         }
     }
@@ -398,8 +405,8 @@ class Product
             // Return true only if execute succeeded AND at least one row was changed
             return $result && $stmt->rowCount() > 0;
         } catch (\PDOException $e) {
-            Registry::get('logger')->error("Error updating product", ['exception' => $e, 'product_id' => $id, 'data' => $data]);
-            // error_log("Error updating product: " . $e->getMessage()); // Keep if needed
+            $this->logger->error("Error updating product", ['exception' => $e, 'product_id' => $id, 'data' => $data]);
+            
             return false;
         }
     }
@@ -422,8 +429,8 @@ class Product
             // Ensure the query executed and exactly one row was affected
             return $result && $stmt->rowCount() > 0;
         } catch (\PDOException $e) {
-            Registry::get('logger')->error("Error toggling product status", ['exception' => $e, 'product_id' => $id]);
-            // error_log("Error toggling product status: " . $e->getMessage()); // Keep if needed
+            $this->logger->error("Error toggling product status", ['exception' => $e, 'product_id' => $id]);
+            
             return false;
         }
     }
@@ -445,8 +452,8 @@ class Product
             $stmt->execute();
             return (int) $stmt->fetchColumn();
         } catch (\PDOException $e) {
-            Registry::get('logger')->error("Error counting low stock products", ['exception' => $e, 'threshold' => $threshold]);
-            // error_log("Error counting low stock products: " . $e->getMessage()); // Keep if needed
+            $this->logger->error("Error counting low stock products", ['exception' => $e, 'threshold' => $threshold]);
+            
             return 0; // Return 0 on error
         }
     }
@@ -462,7 +469,7 @@ class Product
             $stmt = $this->db->query("SELECT COUNT(*) FROM products");
             return (int) $stmt->fetchColumn();
         } catch (\PDOException $e) {
-            Registry::get('logger')->error("Error counting total products", ['exception' => $e]);
+            $this->logger->error("Error counting total products", ['exception' => $e]);
             return 0; // Return 0 on error
         }
     }
@@ -482,7 +489,7 @@ class Product
      */
     public function searchByNameOrDescription(string $searchTerm, int $limit = 20): array
     {
-        $logger = Registry::get('logger');
+        $logger = $this->logger;
         $logger->info('Product::searchByNameOrDescription called.', ['searchTerm' => $searchTerm, 'limit' => $limit]);
         
         // Sanitize the search term
@@ -564,7 +571,7 @@ class Product
      */
     public function searchWithEnhancedTerms(array $aiParams, int $limit = 20): array
     {
-        $logger = Registry::get('logger');
+        $logger = $this->logger;
         $logger->info('Product::searchWithEnhancedTerms called.', [
             'keywords_count' => count($aiParams['keywords'] ?? []),
             'categories_count' => count($aiParams['categories'] ?? []),

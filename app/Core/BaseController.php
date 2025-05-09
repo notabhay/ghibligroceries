@@ -66,6 +66,16 @@ abstract class BaseController
 
         // Extract the data array into individual variables accessible by the view and layout.
         // For example, $data['title'] becomes $title.
+// Add CSRF token to data for the view
+        if (\App\Core\Registry::has('session')) {
+            $session = \App\Core\Registry::get('session');
+            $data['csrf_token_for_layout'] = $session->getCsrfToken();
+        } else {
+            // Fallback or log error if session is not available
+            // For now, providing an empty string. Consider logging this.
+            error_log("Session service not found in Registry for BaseController::view(). CSRF token will be empty.");
+            $data['csrf_token_for_layout'] = '';
+        }
         extract($data);
 
         // Start output buffering to capture the view's content.

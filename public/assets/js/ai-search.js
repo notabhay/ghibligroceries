@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 addToCartBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    addToCart(product.product_id);
+                    addToCart(product.product_id, addToCartBtn); // Pass the button element
                 });
             }
         }
@@ -225,10 +225,14 @@ document.addEventListener('DOMContentLoaded', function () {
     /**
      * Adds a product to the cart
      * @param {string|number} productId - The ID of the product to add
+     * @param {HTMLElement} buttonElement - The button that was clicked
      */
-    function addToCart(productId) {
-        const button = document.querySelector(`.add-to-cart-btn[data-product-id="${productId}"]`);
-        if (!button) return;
+    function addToCart(productId, buttonElement) { // Added buttonElement parameter
+        const button = buttonElement; // Use the passed button
+        if (!button) {
+            console.error("Button element not provided to addToCart function for product ID:", productId);
+            return;
+        }
 
         // Provide visual feedback
         button.textContent = 'Adding...';
@@ -242,13 +246,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
+                csrf_token: getCsrfToken(),
                 product_id: productId,
                 quantity: 1
             })
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    if (response.status === 403) {
+                        showToast("Your session may have expired or the request was tampered with. Please refresh the page and try again.", "error");
+                        // Reset button before rejecting
+                        button.textContent = 'Add to Cart';
+                        button.disabled = false;
+                        return Promise.reject(new Error('CSRF validation failed (403)')); // Stop further .then()
+                    }
+                    // For other errors, capture status to throw
+                    const status = response.status;
+                    return response.text().then(text => { // Get error body if any
+                        throw new Error(`HTTP error! Status: ${status}. Body: ${text}`);
+                    });
                 }
                 return response.json();
             })
@@ -262,23 +278,30 @@ document.addEventListener('DOMContentLoaded', function () {
                     showToast(data.message || 'Item added to cart successfully!', 'success');
 
                     // Update cart icon and badge if those functions exist
-                    if (typeof updateCartIcon === 'function') {
-                        updateCartIcon(true);
+                    if (typeof window.updateCartIcon === 'function') { // Check window scope
+                        window.updateCartIcon(true);
                     }
-                    if (typeof updateCartBadge === 'function') {
-                        updateCartBadge();
+                    if (typeof window.updateCartBadge === 'function') { // Check window scope
+                        window.updateCartBadge();
                     }
                 } else {
                     showToast('Error: ' + (data.message || 'Could not add item to cart.'), 'error');
                 }
             })
             .catch(error => {
-                // Reset button
-                button.textContent = 'Add to Cart';
-                button.disabled = false;
+                // Reset button (already handled for 403, but good for other errors)
+                if (button.disabled) { // Check if button is still disabled (i.e., not handled by 403 block)
+                    button.textContent = 'Add to Cart';
+                    button.disabled = false;
+                }
 
-                console.error('Add to Cart error:', error);
-                showToast('An error occurred. Please try again.', 'error');
+                // If it's not the specific 403 error we handled, show a generic toast
+                if (error.message !== 'CSRF validation failed (403)') {
+                    console.error('Add to Cart error:', error);
+                    showToast(`An error occurred: ${error.message}. Please try again.`, 'error');
+                } else {
+                    console.error('Add to Cart error: CSRF validation failed (403)'); // Log it still
+                }
             });
     }
 

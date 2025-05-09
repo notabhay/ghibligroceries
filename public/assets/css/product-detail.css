@@ -1,0 +1,264 @@
+/* Variables (assuming these are defined in a global styles.css or similar) */
+/*
+:root {
+    --tomato-red: #FF6347;
+    --herb-green: #2E8B57;
+    --light-gray: #f8f9fa;
+    --dark-gray: #343a40;
+    --border-color: #dee2e6;
+    --primary-font: 'Arial', sans-serif;
+    --secondary-font: 'Georgia', serif;
+    --text-color: #212529;
+    --link-color: #007bff;
+    --link-hover-color: #0056b3;
+    --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+*/
+
+/* Container for the entire product detail section */
+.product-detail-container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    max-width: 1200px;
+    /* Or your site's max-width */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Breadcrumbs specific styling */
+.product-breadcrumbs {
+    margin-bottom: 20px;
+    padding: 0.75rem 1rem;
+    background-color: var(--light-gray, #f8f9fa);
+    /* Fallback color */
+    border-radius: 0.25rem;
+}
+
+.product-breadcrumbs .breadcrumb {
+    margin-bottom: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
+.product-breadcrumbs .breadcrumb-item a {
+    color: var(--link-color, #007bff);
+    text-decoration: none;
+}
+
+.product-breadcrumbs .breadcrumb-item a:hover {
+    color: var(--link-hover-color, #0056b3);
+    text-decoration: underline;
+}
+
+.product-breadcrumbs .breadcrumb-item.active {
+    color: var(--dark-gray, #343a40);
+}
+
+/* Main content area for two-column layout */
+.product-detail-main-content {
+    display: flex;
+    flex-wrap: wrap;
+    /* Allow wrapping for smaller screens */
+    gap: 30px;
+    /* Space between columns */
+}
+
+/* Left Column: Product Image */
+.product-image-column {
+    flex: 1 1 400px;
+    /* Grow, shrink, base width */
+    min-width: 300px;
+    /* Minimum width before wrapping */
+}
+
+.product-image-main-wrapper {
+    position: relative;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    /* Ensure image stays within borders */
+    box-shadow: var(--box-shadow, 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075));
+}
+
+.product-detail-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    /* Adjust as needed */
+    object-fit: contain;
+    /* Or 'cover' depending on desired effect */
+}
+
+/* Right Column: Product Info */
+.product-info-column {
+    flex: 1 1 500px;
+    /* Grow, shrink, base width */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* Space between elements in this column */
+}
+
+.product-info-column h1 {
+    font-family: var(--primary-font, 'Arial', sans-serif);
+    font-size: 2.5rem;
+    /* Prominent H1 */
+    margin-bottom: 0.5rem;
+    color: var(--dark-gray, #343a40);
+}
+
+.product-detail-price {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: var(--herb-green, #2E8B57);
+    /* Use existing price color or a theme color */
+    margin-bottom: 1rem;
+}
+
+.product-detail-category a {
+    color: var(--link-color, #007bff);
+    text-decoration: none;
+}
+
+.product-detail-category a:hover {
+    color: var(--link-hover-color, #0056b3);
+    text-decoration: underline;
+}
+
+/* Stock Status Styling */
+.product-stock {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.product-stock.in-stock {
+    background-color: #d4edda;
+    /* Light green */
+    color: #155724;
+    /* Dark green */
+    border: 1px solid #c3e6cb;
+}
+
+.product-stock.low-stock {
+    background-color: #fff3cd;
+    /* Light yellow/orange */
+    color: #856404;
+    /* Dark yellow/orange */
+    border: 1px solid #ffeeba;
+}
+
+.product-stock.out-of-stock {
+    background-color: #f8d7da;
+    /* Light red */
+    color: #721c24;
+    /* Dark red */
+    border: 1px solid #f5c6cb;
+}
+
+/* Full Product Description */
+.product-description-full {
+    margin-top: 1rem;
+    font-family: var(--secondary-font, 'Georgia', serif);
+    line-height: 1.6;
+}
+
+.product-description-full h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--dark-gray, #343a40);
+    border-bottom: 2px solid var(--herb-green, #2E8B57);
+    padding-bottom: 0.25rem;
+}
+
+/* Add to Cart Form Styling */
+.add-to-cart-form-detail {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+    /* Align items to the start of the column */
+}
+
+.product-detail-quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-detail-quantity label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.product-detail-quantity .quantity-input {
+    width: 60px;
+    text-align: center;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 0.25rem;
+}
+
+.product-detail-quantity .quantity-btn {
+    background-color: var(--light-gray, #f8f9fa);
+    border: 1px solid var(--border-color, #dee2e6);
+    color: var(--dark-gray, #343a40);
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
+    border-radius: 0.25rem;
+}
+
+.product-detail-quantity .quantity-btn:hover {
+    background-color: #e2e6ea;
+    /* Slightly darker gray */
+}
+
+.add-to-cart-btn-detail {
+    /* Assuming .btn and .btn-primary are defined globally and provide base styling */
+    /* This class can be used for specific overrides if needed, or just rely on global styles */
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    /* Ensure it matches .btn-primary style from styles.css */
+}
+
+.add-to-cart-btn-detail:disabled {
+    background-color: #6c757d;
+    /* Bootstrap's secondary color for disabled state */
+    border-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.add-to-cart-btn-detail .fa-shopping-cart {
+    margin-right: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .product-detail-main-content {
+        flex-direction: column;
+        /* Stack columns */
+    }
+
+    .product-info-column h1 {
+        font-size: 2rem;
+        /* Slightly smaller H1 on mobile */
+    }
+
+    .product-detail-price {
+        font-size: 1.5rem;
+    }
+
+    .add-to-cart-form-detail {
+        align-items: stretch;
+        /* Make form elements take full width */
+    }
+
+    .add-to-cart-btn-detail {
+        width: 100%;
+        text-align: center;
+    }
+}

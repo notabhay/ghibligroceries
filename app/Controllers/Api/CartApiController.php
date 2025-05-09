@@ -8,9 +8,7 @@ use App\Core\Session;
 use App\Models\Product;
 use App\Core\Registry;
 use App\Helpers\CartHelper;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Monolog\Level;
+
 
 /**
  * Cart API Controller
@@ -54,15 +52,7 @@ class CartApiController extends BaseController
         $this->cartHelper = new CartHelper($this->session, Registry::get('database'));
 
         // Initialize Logger
-        $this->logger = new Logger('cart_api');
-        $logFilePath = BASE_PATH . '/logs/app.log'; // Use BASE_PATH constant
-        $logDir = dirname($logFilePath);
-        if (!is_dir($logDir)) {
-            // Attempt to create the directory recursively
-            mkdir($logDir, 0777, true);
-        }
-        // Add a handler to log messages to the application log file
-        $this->logger->pushHandler(new StreamHandler($logFilePath, Level::Debug));
+        $this->logger = Registry::get('logger');
     }
 
     /**
@@ -70,7 +60,7 @@ class CartApiController extends BaseController
      *
      * Handles POST requests to add a specified quantity of a product to the user's cart.
      * Requires user authentication.
-     * Expects JSON input: {"product_id": int, "quantity": int}
+     * Expects JSON input: {"product_id": int, "quantity": int, "csrf_token": string}
      *
      * @api {post} /api/cart/add Add item to cart
      * @apiName AddCartItem
@@ -79,6 +69,7 @@ class CartApiController extends BaseController
      *
      * @apiBody {Number} product_id The ID of the product to add.
      * @apiBody {Number} quantity The positive quantity of the product to add.
+     * @apiBody {String} csrf_token The CSRF protection token.
      *
      * @apiSuccess {Boolean} success Indicates if the operation was successful.
      * @apiSuccess {String} message Confirmation message.
@@ -100,23 +91,14 @@ class CartApiController extends BaseController
      *
      * @apiError (400 Bad Request) InvalidInput Invalid product_id or quantity provided.
      * @apiError (401 Unauthorized) AuthenticationRequired User is not authenticated.
+     * @apiError (403 Forbidden) InvalidCsrfToken The provided CSRF token was invalid.
      * @apiError (404 Not Found) ProductNotFound The specified product does not exist or is unavailable.
      * @apiError (405 Method Not Allowed) InvalidMethod Request method was not POST.
      *
-     * @apiErrorExample {json} Error-Response (400):
-     *     HTTP/1.1 400 Bad Request
+     * @apiErrorExample {json} Error-Response (403):
+     *     HTTP/1.1 403 Forbidden
      *     {
-     *       "error": "Invalid input. Please provide a valid product_id and a positive quantity."
-     *     }
-     * @apiErrorExample {json} Error-Response (401):
-     *     HTTP/1.1 401 Unauthorized
-     *     {
-     *       "error": "Authentication required."
-     *     }
-     * @apiErrorExample {json} Error-Response (404):
-     *     HTTP/1.1 404 Not Found
-     *     {
-     *       "error": "Product not found or insufficient stock."
+     *       "error": "Invalid security token."
      *     }
      */
     public function add()
@@ -135,6 +117,13 @@ class CartApiController extends BaseController
 
         // Get JSON data from the request body
         $requestData = json_decode(file_get_contents('php://input'), true);
+
+        // Validate CSRF token
+        if (!isset($requestData['csrf_token']) || !$this->session->validateCsrfToken($requestData['csrf_token'])) {
+            $this->logger->warning('Invalid CSRF token for cart add.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token' => $this->session->getCsrfToken()]);
+            $this->jsonResponse(['error' => 'Invalid security token.'], 403);
+            return;
+        }
 
         // Validate input data
         if (!isset($requestData['product_id']) || !isset($requestData['quantity']) || !is_numeric($requestData['product_id']) || !is_numeric($requestData['quantity']) || $requestData['quantity'] <= 0) {
@@ -173,7 +162,7 @@ class CartApiController extends BaseController
      * Handles POST requests to update the quantity of a specific product in the cart.
      * If the new quantity is 0 or less, the item is removed.
      * Requires user authentication.
-     * Expects JSON input: {"product_id": int, "quantity": int}
+     * Expects JSON input: {"product_id": int, "quantity": int, "csrf_token": string}
      *
      * @api {post} /api/cart/update Update item quantity
      * @apiName UpdateCartItem
@@ -182,6 +171,7 @@ class CartApiController extends BaseController
      *
      * @apiBody {Number} product_id The ID of the product to update.
      * @apiBody {Number} quantity The new quantity for the product (non-negative integer). If 0, the item is removed.
+     * @apiBody {String} csrf_token The CSRF protection token.
      *
      * @apiSuccess {Boolean} success Indicates if the operation was successful.
      * @apiSuccess {String} message Confirmation message.
@@ -216,13 +206,14 @@ class CartApiController extends BaseController
      *
      * @apiError (400 Bad Request) InvalidInput Invalid product_id or quantity provided.
      * @apiError (401 Unauthorized) AuthenticationRequired User is not authenticated.
+     * @apiError (403 Forbidden) InvalidCsrfToken The provided CSRF token was invalid.
      * @apiError (404 Not Found) ProductNotFound The specified product does not exist in the cart or database.
      * @apiError (405 Method Not Allowed) InvalidMethod Request method was not POST.
      *
-     * @apiErrorExample {json} Error-Response (400):
-     *     HTTP/1.1 400 Bad Request
+     * @apiErrorExample {json} Error-Response (403):
+     *     HTTP/1.1 403 Forbidden
      *     {
-     *       "error": "Invalid input. Please provide a valid product_id and quantity."
+     *       "error": "Invalid security token."
      *     }
      */
     public function update()
@@ -241,6 +232,13 @@ class CartApiController extends BaseController
 
         // Get JSON data
         $requestData = json_decode(file_get_contents('php://input'), true);
+
+        // Validate CSRF token
+        if (!isset($requestData['csrf_token']) || !$this->session->validateCsrfToken($requestData['csrf_token'])) {
+            $this->logger->warning('Invalid CSRF token for cart update.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token' => $this->session->getCsrfToken()]);
+            $this->jsonResponse(['error' => 'Invalid security token.'], 403);
+            return;
+        }
 
         // Validate input
         if (!isset($requestData['product_id']) || !isset($requestData['quantity']) || !is_numeric($requestData['product_id']) || !is_numeric($requestData['quantity'])) {
@@ -369,7 +367,7 @@ class CartApiController extends BaseController
      *
      * Handles POST requests to remove a specific product entirely from the cart, regardless of quantity.
      * Requires user authentication.
-     * Expects JSON input: {"product_id": int}
+     * Expects JSON input: {"product_id": int, "csrf_token": string}
      *
      * @api {post} /api/cart/remove Remove item from cart
      * @apiName RemoveCartItem
@@ -377,6 +375,7 @@ class CartApiController extends BaseController
      * @apiPermission user
      *
      * @apiBody {Number} product_id The ID of the product to remove.
+     * @apiBody {String} csrf_token The CSRF protection token.
      *
      * @apiSuccess {Boolean} success Indicates if the operation was successful.
      * @apiSuccess {String} message Confirmation message.
@@ -398,14 +397,14 @@ class CartApiController extends BaseController
      *
      * @apiError (400 Bad Request) InvalidInput Invalid or missing product_id.
      * @apiError (401 Unauthorized) AuthenticationRequired User is not authenticated.
+     * @apiError (403 Forbidden) InvalidCsrfToken The provided CSRF token was invalid.
      * @apiError (404 Not Found) ItemNotFound The specified item was not found in the cart.
      * @apiError (405 Method Not Allowed) InvalidMethod Request method was not POST.
      *
-     * @apiErrorExample {json} Error-Response (404):
-     *     HTTP/1.1 404 Not Found
+     * @apiErrorExample {json} Error-Response (403):
+     *     HTTP/1.1 403 Forbidden
      *     {
-     *       "success": false,
-     *       "error": "Item not found in cart."
+     *       "error": "Invalid security token."
      *     }
      */
     public function remove()
@@ -424,6 +423,13 @@ class CartApiController extends BaseController
 
         // Get JSON data
         $requestData = json_decode(file_get_contents('php://input'), true);
+
+        // Validate CSRF token
+        if (!isset($requestData['csrf_token']) || !$this->session->validateCsrfToken($requestData['csrf_token'])) {
+            $this->logger->warning('Invalid CSRF token for cart remove.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token' => $this->session->getCsrfToken()]);
+            $this->jsonResponse(['error' => 'Invalid security token.'], 403);
+            return;
+        }
 
         // Validate input
         if (!isset($requestData['product_id']) || !is_numeric($requestData['product_id'])) {
@@ -449,6 +455,7 @@ class CartApiController extends BaseController
      * Handles POST requests (often via DELETE method override in forms/JS)
      * to remove a specific product from the cart using a route parameter.
      * Requires user authentication.
+     * Expects JSON input: {"csrf_token": string}
      * Logs detailed information about the process.
      *
      * @param array $params Associative array containing route parameters. Expected: ['product_id' => int]
@@ -459,6 +466,7 @@ class CartApiController extends BaseController
      * @apiPermission user
      *
      * @apiParam {Number} product_id The ID of the product to remove passed in the URL path.
+     * @apiBody {String} csrf_token The CSRF protection token.
      *
      * @apiSuccess {Boolean} success Indicates if the operation was successful.
      * @apiSuccess {String} message Confirmation message.
@@ -480,14 +488,14 @@ class CartApiController extends BaseController
      *
      * @apiError (400 Bad Request) InvalidInput Invalid or missing product_id in the URL.
      * @apiError (401 Unauthorized) AuthenticationRequired User is not authenticated.
+     * @apiError (403 Forbidden) InvalidCsrfToken The provided CSRF token was invalid.
      * @apiError (404 Not Found) ItemNotFound The specified item was not found in the cart.
      * @apiError (405 Method Not Allowed) InvalidMethod Request method was not POST (or simulated DELETE via POST).
      *
-     * @apiErrorExample {json} Error-Response (400):
-     *     HTTP/1.1 400 Bad Request
+     * @apiErrorExample {json} Error-Response (403):
+     *     HTTP/1.1 403 Forbidden
      *     {
-     *       "success": false,
-     *       "error": "Invalid product ID."
+     *       "error": "Invalid security token."
      *     }
      */
     public function removeItem($params)
@@ -505,6 +513,16 @@ class CartApiController extends BaseController
         if (!$this->session->isAuthenticated()) {
             $this->logger->warning('Authentication required for removeItem.', ['params_received' => $params]);
             $this->jsonResponse(['error' => 'Authentication required.'], 401);
+            return;
+        }
+
+        // Get JSON data (even if it's just for the CSRF token)
+        $requestData = json_decode(file_get_contents('php://input'), true);
+
+        // Validate CSRF token
+        if (!isset($requestData['csrf_token']) || !$this->session->validateCsrfToken($requestData['csrf_token'])) {
+            $this->logger->warning('Invalid CSRF token for cart removeItem.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token' => $this->session->getCsrfToken()]);
+            $this->jsonResponse(['error' => 'Invalid security token.'], 403);
             return;
         }
 
@@ -554,11 +572,14 @@ class CartApiController extends BaseController
      *
      * Handles POST requests to remove all items from the authenticated user's cart.
      * Requires user authentication.
+     * Expects JSON input: {"csrf_token": string}
      *
      * @api {post} /api/cart/clear Clear entire cart
      * @apiName ClearCart
      * @apiGroup Cart
      * @apiPermission user
+     *
+     * @apiBody {String} csrf_token The CSRF protection token.
      *
      * @apiSuccess {Boolean} success Indicates if the operation was successful.
      * @apiSuccess {String} message Confirmation message.
@@ -577,7 +598,14 @@ class CartApiController extends BaseController
      *     }
      *
      * @apiError (401 Unauthorized) AuthenticationRequired User is not authenticated.
+     * @apiError (403 Forbidden) InvalidCsrfToken The provided CSRF token was invalid.
      * @apiError (405 Method Not Allowed) InvalidMethod Request method was not POST.
+     *
+     * @apiErrorExample {json} Error-Response (403):
+     *     HTTP/1.1 403 Forbidden
+     *     {
+     *       "error": "Invalid security token."
+     *     }
      */
     public function clearCart()
     {
@@ -590,6 +618,16 @@ class CartApiController extends BaseController
         // Check authentication
         if (!$this->session->isAuthenticated()) {
             $this->jsonResponse(['error' => 'Authentication required.'], 401);
+            return;
+        }
+
+        // Get JSON data (even if it's just for the CSRF token)
+        $requestData = json_decode(file_get_contents('php://input'), true);
+
+        // Validate CSRF token
+        if (!isset($requestData['csrf_token']) || !$this->session->validateCsrfToken($requestData['csrf_token'])) {
+            $this->logger->warning('Invalid CSRF token for cart clear.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token' => $this->session->getCsrfToken()]);
+            $this->jsonResponse(['error' => 'Invalid security token.'], 403);
             return;
         }
 

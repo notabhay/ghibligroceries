@@ -58,6 +58,7 @@ $router->get('categories', [ProductController::class, 'showCategories']); // Lis
 $router->get('products', [ProductController::class, 'listProducts']); // List products (potentially filtered)
 $router->get('search', [ProductController::class, 'search']); // Search products
 
+$router->get('product/{id}/{slug}', [ProductController::class, 'showProductDetail']); // Show product detail page
 // --- User Authentication Routes ---
 $router->get('register', [UserController::class, 'showRegister']); // Registration form view
 $router->post('register', [UserController::class, 'register']); // Registration form submission
@@ -84,7 +85,7 @@ $router->get('captcha', [CaptchaController::class, 'generate']); // Generate and
 
 // --- AJAX Routes ---
 $router->post('ajax/check-email', [UserController::class, 'checkEmail']); // Check if an email is already registered (used during registration)
-$router->get('ajax/products-by-category', [ProductController::class, 'getSubcategoriesAjax']); // Get subcategories/products for filtering (likely needs review/rename)
+$router->get('ajax/products-by-category', [ProductController::class, 'ajaxGetProductsByCategory']); // Get products by category for filtering
 $router->get('ajax/subcategories', [ProductController::class, 'ajaxGetSubcategories']); // Get subcategories based on a parent category ID
 
 // --- AI Search Routes ---

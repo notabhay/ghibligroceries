@@ -6,7 +6,7 @@
  * Expected PHP Variables:
  * - $searchTerm (string):     The search term used to find products. Required.
  * - $products (array):        An array of products matching the search term. Each product should have 
- *                             'product_id', 'name', 'price', 'image_path', 'category_name'. Defaults to empty array.
+ *                             'product_id', 'name', 'price', 'image_path', 'category_name', 'slug'. Defaults to empty array.
  * - $resultCount (int):       The number of products found. Defaults to 0.
  * - $correctedTerm (string):  AI-suggested corrected search term, if available. Defaults to null.
  * - $aiProcessed (bool):      Whether the search was processed by AI. Defaults to false.
@@ -98,13 +98,14 @@ $meta_keywords = $meta_keywords ?? 'search, products, grocery, online shopping';
                 <?php for ($j = $start_index; $j < $end_index; $j++):
                             $prod = $products[$j];
                             // Basic check to ensure essential product data exists before attempting to display
-                            if (!isset($prod['product_id'], $prod['name'], $prod['price'], $prod['image_path']))
+                            if (!isset($prod['product_id'], $prod['name'], $prod['price'], $prod['image_path'], $prod['slug']))
                                 continue; // Skip this iteration if data is missing
                         ?>
                 <!-- Individual Product Card -->
                 <article class="product-card">
                     <!-- Link to the individual product details page -->
-                    <a href="/product/<?php echo htmlspecialchars($prod['product_id']); ?>" class="product-link">
+                    <a href="/product/<?php echo htmlspecialchars($prod['product_id']); ?>/<?php echo htmlspecialchars($prod['slug']); ?>"
+                        class="product-link">
                         <!-- Product Image -->
                         <img src="<?php echo htmlspecialchars($prod['image_path']); ?>"
                             alt="<?php echo htmlspecialchars($prod['name']); ?>" class="product-image">

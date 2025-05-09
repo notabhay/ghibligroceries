@@ -401,6 +401,8 @@ class AdminCategoryController extends BaseController
         }
 
         // Extract the data array into individual variables accessible by the view and layout
+// Add CSRF token to data for the admin layout view
+        $data['csrf_token_for_layout'] = $this->session->getCsrfToken();
         extract($data);
 
         // Start output buffering to capture the view's content

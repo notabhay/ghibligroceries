@@ -119,6 +119,14 @@ class ProductController extends BaseController
                 // If no filter is applied, fetch all products initially
                 $initialProducts = $this->productModel->getAll();
             }
+
+            // Add slug to each product
+            foreach ($initialProducts as &$product) {
+                $product['slug'] = $this->generateSlug($product['name']);
+            }
+            unset($product);
+
+
         } catch (\Exception $e) {
             // Log error if fetching categories or products fails
             $this->logger->error("Error fetching categories or products for display.", ['exception' => $e]);
@@ -188,17 +196,13 @@ class ProductController extends BaseController
      * Used by JavaScript to update the product list when a category is selected.
      * Expects 'categoryId' as a GET parameter.
      * Returns JSON response with products or an error.
-     *
-     * @deprecated This method seems redundant or possibly incorrectly named given ajaxGetSubcategories.
-     *             It fetches *products* by category ID, not subcategories.
-     *             Consider renaming or clarifying its purpose if kept.
      * @return void Outputs JSON response.
      */
-    public function getSubcategoriesAjax(): void
+    public function ajaxGetProductsByCategory(): void
     {
         // Get category ID from GET request
         $categoryId = $this->request->get('categoryId');
-        $this->logger->info('AJAX: getSubcategoriesAjax called (fetches products).', ['categoryId' => $categoryId]);
+        $this->logger->info('AJAX: ajaxGetProductsByCategory called (fetches products).', ['categoryId' => $categoryId]);
 
         // Validate the category ID
         if (!filter_var($categoryId, FILTER_VALIDATE_INT)) {
@@ -322,6 +326,12 @@ class ProductController extends BaseController
                 $resultCount = count($products);
                 $fallback = true;
             }
+
+            // Add slug to each product
+            foreach ($products as &$product) {
+                $product['slug'] = $this->generateSlug($product['name']);
+            }
+            unset($product);
             
             // Render the search results view
             $this->view('pages/search_results', [
@@ -352,6 +362,12 @@ class ProductController extends BaseController
             // Fall back to traditional search
             $products = $this->productModel->searchByNameOrDescription($searchTerm);
             $resultCount = count($products);
+
+            // Add slug to each product
+            foreach ($products as &$product) {
+                $product['slug'] = $this->generateSlug($product['name']);
+            }
+            unset($product);
             
             // Render the search results page with fallback results
             $this->view('pages/search_results', [
@@ -409,5 +425,158 @@ class ProductController extends BaseController
     {
         // The main entry point for this controller shows the categories page
         $this->showCategories();
+    }
+
+    /**
+     * Generates a URL-friendly slug from a string.
+     *
+     * @param string $name The string to convert to a slug.
+     * @return string The generated slug.
+     */
+    private function generateSlug(string $name): string
+    {
+        $slug = strtolower($name);
+        // Replace non-letter or digits by -
+        $slug = preg_replace('~[^\pL\d]+~u', '-', $slug);
+        // Transliterate
+        $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
+        // Remove unwanted characters
+        $slug = preg_replace('~[^-\w]+~', '', $slug);
+        // Trim
+        $slug = trim($slug, '-');
+        // Remove duplicate -
+        $slug = preg_replace('~-+~', '-', $slug);
+        if (empty($slug)) {
+            return 'n-a';
+        }
+        return $slug;
+    }
+
+    /**
+     * Displays the product detail page.
+     *
+     * @param array $params Parameters from the route, expecting 'id' and 'slug'.
+     * @return void Renders the 'pages/product_detail' view or an error view.
+     */
+    public function showProductDetail(array $params): void
+    {
+        $this->logger->info('Product detail page requested', ['params' => $params]);
+
+        // 1. Sanitize and validate productId
+        if (!isset($params['id']) || !filter_var($params['id'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])) {
+            $this->logger->error('Invalid product ID provided for detail page.', ['id' => $params['id'] ?? null]);
+            http_response_code(404); // Set 404 status code
+            $this->view('errors.general', [
+                'page_title' => 'Invalid Product ID',
+                'error_status_code' => 404,
+                'error_heading' => 'Invalid Product ID',
+                'error_message' => 'The product ID provided is invalid. Please check the URL and try again.',
+                'link_text' => 'Browse Products',
+                'link_href' => '/categories',
+                'additional_css_files' => ['/assets/css/error-page.css']
+            ]);
+            return;
+        }
+        $productId = (int) $params['id'];
+
+        // 2. Fetch Product
+        // The Product model's findById might need to be modified to fetch category_parent_id
+        // For now, we assume it might not have it, or we fetch category details separately.
+        $product = $this->productModel->findById($productId);
+
+        if (!$product) {
+            $this->logger->warning("Product not found for ID: {$productId}");
+            http_response_code(404); // Set 404 status code
+            $this->view('errors.general', [
+                'page_title' => 'Product Not Found',
+                'error_status_code' => 404,
+                'error_heading' => 'Product Not Found',
+                'error_message' => "Sorry, we couldn't find the product you were looking for. It might have been removed or the link is incorrect.",
+                'link_text' => 'Browse Products',
+                'link_href' => '/categories',
+                'additional_css_files' => ['/assets/css/error-page.css'] // Add this line
+            ]);
+            return;
+        }
+        
+        // Add slug to product array for consistency, though it's already in $params
+        // This also ensures the slug used for display is the one generated by our current logic
+        $product['slug'] = $this->generateSlug($product['name']);
+
+        // 3. Fetch Category Breadcrumbs
+        // $product['category_id'] is available from $this->productModel->findById($productId)
+        $categoryBreadcrumbs = $this->getCategoryBreadcrumbs($product['category_id']);
+        
+        // 4. Stock Display Logic
+        $stock_quantity = (int) $product['stock_quantity'];
+        $stock_status_text = '';
+        $stock_status_class = '';
+        $can_add_to_cart = false;
+
+        if ($stock_quantity <= 0) {
+            $stock_status_text = "Out of Stock";
+            $stock_status_class = "out-of-stock";
+            $can_add_to_cart = false;
+        } elseif ($stock_quantity <= 10) { // Configurable threshold, 10 for now
+            $stock_status_text = "Low Stock - Only " . $stock_quantity . " left!";
+            $stock_status_class = "low-stock";
+            $can_add_to_cart = true;
+        } else {
+            $stock_status_text = "In Stock";
+            $stock_status_class = "in-stock";
+            $can_add_to_cart = true;
+        }
+
+        // 5. Pass Data to View
+        $data = [
+            'page_title' => htmlspecialchars($product['name']) . ' - GhibliGroceries',
+            'meta_description' => 'View details for ' . htmlspecialchars($product['name']) . '. ' . htmlspecialchars(substr($product['description'], 0, 150)) . '...',
+            'product' => $product,
+            'category_breadcrumbs' => $categoryBreadcrumbs,
+            'stock_status_text' => $stock_status_text,
+            'stock_status_class' => $stock_status_class,
+            'can_add_to_cart' => $can_add_to_cart,
+            'csrf_token' => $this->session->getCsrfToken(),
+            'additional_css_files' => ['/assets/css/product-detail.css'], // Ensure this path is correct
+            'logged_in' => $this->session->isAuthenticated()
+        ];
+
+        $this->view('pages/product_detail', $data);
+    }
+
+    /**
+     * Generates category breadcrumbs for a given category ID.
+     *
+     * @param int $categoryId The ID of the current category.
+     * @return array An array of breadcrumb items.
+     */
+    private function getCategoryBreadcrumbs(int $categoryId): array
+    {
+        $breadcrumbs = [];
+        $currentCategoryId = $categoryId;
+
+        while ($currentCategoryId !== null && $currentCategoryId > 0) {
+            $category = $this->categoryModel->findById($currentCategoryId); // This should fetch parent_id as well
+            if ($category) {
+                array_unshift($breadcrumbs, [
+                    'name' => $category['category_name'],
+                    'link' => '/categories?filter=' . urlencode($category['category_name']),
+                    'active' => false // All category links are not active; product name is the active part
+                ]);
+                // Ensure 'parent_id' is part of the $category array from $this->categoryModel->findById()
+                $currentCategoryId = isset($category['parent_id']) ? (int)$category['parent_id'] : null;
+            } else {
+                $this->logger->warning('Category not found while building breadcrumbs.', ['categoryId' => $currentCategoryId]);
+                break; 
+            }
+        }
+        
+        // Add "Home" as the first breadcrumb
+        array_unshift($breadcrumbs, ['name' => 'Home', 'link' => '/', 'active' => false]);
+
+        // The view will append the product name as the last, active breadcrumb item.
+        // Example: Home / Category / SubCategory / ProductName (active)
+        // This function returns: [ {Home}, {Category}, {SubCategory} ] all with active=false.
+        return $breadcrumbs;
     }
 }
