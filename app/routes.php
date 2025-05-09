@@ -43,6 +43,10 @@ use App\Controllers\AiSearchController;
 // This instance is typically bound to the registry in the application's bootstrap process.
 $router = new Router();
 
+// --- DevTools/Utility Routes (to prevent log noise) ---
+// Handle common browser/devtool requests gracefully to avoid cluttering logs with 404 exceptions.
+$router->get('.well-known/appspecific/com.chrome.devtools.json', [PageController::class, 'silentNotFound']);
+
 // --- Public Page Routes ---
 $router->get('', [PageController::class, 'index']); // Homepage
 $router->get('about', [PageController::class, 'about']); // About page

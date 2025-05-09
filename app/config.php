@@ -17,7 +17,7 @@ date_default_timezone_set('Europe/London');
  * @var bool $debugMode Enable or disable debug mode.
  *                     When true, more detailed errors are shown. Set to false in production.
  */
-$debugMode = true;
+$debugMode = false;
 
 /**
  * @var int $errorLevel The level of error reporting based on debug mode.
@@ -64,7 +64,7 @@ return [
     'API_BASE_PATH' => '/api', // Base path for all API routes.
     
     // --- Gemini API Configuration ---
-    'GEMINI_API_KEY' => getenv('GEMINI_API_KEY') ?: '', // Google Gemini API key from .env
+    'GEMINI_API_KEY' => $_ENV['GEMINI_API_KEY'] ?? '', // Google Gemini API key from .env
     'GEMINI_API_ENDPOINT' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent',
     'GEMINI_TEMPERATURE' => 0.6, // Controls randomness (0.0 to 1.0)
     'GEMINI_TIMEOUT' => 30, // Timeout in seconds for API requests

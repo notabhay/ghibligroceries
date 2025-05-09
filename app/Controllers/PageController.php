@@ -278,4 +278,17 @@ class PageController extends BaseController
         // Render the cart view
         $this->view('pages/cart', $data);
     }
+
+    /**
+     * Handles requests for utility paths that should return a 404 without logging an error.
+     * This is used to prevent noise in the logs from common browser/devtool requests.
+     *
+     * @return void
+     */
+    public function silentNotFound(): void
+    {
+        http_response_code(404);
+        // No output is necessary, just the header.
+        exit;
+    }
 }
