@@ -17,7 +17,7 @@ date_default_timezone_set('Europe/London');
  * @var bool $debugMode Enable or disable debug mode.
  *                     When true, more detailed errors are shown. Set to false in production.
  */
-$debugMode = false;
+$debugMode = true;
 
 /**
  * @var int $errorLevel The level of error reporting based on debug mode.
