@@ -17,8 +17,17 @@ define('BASE_PATH', dirname(__DIR__));
 // This makes all Composer-managed libraries and application classes (following PSR-4) available.
 require_once BASE_PATH . '/vendor/autoload.php';
 
+// --- Environment Variable Loading ---
+// Load environment variables from .env file using phpdotenv
+// This should be done before loading the application configuration.
+if (file_exists(BASE_PATH . '/.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(BASE_PATH);
+    $dotenv->load();
+}
+
 // Load the application configuration.
 // Contains settings like database credentials, debug mode, etc.
+// Now it can access environment variables loaded by phpdotenv.
 $config = require_once BASE_PATH . '/app/config.php';
 
 // --- Dependency Imports ---

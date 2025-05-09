@@ -64,7 +64,7 @@ return [
     'API_BASE_PATH' => '/api', // Base path for all API routes.
     
     // --- Gemini API Configuration ---
-    'GEMINI_API_KEY' => 'AIzaSyD90Z7i6lrPCim2_r_09uizb1bfz26bPVw', // Google Gemini API key (to be provided by the user)
+    'GEMINI_API_KEY' => getenv('GEMINI_API_KEY') ?: '', // Google Gemini API key from .env
     'GEMINI_API_ENDPOINT' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent',
     'GEMINI_TEMPERATURE' => 0.6, // Controls randomness (0.0 to 1.0)
     'GEMINI_TIMEOUT' => 30, // Timeout in seconds for API requests
