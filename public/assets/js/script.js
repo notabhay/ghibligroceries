@@ -6,6 +6,20 @@
  */
 document.addEventListener('DOMContentLoaded', function () {
 
+    // --- Homepage Search Loading Indicator ---
+    const homepageSearchForm = document.getElementById('homepage-search-form');
+    const homepageSearchButton = document.getElementById('homepage-search-button');
+
+    if (homepageSearchForm && homepageSearchButton) {
+        homepageSearchForm.addEventListener('submit', function () {
+            // Apply loading state to the button
+            homepageSearchButton.classList.add('loading');
+            homepageSearchButton.disabled = true;
+
+            // Form will naturally submit (no preventDefault)
+        });
+    }
+
     // --- Mobile Menu Toggle ---
     const menuToggle = document.querySelector('.mobile-menu-toggle');
     const navMenu = document.querySelector('.mobile-menu');

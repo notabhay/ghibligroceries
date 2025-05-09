@@ -7,8 +7,10 @@ use App\Core\Database;
 use App\Core\Registry;
 use App\Core\Request;
 use App\Core\Session;
+use App\Core\Redirect;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\GeminiService;
 use Psr\Log\LoggerInterface;
 use PDO; // Added for type hinting in getCategoryIdByName
 
@@ -255,6 +257,120 @@ class ProductController extends BaseController
             $this->logger->error("AJAX: Error fetching subcategories.", ['parentId' => $parentId, 'exception' => $e]);
             // Consider sending a 500 error instead of empty array for clearer error handling client-side
             $this->jsonResponse(['subcategories' => []]); // Original logic returned empty array on error
+        }
+    }
+
+    /**
+     * Handles product search functionality with AI enhancement.
+     * Retrieves search term from GET parameter, validates it, and uses GeminiService
+     * to enhance the search before fetching matching products.
+     * Renders the search results view with the products found.
+     * 
+     * @return void Renders the 'pages/search_results' view or redirects if no search term.
+     */
+    public function search(): void
+    {
+        // Get the search term from the GET parameter
+        $searchTerm = trim($this->request->get('q', ''));
+        $this->logger->info('AI product search initiated', ['searchTerm' => $searchTerm]);
+        
+        // Check if a search term was provided
+        if (empty($searchTerm)) {
+            $this->logger->warning('Empty search term, redirecting to categories page');
+            Redirect::to('/categories');
+            return;
+        }
+        
+        // Get login status
+        $logged_in = $this->session->isAuthenticated();
+        
+        try {
+            // Initialize variables
+            $products = [];
+            $resultCount = 0;
+            $correctedTerm = null;
+            $aiProcessed = false;
+            $fallback = false;
+            
+            // Get product categories for context
+            $categories = $this->productModel->getProductCategories();
+            
+            // Initialize GeminiService
+            $geminiService = new GeminiService();
+            
+            // Call Gemini API to enhance the search query
+            $enhancedParams = $geminiService->callGeminiApi(
+                $geminiService->constructPrompt($searchTerm, $categories)
+            );
+            
+            // If Gemini API call succeeds, use enhanced search
+            if ($enhancedParams !== null) {
+                $products = $this->productModel->searchWithEnhancedTerms($enhancedParams);
+                $resultCount = count($products);
+                $correctedTerm = $enhancedParams['correctedQuery'] ?? null;
+                $aiProcessed = true;
+                
+                $this->logger->info('AI search successful', [
+                    'searchTerm' => $searchTerm,
+                    'resultCount' => $resultCount,
+                    'correctedTerm' => $correctedTerm
+                ]);
+            } else {
+                // Fall back to traditional search
+                $this->logger->warning('AI search failed, falling back to traditional search', ['searchTerm' => $searchTerm]);
+                $products = $this->productModel->searchByNameOrDescription($searchTerm);
+                $resultCount = count($products);
+                $fallback = true;
+            }
+            
+            // Render the search results view
+            $this->view('pages/search_results', [
+                'searchTerm' => $searchTerm,
+                'correctedTerm' => $correctedTerm,
+                'products' => $products,
+                'resultCount' => $resultCount,
+                'aiProcessed' => $aiProcessed,
+                'fallback' => $fallback,
+                'page_title' => 'Search Results - GhibliGroceries',
+                'meta_description' => "Search results for '{$searchTerm}' at GhibliGroceries.",
+                'meta_keywords' => 'search, products, grocery, online shopping',
+                'additional_css_files' => [
+                    '/assets/css/categories.css',
+                    '/assets/css/ai-search.css'
+                ],
+                'additional_js_files' => [
+                    'search-page.js'
+                ],
+                'logged_in' => $logged_in
+            ]);
+            
+        } catch (\Exception $e) {
+            // Log error if search fails
+            $this->logger->error("Error during AI product search", ['searchTerm' => $searchTerm, 'exception' => $e]);
+            $this->session->flash('error', 'An error occurred while searching. Please try again.');
+            
+            // Fall back to traditional search
+            $products = $this->productModel->searchByNameOrDescription($searchTerm);
+            $resultCount = count($products);
+            
+            // Render the search results page with fallback results
+            $this->view('pages/search_results', [
+                'searchTerm' => $searchTerm,
+                'products' => $products,
+                'resultCount' => $resultCount,
+                'fallback' => true,
+                'page_title' => 'Search Results - GhibliGroceries',
+                'meta_description' => "Search results for '{$searchTerm}' at GhibliGroceries.",
+                'meta_keywords' => 'search, products, grocery, online shopping',
+                'additional_css_files' => [
+                    '/assets/css/categories.css',
+                    '/assets/css/ai-search.css'
+                ],
+                'additional_js_files' => [
+                    'search-page.js'
+                ],
+                'logged_in' => $logged_in
+            ]);
         }
     }
 

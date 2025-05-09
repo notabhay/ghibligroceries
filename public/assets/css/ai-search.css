@@ -1,0 +1,347 @@
+/**
+ * Styles for AI-powered search functionality
+ */
+
+/* Search Bar Loading State */
+.search-bar.loading .search-input {
+    background-color: #f9f9f9;
+    cursor: not-allowed;
+}
+
+.search-bar.loading .search-button {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+/* Hide spinner by default, show when loading */
+.search-button .fa-spinner {
+    display: none;
+}
+
+.search-button.loading .fa-search {
+    display: none;
+}
+
+.search-button.loading .fa-spinner {
+    display: inline-block;
+}
+
+.search-button.loading {
+    opacity: 0.7;
+    cursor: default;
+}
+
+/* Results Dropdown Container (for homepage) */
+.ai-search-results-dropdown {
+    position: absolute;
+    z-index: 1000;
+    width: 100%;
+    max-width: 600px;
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: #fff;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-top: 2px;
+    padding: 12px;
+    border: 1px solid #ddd;
+}
+
+/* Results Header */
+.ai-results-header {
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+/* "Did you mean" Suggestion */
+.ai-suggestion {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-style: italic;
+    color: #555;
+}
+
+.ai-suggestion-link {
+    color: #4CAF50;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.ai-suggestion-link:hover {
+    text-decoration: none;
+}
+
+/* Search Refinement Form */
+.search-refinement {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+.search-refinement .search-bar {
+    display: flex;
+    width: 100%;
+}
+
+.search-refinement .search-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+}
+
+.search-refinement .search-button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+/* Loading overlay for search results */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.loading-overlay .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4caf50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Product List (for dropdown) */
+.ai-product-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Product Item (for dropdown) */
+.ai-product-item {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.ai-product-item:last-child {
+    border-bottom: none;
+}
+
+.ai-product-item>a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 8px;
+}
+
+.ai-product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 12px;
+    border-radius: 4px;
+}
+
+.ai-product-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-product-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.ai-product-category {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.ai-product-price {
+    font-weight: 600;
+    color: #4CAF50;
+    margin-left: auto;
+    padding-left: 10px;
+}
+
+/* Add to Cart Button */
+.ai-product-item .add-to-cart-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    align-self: flex-start;
+    transition: background-color 0.2s;
+}
+
+.ai-product-item .add-to-cart-btn:hover {
+    background-color: #45a049;
+}
+
+.ai-product-item .add-to-cart-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Login to Purchase Link */
+.ai-product-item .login-to-purchase-btn {
+    display: inline-block;
+    background-color: #f1f1f1;
+    color: #333;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    align-self: flex-start;
+}
+
+.ai-product-item .login-to-purchase-btn:hover {
+    background-color: #e1e1e1;
+}
+
+/* View All Results Link */
+.ai-view-all {
+    text-align: center;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+}
+
+.ai-view-all a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.ai-view-all a:hover {
+    text-decoration: underline;
+}
+
+/* No Results Message */
+.no-results {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.no-results p {
+    margin-bottom: 15px;
+}
+
+.browse-categories-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.browse-categories-btn:hover {
+    background-color: #45a049;
+}
+
+/* Error Message */
+.search-error {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #fff3f3;
+    border-radius: 4px;
+    margin: 20px 0;
+}
+
+.search-error p {
+    margin-bottom: 15px;
+}
+
+.search-error a {
+    color: #4CAF50;
+    text-decoration: underline;
+}
+
+/* Fallback Notice */
+.search-fallback-notice {
+    background-color: #fffde7;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #856404;
+}
+
+/* Screen reader only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .ai-search-results-dropdown {
+        position: fixed;
+        top: 60px;
+        /* Adjust based on your header height */
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: none;
+        border-radius: 0;
+        margin-top: 0;
+        z-index: 1001;
+    }
+
+    .search-refinement {
+        padding: 0 10px;
+    }
+
+    .products-row {
+        flex-direction: column;
+    }
+
+    .product-card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}

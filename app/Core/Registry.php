@@ -3,10 +3,10 @@
 namespace App\Core;
 
 // Import Monolog classes for logging functionality.
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Monolog\Formatter\LineFormatter;
-use Psr\Log\LogLevel; // Import PSR LogLevel constants.
+use \Monolog\Logger;
+use \Monolog\Handler\StreamHandler;
+use \Monolog\Formatter\LineFormatter;
+use \Monolog\Level; // Import Monolog Level enum.
 use Exception; // Import base Exception class.
 
 /**
@@ -111,13 +111,17 @@ class Registry
      *
      * @param string $logFilePath The absolute path to the log file.
      * @param string $loggerName The name of the logger channel (e.g., 'app', 'database'). Defaults to 'app'.
-     * @param int $logLevel The minimum log level to record (e.g., LogLevel::DEBUG, LogLevel::WARNING). Defaults to DEBUG.
+     * @param int $logLevel The minimum log level to record. Uses Monolog log level constants:
+     *                      100=Debug, 200=Info, 250=Notice, 300=Warning, 400=Error, 500=Critical, 550=Alert, 600=Emergency
+     *                      Defaults to 100 (Debug level).
      * @throws Exception If the log directory cannot be created or logger initialization fails.
      * @return void
      */
-    public static function initializeLogger(string $logFilePath, string $loggerName = 'app', int $logLevel = LogLevel::DEBUG): void
+    public static function initializeLogger(string $logFilePath, string $loggerName = 'app', int $logLevel = 100): void
     {
         try {
+            // Log level 100 is Debug in Monolog v3
+            
             // Get the directory path from the log file path.
             $logDir = dirname($logFilePath);
             // Check if the directory exists, and attempt to create it recursively if not.
@@ -127,10 +131,10 @@ class Registry
             }
 
             // Create a new Monolog Logger instance.
-            $logger = new Logger($loggerName);
+            $logger = new \Monolog\Logger($loggerName);
 
             // Create a stream handler to write logs to the specified file.
-            $handler = new StreamHandler($logFilePath, $logLevel);
+            $handler = new \Monolog\Handler\StreamHandler($logFilePath, $logLevel);
 
             // Define the output format for log entries.
             $outputFormat = "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n";
@@ -139,7 +143,7 @@ class Registry
 
             // Create a line formatter with the defined formats.
             // allowInlineLineBreaks = true, ignoreEmptyContextAndExtra = true
-            $formatter = new LineFormatter($outputFormat, $dateFormat, true, true);
+            $formatter = new \Monolog\Formatter\LineFormatter($outputFormat, $dateFormat, true, true);
 
             // Set the formatter for the handler.
             $handler->setFormatter($formatter);

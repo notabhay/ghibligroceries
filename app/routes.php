@@ -37,6 +37,7 @@ use App\Controllers\Admin\AdminCategoryController;
 use App\Middleware\AdminAuthMiddleware; // Middleware for admin routes (though applied within the group callback).
 use App\Controllers\Api\OrderApiController;
 use App\Controllers\Api\CartApiController;
+use App\Controllers\AiSearchController;
 
 // Instantiate the main router object.
 // This instance is typically bound to the registry in the application's bootstrap process.
@@ -51,6 +52,7 @@ $router->post('contact/submit', [PageController::class, 'submitContact']); // Co
 // --- Product & Category Routes ---
 $router->get('categories', [ProductController::class, 'showCategories']); // List main categories
 $router->get('products', [ProductController::class, 'listProducts']); // List products (potentially filtered)
+$router->get('search', [ProductController::class, 'search']); // Search products
 
 // --- User Authentication Routes ---
 $router->get('register', [UserController::class, 'showRegister']); // Registration form view
@@ -80,6 +82,10 @@ $router->get('captcha', [CaptchaController::class, 'generate']); // Generate and
 $router->post('ajax/check-email', [UserController::class, 'checkEmail']); // Check if an email is already registered (used during registration)
 $router->get('ajax/products-by-category', [ProductController::class, 'getSubcategoriesAjax']); // Get subcategories/products for filtering (likely needs review/rename)
 $router->get('ajax/subcategories', [ProductController::class, 'ajaxGetSubcategories']); // Get subcategories based on a parent category ID
+
+// --- AI Search Routes ---
+$router->post('api/ai-search', [AiSearchController::class, 'search']); // AI-powered search using Gemini API (POST for AJAX)
+$router->get('api/ai-search', [AiSearchController::class, 'search']); // AI-powered search using Gemini API (GET for direct API testing)
 
 // --- Cart API Routes (Typically called via JavaScript/AJAX) ---
 $router->post('api/cart/add', [CartApiController::class, 'add']); // Add an item to the cart

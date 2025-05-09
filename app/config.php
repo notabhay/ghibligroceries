@@ -17,7 +17,7 @@ date_default_timezone_set('Europe/London');
  * @var bool $debugMode Enable or disable debug mode.
  *                     When true, more detailed errors are shown. Set to false in production.
  */
-$debugMode = false;
+$debugMode = true;
 
 /**
  * @var int $errorLevel The level of error reporting based on debug mode.
@@ -62,6 +62,13 @@ return [
     'API_RATE_LIMIT' => 100, // Maximum number of API requests allowed per minute (example).
     'API_VERSION' => '1.0', // Current version of the API.
     'API_BASE_PATH' => '/api', // Base path for all API routes.
+    
+    // --- Gemini API Configuration ---
+    'GEMINI_API_KEY' => 'AIzaSyD90Z7i6lrPCim2_r_09uizb1bfz26bPVw', // Google Gemini API key (to be provided by the user)
+    'GEMINI_API_ENDPOINT' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent',
+    'GEMINI_TEMPERATURE' => 0.6, // Controls randomness (0.0 to 1.0)
+    'GEMINI_TIMEOUT' => 30, // Timeout in seconds for API requests
+    'GEMINI_FALLBACK_ENABLED' => true, // Whether to fall back to traditional search if AI fails
 
     // --- Application Settings ---
     'ITEMS_PER_PAGE' => 10, // Default number of items to display per page in listings.

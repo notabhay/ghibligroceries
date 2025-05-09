@@ -295,3 +295,9 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Specific layout for the search results page wrapper */
+.products-wrapper.search-results-page-wrapper {
+    display: block;
+    /* Override display: grid to allow children to flow as blocks */
+}

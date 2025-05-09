@@ -2439,3 +2439,21 @@ textarea.form-control {
     /* Button padding */
     /* Inherits .btn styles if class is applied */
 }
+
+/* Homepage Search Button Loading Indicator */
+#homepage-search-button .fa-spinner {
+    display: none;
+}
+
+#homepage-search-button.loading .fa-search {
+    display: none;
+}
+
+#homepage-search-button.loading .fa-spinner {
+    display: inline-block;
+}
+
+#homepage-search-button.loading {
+    opacity: 0.7;
+    cursor: default;
+}

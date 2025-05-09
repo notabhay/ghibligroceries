@@ -14,7 +14,6 @@
  * - $logged_in (bool):          Indicates if the user is currently logged in. Used to show 'Add to Cart' or 'Login' buttons. Defaults to false.
  *
  * JavaScript Interaction:
- * - The search bar ('.search-bar') might have associated JS for live search suggestions or redirection.
  * - 'Add to Cart' buttons ('.add-to-cart-btn') likely trigger AJAX requests to add items to the cart.
  */
 
@@ -32,13 +31,15 @@ $logged_in = $logged_in ?? false; // User login status
     <div class="hero-copy">
         <h1>Let Your <span>Groceries</span> Come To You</h1>
         <p>Get fresh groceries online without stepping out to make delicious food with the freshest ingredients.</p>
-        <!-- Search Bar (functionality likely requires JS) -->
-        <search class="search-bar">
-            <input type="text" class="search-input" placeholder="Search products...">
-            <button class="search-button" aria-label="Search">
+        <!-- Standard Search Bar (no AI-specific IDs) -->
+        <form action="/search" method="GET" class="search-bar" id="homepage-search-form">
+            <input type="text" name="q" id="search-input" class="search-input" placeholder="Search products..."
+                required>
+            <button type="submit" id="homepage-search-button" class="search-button" aria-label="Search">
                 <i class="fas fa-search"></i> <!-- Search Icon -->
+                <i class="fas fa-spinner fa-spin"></i> <!-- Spinner Icon (initially hidden) -->
             </button>
-        </search>
+        </form>
         <!-- List of key features/selling points -->
         <div class="feature-list">
             <div class="feature-item">
@@ -66,38 +67,38 @@ $logged_in = $logged_in ?? false; // User login status
         <?php // Check if there are random products to display 
         ?>
         <?php if (!empty($random_products)): ?>
-            <?php // Loop through each featured product 
+        <?php // Loop through each featured product 
             ?>
-            <?php foreach ($random_products as $product): ?>
-                <!-- Individual Product Card -->
-                <article class="product-card">
-                    <!-- Product Image (uses placeholder if path is missing) -->
-                    <img src="/<?php echo htmlspecialchars($product['image_path'] ?? 'assets/images/placeholder.png'); ?>"
-                        alt="<?php echo htmlspecialchars($product['name'] ?? 'Product'); ?>">
-                    <!-- Product Name (uses 'N/A' if missing) -->
-                    <div class="product-name"><?php echo htmlspecialchars($product['name'] ?? 'N/A'); ?></div>
-                    <!-- Product Price (formats to 2 decimal places, defaults to 0) -->
-                    <div class="product-price">$<?php echo number_format($product['price'] ?? 0, 2); ?></div>
-                    <?php // Display button based on login status 
+        <?php foreach ($random_products as $product): ?>
+        <!-- Individual Product Card -->
+        <article class="product-card">
+            <!-- Product Image (uses placeholder if path is missing) -->
+            <img src="/<?php echo htmlspecialchars($product['image_path'] ?? 'assets/images/placeholder.png'); ?>"
+                alt="<?php echo htmlspecialchars($product['name'] ?? 'Product'); ?>">
+            <!-- Product Name (uses 'N/A' if missing) -->
+            <div class="product-name"><?php echo htmlspecialchars($product['name'] ?? 'N/A'); ?></div>
+            <!-- Product Price (formats to 2 decimal places, defaults to 0) -->
+            <div class="product-price">$<?php echo number_format($product['price'] ?? 0, 2); ?></div>
+            <?php // Display button based on login status 
                     ?>
-                    <?php if ($logged_in): ?>
-                        <!-- Add to Cart Button (for logged-in users, JS interaction) -->
-                        <button class="add-to-cart-btn" data-product-id="<?php echo htmlspecialchars($product['product_id'] ?? ''); // Ensure product_id exists 
+            <?php if ($logged_in): ?>
+            <!-- Add to Cart Button (for logged-in users, JS interaction) -->
+            <button class="add-to-cart-btn" data-product-id="<?php echo htmlspecialchars($product['product_id'] ?? ''); // Ensure product_id exists 
                                                                             ?>">
-                            Add to Cart
-                        </button>
-                    <?php else: ?>
-                        <!-- Login Link (for logged-out users) -->
-                        <a href="/login" class="login-to-purchase-btn">
-                            Login to Purchase
-                        </a>
-                    <?php endif; ?>
-                </article>
-            <?php endforeach; // End product loop 
+                Add to Cart
+            </button>
+            <?php else: ?>
+            <!-- Login Link (for logged-out users) -->
+            <a href="/login" class="login-to-purchase-btn">
+                Login to Purchase
+            </a>
+            <?php endif; ?>
+        </article>
+        <?php endforeach; // End product loop 
             ?>
         <?php else: ?>
-            <!-- Message displayed if no featured products are available -->
-            <p>No products to display currently.</p>
+        <!-- Message displayed if no featured products are available -->
+        <p>No products to display currently.</p>
         <?php endif; // End check for random products 
         ?>
     </section> <!-- End product-showcase -->

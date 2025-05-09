@@ -113,6 +113,7 @@ class PageController extends BaseController
             'meta_keywords' => 'grocery, online shopping, vegetables, meat, fresh produce',
             'random_products' => $random_products, // Pass fetched products to the view
             'logged_in' => $this->session->isAuthenticated(), // Pass login status
+            // Removed AI search JS and CSS from homepage
         ];
 
         // Render the homepage view
