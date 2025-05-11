@@ -1,18 +1,12 @@
 /* Variables (assuming these are defined in a global styles.css or similar) */
 /*
-:root {
-    --tomato-red: #FF6347;
-    --herb-green: #2E8B57;
-    --light-gray: #f8f9fa;
-    --dark-gray: #343a40;
-    --border-color: #dee2e6;
-    --primary-font: 'Arial', sans-serif;
-    --secondary-font: 'Georgia', serif;
-    --text-color: #212529;
-    --link-color: #007bff;
-    --link-hover-color: #0056b3;
-    --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-}
+   Local font variables (--primary-font, --secondary-font) previously defined here
+   have been removed. Elements like .product-info-column h1 and
+   .product-description-full will now inherit the global font-family (Poppins)
+   set in the main styles.css file.
+   Other local variables like --tomato-red, --herb-green, etc., were also part of
+   this commented block and are effectively removed as they were not being used
+   elsewhere in this file and global variables from styles.css are preferred.
 */
 
 /* Container for the entire product detail section */
@@ -32,16 +26,45 @@
     background-color: var(--light-gray, #f8f9fa);
     /* Fallback color */
     border-radius: 0.25rem;
+    display: flow-root;
+    /* Ensures the element contains its children and establishes a new BFC */
+    /* Override global nav styles that misplace breadcrumbs */
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
 }
 
 .product-breadcrumbs .breadcrumb {
     margin-bottom: 0;
     padding: 0;
     background-color: transparent;
+    list-style-type: none;
+    /* Ensure no list bullets/numbers */
+    display: flex;
+    /* Added to manage wrapping of inline items */
+    flex-wrap: wrap;
+    /* Added to allow items to wrap to the next line */
+}
+
+.product-breadcrumbs .breadcrumb-item {
+    /* display: inline; */
+    /* Removed as parent .breadcrumb is now display: flex; flex-wrap: wrap; */
+    /* Flex items will flow naturally, and the ::before separator should still work. */
+}
+
+.product-breadcrumbs .breadcrumb-item+.breadcrumb-item::before {
+    content: "/";
+    /* Separator */
+    padding: 0 0.5em;
+    /* Space around separator */
+    color: var(--dark-gray, #6c757d);
+    /* Separator color, adjust as needed */
 }
 
 .product-breadcrumbs .breadcrumb-item a {
-    color: var(--link-color, #007bff);
+    color: var(--herb-green);
+    /* Suggestion 2.1: Harmonize Link Colors */
     text-decoration: none;
 }
 
@@ -51,7 +74,8 @@
 }
 
 .product-breadcrumbs .breadcrumb-item.active {
-    color: var(--dark-gray, #343a40);
+    color: var(--tomato-red);
+    /* Suggestion 2.1: Harmonize Link Colors */
 }
 
 /* Main content area for two-column layout */
@@ -96,12 +120,18 @@
     /* Grow, shrink, base width */
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
+    /* Suggestion 1.2: Changed from 15px to 20px */
     /* Space between elements in this column */
+    /* Suggestion 1.1: Visually Group Product Information */
+    background-color: #fff;
+    box-shadow: var(--shadow);
+    border-radius: 8px;
+    padding: 30px;
 }
 
 .product-info-column h1 {
-    font-family: var(--primary-font, 'Arial', sans-serif);
+    /* font-family will be inherited from body (Poppins) */
     font-size: 2.5rem;
     /* Prominent H1 */
     margin-bottom: 0.5rem;
@@ -117,7 +147,8 @@
 }
 
 .product-detail-category a {
-    color: var(--link-color, #007bff);
+    color: var(--herb-green);
+    /* Suggestion 2.1: Harmonize Link Colors */
     text-decoration: none;
 }
 
@@ -162,7 +193,7 @@
 /* Full Product Description */
 .product-description-full {
     margin-top: 1rem;
-    font-family: var(--secondary-font, 'Georgia', serif);
+    /* font-family will be inherited from body (Poppins) */
     line-height: 1.6;
 }
 
@@ -170,7 +201,8 @@
     font-size: 1.5rem;
     margin-bottom: 0.75rem;
     color: var(--dark-gray, #343a40);
-    border-bottom: 2px solid var(--herb-green, #2E8B57);
+    border-bottom: 1px solid rgba(90, 143, 80, 0.1);
+    /* Suggestion 2.2: Refine "Description" Separator */
     padding-bottom: 0.25rem;
 }
 
@@ -187,7 +219,8 @@
 .product-detail-quantity {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
+    /* Suggestion 3.1: Restyle Quantity Selector - Parent container gap */
 }
 
 .product-detail-quantity label {
@@ -196,44 +229,133 @@
 }
 
 .product-detail-quantity .quantity-input {
-    width: 60px;
+    width: 50px;
+    /* Suggestion 3.1: Restyle Quantity Selector - Input */
+    height: 32px;
+    /* Suggestion 3.1: Restyle Quantity Selector - Input */
+    border: 1px solid #ddd;
+    /* Suggestion 3.1: Restyle Quantity Selector - Input */
+    border-radius: 4px;
+    /* Suggestion 3.1: Restyle Quantity Selector - Input */
     text-align: center;
-    padding: 0.375rem 0.75rem;
-    border: 1px solid var(--border-color, #dee2e6);
-    border-radius: 0.25rem;
+    background-color: #f9f9f9;
+    /* Suggestion 3.1: Restyle Quantity Selector - Input */
+    padding: 5px 8px;
+    /* Suggestion 3.1: Restyle Quantity Selector - Input */
+    -moz-appearance: textfield;
+    /* Suggestion 3.1: Restyle Quantity Selector - Input */
+    appearance: textfield;
+    /* Suggestion 3.1: Restyle Quantity Selector - Input */
+}
+
+/* Suggestion 3.1: Restyle Quantity Selector - Input - Webkit spinner removal */
+.product-detail-quantity .quantity-input::-webkit-outer-spin-button,
+.product-detail-quantity .quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .product-detail-quantity .quantity-btn {
-    background-color: var(--light-gray, #f8f9fa);
-    border: 1px solid var(--border-color, #dee2e6);
-    color: var(--dark-gray, #343a40);
-    padding: 0.375rem 0.75rem;
+    border-radius: 50%;
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
+    background-color: var(--creamy-beige);
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
+    border: 1px solid #ddd;
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
+    width: 32px;
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
+    height: 32px;
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
+    padding: 0;
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
+    display: inline-flex;
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
+    justify-content: center;
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
+    align-items: center;
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
+    font-size: 1.1rem;
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
+    line-height: 1;
+    /* Suggestion 3.1: Restyle Quantity Selector - Buttons */
     cursor: pointer;
-    border-radius: 0.25rem;
+    /* color: var(--dark-gray, #343a40); Removed as per specific button color overrides */
+}
+
+/* Suggestion 3.1: Restyle Quantity Selector - Decrease Button Color */
+.product-detail-quantity .quantity-btn.decrease-btn {
+    color: var(--tomato-red);
+}
+
+/* Suggestion 3.1: Restyle Quantity Selector - Increase Button Color */
+.product-detail-quantity .quantity-btn.increase-btn {
+    color: var(--herb-green);
 }
 
 .product-detail-quantity .quantity-btn:hover {
-    background-color: #e2e6ea;
-    /* Slightly darker gray */
+    border-color: #ccc;
+    /* Suggestion 3.1: Restyle Quantity Selector - Button Hover */
+    background-color: var(--dark-creamy-beige);
+    /* Suggestion 3.1: Restyle Quantity Selector - Button Hover */
 }
 
-.add-to-cart-btn-detail {
-    /* Assuming .btn and .btn-primary are defined globally and provide base styling */
-    /* This class can be used for specific overrides if needed, or just rely on global styles */
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    /* Ensure it matches .btn-primary style from styles.css */
+
+/* Styles for buttons within the product detail form, mimicking product card buttons */
+.add-to-cart-form-detail .add-to-cart-btn,
+.add-to-cart-form-detail .login-to-purchase-btn {
+    display: block;
+    transition: var(--transition);
+    cursor: pointer;
+    margin-top: 10px;
+    /* Or adjust if form's gap is preferred */
+    border-radius: 4px;
+    padding: 8px 12px;
+    width: 100%;
+    /* Make button full width like on product cards */
+    font-weight: 500;
+    font-size: 14px;
+    font-family: "Poppins", sans-serif;
+    /* Ensure font consistency */
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+    /* Ensure padding/border are included in width */
 }
 
-.add-to-cart-btn-detail:disabled {
+.add-to-cart-form-detail .add-to-cart-btn {
+    border: none;
+    background-color: var(--herb-green);
+    color: white;
+}
+
+.add-to-cart-form-detail .add-to-cart-btn:hover {
+    background-color: var(--dark-herb-green);
+}
+
+/* Disabled state for the add-to-cart-btn */
+.add-to-cart-form-detail .add-to-cart-btn:disabled {
     background-color: #6c757d;
-    /* Bootstrap's secondary color for disabled state */
+    /* Standard disabled color */
     border-color: #6c757d;
+    /* Match background if border was present */
+    color: #ccc;
+    /* Lighter text for disabled state */
     cursor: not-allowed;
+    /* Ensure hover effects are overridden for disabled state if necessary */
+    /* For example, if hover had a transform, reset it: transform: none; */
 }
 
-.add-to-cart-btn-detail .fa-shopping-cart {
-    margin-right: 8px;
+.add-to-cart-form-detail .login-to-purchase-btn {
+    border: none;
+    /* Ensure no border if it's meant to be like product card's add-to-cart */
+    background-color: var(--bread-wheat);
+    /* From styles.css .product-card .login-to-purchase-btn */
+    color: white;
+}
+
+.add-to-cart-form-detail .login-to-purchase-btn:hover {
+    background-color: var(--dark-bread-wheat);
+    /* From styles.css .product-card .login-to-purchase-btn:hover */
 }
 
 /* Responsive adjustments */
@@ -257,8 +379,4 @@
         /* Make form elements take full width */
     }
 
-    .add-to-cart-btn-detail {
-        width: 100%;
-        text-align: center;
-    }
 }

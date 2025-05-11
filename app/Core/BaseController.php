@@ -87,8 +87,16 @@ abstract class BaseController
         } catch (\Throwable $e) {
             // If an error occurs while rendering the view, clean the buffer and show an error.
             ob_end_clean(); // Discard the buffered content.
-            // Log the actual error here in a real application using Registry::get('logger')
-            echo "Error rendering view '{$view}'. Please check the logs.";
+            if (Registry::has('logger')) {
+                Registry::get('logger')->error("Error rendering view '{$view}': " . $e->getMessage(), [
+                    'exception' => $e,
+                    'view' => $view,
+                    'data_keys' => array_keys($data) // Log keys to see what was passed
+                ]);
+            } else {
+                error_log("Error rendering view '{$view}': " . $e->getMessage() . ". Logger not available in Registry.");
+            }
+            echo "Error rendering view '{$view}'. Please check the application logs for more details.";
             exit; // Stop execution.
         }
 

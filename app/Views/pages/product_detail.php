@@ -1,15 +1,20 @@
 <?php
-// Use the default layout
-$this->layout('layouts/default', [
-    'page_title' => $page_title ?? 'Product Details',
-    'meta_description' => $meta_description ?? 'View details about our product.',
-    'meta_keywords' => $meta_keywords ?? 'product, details, ghibligroceries',
-    'additional_css_files' => $additional_css_files ?? [],
-    'additional_js_files' => $additional_js_files ?? [],
-    'logged_in' => $logged_in ?? false,
-    'user_name' => $user_name ?? '',
-    'cart_item_count' => $cart_item_count ?? 0
-]);
+// The BaseController's view() method handles the layout.
+// Variables like $page_title, $meta_description, etc., are passed
+// from the controller to the view() method, which then makes them
+// available to the layout. So, this $this->layout() call is not needed
+// and was causing the "Call to undefined method" error.
+
+// $this->layout('layouts/default', [
+//     'page_title' => $page_title ?? 'Product Details',
+//     'meta_description' => $meta_description ?? 'View details about our product.',
+//     'meta_keywords' => $meta_keywords ?? 'product, details, ghibligroceries',
+//     'additional_css_files' => $additional_css_files ?? [],
+//     'additional_js_files' => $additional_js_files ?? [],
+//     'logged_in' => $logged_in ?? false,
+//     'user_name' => $user_name ?? '',
+//     'cart_item_count' => $cart_item_count ?? 0
+// ]);
 ?>
 
 <div class="product-detail-container content-spacing">
@@ -69,10 +74,17 @@ $this->layout('layouts/default', [
                     <button type="button" class="quantity-btn increase-btn"
                         data-product-id="<?php echo $product['product_id']; ?>">+</button>
                 </div>
-                <button type="submit" class="btn btn-primary add-to-cart-btn-detail"
+                <?php if ($logged_in): ?>
+                <button type="submit" class="add-to-cart-btn"
+                    data-product-id="<?php echo htmlspecialchars($product['product_id']); ?>"
                     <?php echo !$can_add_to_cart ? 'disabled' : ''; ?>>
-                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                    Add to Cart
                 </button>
+                <?php else: ?>
+                <a href="/login" class="login-to-purchase-btn">
+                    Login to Purchase
+                </a>
+                <?php endif; ?>
             </form>
         </div>
     </div>

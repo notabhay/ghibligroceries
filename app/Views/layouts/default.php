@@ -10,11 +10,12 @@
  * - $meta_description (string, optional): The meta description for SEO. Defaults if not set.
  * - $meta_keywords (string, optional): The meta keywords for SEO. Defaults if not set.
  * - $additional_css_files (array, optional): An array of paths to additional CSS files to include.
+ * - $additional_styles (string, optional): A string containing inline CSS styles to be added. (Moved from navigation.php)
+ * - $additional_js_files (array, optional): An array of paths to additional JS files to include. (Moved from navigation.php)
  * - $logged_in (bool): Indicates if the user is currently logged in (used for body data attribute).
  * - $content (string): The HTML content of the specific page view to be rendered.
  *
  * Includes Partials:
- * - app/Views/partials/navigation.php: Contains head elements like meta tags, base CSS/JS links.
  * - app/Views/partials/header.php: Contains the site header, logo, main navigation, and user actions.
  * - app/Views/partials/footer.php: Contains the site footer with links and copyright info.
  -->
@@ -50,25 +51,37 @@
     <?php endforeach;
     endif;
     ?>
+
+    <!-- Google Fonts (Poppins) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <?php // Include additional inline styles if provided (moved from navigation.php)
+    if (isset($additional_styles)): ?>
+    <style>
+    <?php echo $additional_styles; // Output raw CSS string
+    ?>
+    </style>
+    <?php endif; ?>
+
+    <!-- JavaScript Files (moved from navigation.php) -->
+    <!-- Main site-wide script file (deferred execution) -->
+    <script src="/assets/js/script.js" defer></script>
+
+    <?php // Include additional JavaScript files if provided (moved from navigation.php)
+    if (isset($additional_js_files) && is_array($additional_js_files)):
+        foreach ($additional_js_files as $js_file): ?>
+    <!-- Include JS file relative to the /public/assets/js/ directory (deferred execution) -->
+    <script src="/assets/js/<?php echo htmlspecialchars($js_file); ?>" defer></script>
+    <?php endforeach;
+    endif; ?>
 </head>
 <!-- Add a data attribute to the body indicating login status, useful for CSS/JS -->
 
 <body data-logged-in="<?php echo isset($logged_in) && $logged_in ? 'true' : 'false'; ?>">
     <!-- Main application container -->
     <div class="app-container">
-
-        <?php
-        // Include the navigation partial (which primarily contains head elements in this structure)
-        // Note: This seems unusual placement for navigation.php based on its typical content.
-        // It might be intended to include head elements defined elsewhere or is misnamed.
-        $navPath = BASE_PATH . '/app/Views/partials/navigation.php';
-        if (file_exists($navPath)) {
-            require $navPath;
-        } else {
-            // Error handling or fallback if the navigation partial is missing
-            echo "<!-- Navigation partial not found at: " . htmlspecialchars($navPath) . " -->";
-        }
-        ?>
 
         <?php
         // Include the header partial (logo, main menu, user actions)
@@ -118,8 +131,8 @@
         </div>
     </div>
 
-    <!-- Note: Global JavaScript files are likely included within navigation.php or header.php -->
-    <!-- Specific page JS might be included via $additional_js_files in navigation.php -->
+    <!-- Note: Global JavaScript files are now included in the <head> with defer. -->
+    <!-- Specific page JS are also included in <head> via $additional_js_files with defer. -->
 </body>
 
 </html>
