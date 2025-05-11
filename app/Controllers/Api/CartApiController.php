@@ -8,6 +8,7 @@ use App\Core\Session;
 use App\Models\Product;
 use App\Core\Registry;
 use App\Helpers\CartHelper;
+use Monolog\Logger; // Add this line
 
 
 /**
@@ -35,7 +36,7 @@ class CartApiController extends BaseController
     private $db;
 
     /**
-     * @var Logger Instance of the Monolog logger.
+     * @var \Monolog\Logger Instance of the Monolog logger.
      */
     private $logger;
 
