@@ -67,8 +67,8 @@ abstract class BaseController
         // Extract the data array into individual variables accessible by the view and layout.
         // For example, $data['title'] becomes $title.
 // Add CSRF token to data for the view
-        if (\App\Core\Registry::has('session')) {
-            $session = \App\Core\Registry::get('session');
+        if (Registry::has('session')) {
+            $session = Registry::get('session');
             $data['csrf_token_for_layout'] = $session->getCsrfToken();
         } else {
             // Fallback or log error if session is not available
