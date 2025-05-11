@@ -75,7 +75,7 @@
                         data-product-id="<?php echo $product['product_id']; ?>">+</button>
                 </div>
                 <?php if ($logged_in): ?>
-                <button type="submit" class="add-to-cart-btn"
+                <button type="submit" class="add-to-cart-btn add-to-cart-btn-detail"
                     data-product-id="<?php echo htmlspecialchars($product['product_id']); ?>"
                     <?php echo !$can_add_to_cart ? 'disabled' : ''; ?>>
                     Add to Cart

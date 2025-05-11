@@ -211,6 +211,84 @@ class CartHelper
         ];
     }
 
+/**
+     * Sets the quantity of a specific item in the cart to a new total.
+     *
+     * If the new total quantity is zero or less, the item is removed from the cart.
+     * Returns the updated cart state.
+     *
+     * @param int $productId The ID of the product to update.
+     * @param int $newTotalQuantity The new total quantity for the item.
+     * @return array An associative array indicating success or failure, along with the updated cart data:
+     *               - 'success' (bool): True on success, false if product not found.
+     *               - 'message' (string): Status message.
+     *               - 'cart' (array): Updated list of cart items.
+     *               - 'total_items' (int): Updated total item count.
+     *               - 'total_price' (float): Updated total price.
+     *               - 'is_empty' (bool): Updated cart empty status.
+     *               - 'updated_product' (array|null): Details of the updated product line item, or null if removed.
+     */
+    public function setCartItemQuantity(int $productId, int $newTotalQuantity): array
+    {
+        // Find the product to ensure it exists and get its details.
+        $product = $this->productModel->findById($productId);
+        if (!$product) {
+            return [
+                'success' => false,
+                'message' => 'Product not found.'
+            ];
+        }
+
+        // Get the current cart from the session.
+        $cart = $this->session->get('cart', []);
+
+        // If the new quantity is 0 or less, remove the item from the cart.
+        if ($newTotalQuantity <= 0) {
+            if (isset($cart[$productId])) {
+                unset($cart[$productId]);
+            }
+        } else {
+            // Otherwise, set the cart with the new total quantity.
+            $cart[$productId] = $newTotalQuantity;
+        }
+
+        // Save the updated cart back to the session.
+        $this->session->set('cart', $cart);
+
+        // Get the latest cart data after the update.
+        $cartData = $this->getCartData();
+
+        // Prepare details about the specific item that was updated.
+        $updatedProductData = null;
+        if ($newTotalQuantity > 0 && $product) { // Ensure product exists
+            $updatedProductData = [
+                'product_id' => $productId,
+                'name' => $product['name'],
+                'new_quantity' => $newTotalQuantity, // This is the key difference
+                'price' => (float)$product['price'],
+                'new_total' => (float)$product['price'] * $newTotalQuantity
+            ];
+        } elseif ($product) { // If item was effectively removed (newTotalQuantity <= 0)
+             $updatedProductData = [
+                'product_id' => $productId,
+                'name' => $product['name'],
+                'new_quantity' => 0,
+                'price' => (float)$product['price'],
+                'new_total' => 0.0
+            ];
+        }
+
+        // Return success response with updated cart state.
+        return [
+            'success' => true,
+            'message' => $newTotalQuantity > 0 ? 'Item quantity set in cart.' : 'Item removed from cart.',
+            'cart' => $cartData['cart_items'],
+            'total_items' => $cartData['total_items'],
+            'total_price' => $cartData['total_price'],
+            'is_empty' => $cartData['is_empty'],
+            'updated_product' => $updatedProductData
+        ];
+    }
     /**
      * Removes an item completely from the shopping cart.
      *

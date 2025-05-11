@@ -105,55 +105,68 @@ class CartApiController extends BaseController
     {
         // Ensure the request method is POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->logger->warning('Cart add: Invalid request method.', ['method' => $_SERVER['REQUEST_METHOD']]);
             $this->jsonResponse(['error' => 'Invalid request method. Only POST is allowed.'], 405);
-            return;
-        }
-
-        // Check if the user is authenticated
-        if (!$this->session->isAuthenticated()) {
-            $this->jsonResponse(['error' => 'Authentication required.'], 401);
             return;
         }
 
         // Get JSON data from the request body
         $requestData = json_decode(file_get_contents('php://input'), true);
+        $this->logger->info('Cart add request received.', [
+            'product_id' => $requestData['product_id'] ?? 'N/A',
+            'quantity' => $requestData['quantity'] ?? 'N/A',
+            'csrf_token_present' => isset($requestData['csrf_token'])
+        ]);
+
+        // Check if the user is authenticated
+        if (!$this->session->isAuthenticated()) {
+            $this->logger->warning('Cart add: Authentication required.', ['product_id' => $requestData['product_id'] ?? 'N/A']);
+            $this->jsonResponse(['error' => 'Authentication required.'], 401);
+            return;
+        }
 
         // Validate CSRF token
         if (!isset($requestData['csrf_token']) || !$this->session->validateCsrfToken($requestData['csrf_token'])) {
-            $this->logger->warning('Invalid CSRF token for cart add.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token' => $this->session->getCsrfToken()]);
+            $this->logger->warning('Cart add: Invalid CSRF token.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token_hash' => $this->session->getCsrfToken() ? hash('sha256', $this->session->getCsrfToken()) : 'N/A']);
             $this->jsonResponse(['error' => 'Invalid security token.'], 403);
             return;
         }
 
         // Validate input data
         if (!isset($requestData['product_id']) || !isset($requestData['quantity']) || !is_numeric($requestData['product_id']) || !is_numeric($requestData['quantity']) || $requestData['quantity'] <= 0) {
+            $this->logger->warning('Cart add: Invalid input.', ['product_id' => $requestData['product_id'] ?? 'N/A', 'quantity' => $requestData['quantity'] ?? 'N/A']);
             $this->jsonResponse(['error' => 'Invalid input. Please provide a valid product_id and a positive quantity.'], 400);
             return;
         }
 
         $productId = (int) $requestData['product_id'];
         $quantity = (int) $requestData['quantity'];
+        $this->logger->info('Cart add: Input validated.', ['product_id' => $productId, 'quantity' => $quantity]);
 
-        // Use CartHelper to add/update the item (updateCartItem handles adding logic)
-        $result = $this->cartHelper->updateCartItem($productId, $quantity);
+        // Use CartHelper to add/update the item
+        $this->logger->info('Cart add: Calling CartHelper::setCartItemQuantity.', ['product_id' => $productId, 'quantity' => $quantity]);
+        $result = $this->cartHelper->setCartItemQuantity($productId, $quantity);
 
         // Handle potential errors from CartHelper
         if (!$result['success']) {
-            // Determine appropriate status code based on message (e.g., 404 for not found)
             $statusCode = ($result['message'] === 'Product not found or insufficient stock.') ? 404 : 400;
+            $this->logger->warning('Cart add: CartHelper failed to set item quantity.', ['product_id' => $productId, 'quantity' => $quantity, 'error' => $result['message'], 'status_code' => $statusCode]);
             $this->jsonResponse(['error' => $result['message']], $statusCode);
             return;
         }
 
         // Respond with success message and updated cart info
-        $this->jsonResponse([
+        $responseData = [
             'success' => true,
-            'message' => 'Product added to cart successfully.',
+            'message' => $result['message'] ?? 'Product processing complete.',
             'total_items' => $result['total_items'],
             'added_product_id' => $productId,
             'added_quantity' => $quantity,
-            'product_name' => $result['updated_product']['name'] ?? 'N/A' // Include product name if available
-        ], 200); // 200 OK for successful update/addition
+            'product_name' => $result['updated_product']['name'] ?? 'N/A'
+        ];
+        $this->logger->info('Cart add: Successfully processed item.', ['product_id' => $productId, 'new_total_items' => $result['total_items']]);
+        $this->logger->info('Cart add: Sending success response.', ['status_code' => 200, 'product_id' => $productId, 'response_summary' => ['total_items' => $result['total_items']]]);
+        $this->jsonResponse($responseData, 200);
     }
 
     /**
@@ -220,66 +233,88 @@ class CartApiController extends BaseController
     {
         // Ensure the request method is POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->logger->warning('Cart update: Invalid request method.', ['method' => $_SERVER['REQUEST_METHOD']]);
             $this->jsonResponse(['error' => 'Invalid request method. Only POST is allowed.'], 405);
-            return;
-        }
-
-        // Check authentication
-        if (!$this->session->isAuthenticated()) {
-            $this->jsonResponse(['error' => 'Authentication required.'], 401);
             return;
         }
 
         // Get JSON data
         $requestData = json_decode(file_get_contents('php://input'), true);
+        $this->logger->info('Cart update request received.', [
+            'product_id' => $requestData['product_id'] ?? 'N/A',
+            'quantity' => $requestData['quantity'] ?? 'N/A',
+            'csrf_token_present' => isset($requestData['csrf_token'])
+        ]);
+
+        // Check authentication
+        if (!$this->session->isAuthenticated()) {
+            $this->logger->warning('Cart update: Authentication required.', ['product_id' => $requestData['product_id'] ?? 'N/A']);
+            $this->jsonResponse(['error' => 'Authentication required.'], 401);
+            return;
+        }
 
         // Validate CSRF token
         if (!isset($requestData['csrf_token']) || !$this->session->validateCsrfToken($requestData['csrf_token'])) {
-            $this->logger->warning('Invalid CSRF token for cart update.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token' => $this->session->getCsrfToken()]);
+            $this->logger->warning('Cart update: Invalid CSRF token.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token_hash' => $this->session->getCsrfToken() ? hash('sha256', $this->session->getCsrfToken()) : 'N/A']);
             $this->jsonResponse(['error' => 'Invalid security token.'], 403);
             return;
         }
 
         // Validate input
         if (!isset($requestData['product_id']) || !isset($requestData['quantity']) || !is_numeric($requestData['product_id']) || !is_numeric($requestData['quantity'])) {
+            $this->logger->warning('Cart update: Invalid input.', ['product_id' => $requestData['product_id'] ?? 'N/A', 'quantity' => $requestData['quantity'] ?? 'N/A']);
             $this->jsonResponse(['error' => 'Invalid input. Please provide a valid product_id and quantity.'], 400);
             return;
         }
 
         $productId = (int) $requestData['product_id'];
         $newQuantity = (int) $requestData['quantity'];
+        $this->logger->info('Cart update: Input validated.', ['product_id' => $productId, 'new_quantity' => $newQuantity]);
 
         // Get current quantity to calculate the change needed for updateCartItem
+        // This logic for quantityChange is specific to how updateCartItem was designed.
+        // If CartHelper::setCartItemQuantity is preferred, this calculation might change.
+        // For now, sticking to the existing logic of CartHelper::updateCartItem expecting a delta.
         $cart = $this->session->get('cart', []);
         $currentQuantity = isset($cart[$productId]) ? $cart[$productId] : 0;
-        $quantityChange = $newQuantity - $currentQuantity; // Calculate the difference to add/remove
+        $quantityChange = $newQuantity - $currentQuantity;
 
         // If new quantity is zero or less, remove the item; otherwise, update it.
         if ($newQuantity <= 0) {
+            $this->logger->info('Cart update: Removing item due to zero or negative quantity.', ['product_id' => $productId, 'new_quantity' => $newQuantity]);
+            $this->logger->info('Cart update: Calling CartHelper::removeCartItem.', ['product_id' => $productId]);
             $result = $this->cartHelper->removeCartItem($productId);
         } else {
-            // updateCartItem expects the *change* in quantity, not the new total
+            $this->logger->info('Cart update: Updating item quantity.', ['product_id' => $productId, 'new_quantity' => $newQuantity, 'quantity_change' => $quantityChange]);
+            // Assuming updateCartItem expects the *change* in quantity. If it expects the absolute new quantity, this call needs adjustment.
+            // The original code used updateCartItem with quantityChange, so we maintain that.
+            // If CartHelper::setCartItemQuantity is the standard, this could be:
+            // $result = $this->cartHelper->setCartItemQuantity($productId, $newQuantity);
+            $this->logger->info('Cart update: Calling CartHelper::updateCartItem.', ['product_id' => $productId, 'quantity_change' => $quantityChange]);
             $result = $this->cartHelper->updateCartItem($productId, $quantityChange);
         }
 
         // Handle errors from CartHelper
         if (!$result['success']) {
-            // Determine status code (e.g., 404 if item wasn't found)
             $statusCode = ($result['message'] === 'Item not found in cart.' || $result['message'] === 'Product not found or insufficient stock.') ? 404 : 400;
+            $this->logger->warning('Cart update: CartHelper failed.', ['product_id' => $productId, 'new_quantity' => $newQuantity, 'error' => $result['message'], 'status_code' => $statusCode]);
             $this->jsonResponse(['error' => $result['message']], $statusCode);
             return;
         }
 
         // Respond with success and the full updated cart state
-        $this->jsonResponse([
+        $responseData = [
             'success' => true,
-            'message' => $result['message'] ?? 'Cart updated successfully.', // Use message from helper if available
+            'message' => $result['message'] ?? 'Cart updated successfully.',
             'cart' => $result['cart'],
             'total_items' => $result['total_items'],
             'total_price' => $result['total_price'],
             'is_empty' => $result['is_empty'],
-            'updated_product' => $result['updated_product'] ?? null // Include details if a product was updated
-        ], 200);
+            'updated_product' => $result['updated_product'] ?? null
+        ];
+        $this->logger->info('Cart update: Successfully processed update.', ['product_id' => $productId, 'new_total_items' => $result['total_items']]);
+        $this->logger->info('Cart update: Sending success response.', ['status_code' => 200, 'product_id' => $productId, 'response_summary' => ['total_items' => $result['total_items']]]);
+        $this->jsonResponse($responseData, 200);
     }
 
     /**
@@ -337,29 +372,36 @@ class CartApiController extends BaseController
      */
     public function getCart()
     {
+        $this->logger->info('Get cart request received.');
         // Ensure GET request
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            $this->logger->warning('Get cart: Invalid request method.', ['method' => $_SERVER['REQUEST_METHOD']]);
             $this->jsonResponse(['error' => 'Invalid request method. Only GET is allowed.'], 405);
             return;
         }
 
         // Check authentication
         if (!$this->session->isAuthenticated()) {
+            $this->logger->warning('Get cart: Authentication required.');
             $this->jsonResponse(['error' => 'Authentication required.'], 401);
             return;
         }
 
         // Retrieve cart data using the helper
+        $this->logger->info('Get cart: Calling CartHelper::getCartData.');
         $cartData = $this->cartHelper->getCartData();
+        $this->logger->info('Get cart: Cart data retrieved.', ['total_items' => $cartData['total_items'], 'is_empty' => $cartData['is_empty']]);
 
         // Respond with the cart data
-        $this->jsonResponse([
+        $responseData = [
             'success' => true,
-            'cart' => $cartData['cart_items'], // Use 'cart_items' key from helper
+            'cart' => $cartData['cart_items'],
             'total_items' => $cartData['total_items'],
             'total_price' => $cartData['total_price'],
             'is_empty' => $cartData['is_empty']
-        ], 200);
+        ];
+        $this->logger->info('Get cart: Sending success response.', ['status_code' => 200, 'response_summary' => ['total_items' => $cartData['total_items']]]);
+        $this->jsonResponse($responseData, 200);
     }
 
     /**
@@ -411,41 +453,56 @@ class CartApiController extends BaseController
     {
         // Ensure POST request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->logger->warning('Cart remove: Invalid request method.', ['method' => $_SERVER['REQUEST_METHOD']]);
             $this->jsonResponse(['error' => 'Invalid request method. Only POST is allowed.'], 405);
-            return;
-        }
-
-        // Check authentication
-        if (!$this->session->isAuthenticated()) {
-            $this->jsonResponse(['error' => 'Authentication required.'], 401);
             return;
         }
 
         // Get JSON data
         $requestData = json_decode(file_get_contents('php://input'), true);
+        $this->logger->info('Cart remove request received.', [
+            'product_id' => $requestData['product_id'] ?? 'N/A',
+            'csrf_token_present' => isset($requestData['csrf_token'])
+        ]);
+
+        // Check authentication
+        if (!$this->session->isAuthenticated()) {
+            $this->logger->warning('Cart remove: Authentication required.', ['product_id' => $requestData['product_id'] ?? 'N/A']);
+            $this->jsonResponse(['error' => 'Authentication required.'], 401);
+            return;
+        }
 
         // Validate CSRF token
         if (!isset($requestData['csrf_token']) || !$this->session->validateCsrfToken($requestData['csrf_token'])) {
-            $this->logger->warning('Invalid CSRF token for cart remove.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token' => $this->session->getCsrfToken()]);
+            $this->logger->warning('Cart remove: Invalid CSRF token.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token_hash' => $this->session->getCsrfToken() ? hash('sha256', $this->session->getCsrfToken()) : 'N/A']);
             $this->jsonResponse(['error' => 'Invalid security token.'], 403);
             return;
         }
 
         // Validate input
         if (!isset($requestData['product_id']) || !is_numeric($requestData['product_id'])) {
+            $this->logger->warning('Cart remove: Invalid input.', ['product_id' => $requestData['product_id'] ?? 'N/A']);
             $this->jsonResponse(['error' => 'Invalid input. Please provide a valid product_id.'], 400);
             return;
         }
 
         $productId = (int) $requestData['product_id'];
+        $this->logger->info('Cart remove: Input validated.', ['product_id' => $productId]);
 
         // Use CartHelper to remove the item
+        $this->logger->info('Cart remove: Calling CartHelper::removeCartItem.', ['product_id' => $productId]);
         $result = $this->cartHelper->removeCartItem($productId);
 
-        // Determine status code based on success/failure (e.g., 404 if not found)
-        $statusCode = $result['success'] ? 200 : ($result['message'] === 'Item not found in cart.' ? 404 : 400);
-
-        // Respond with the result from the helper
+        // Determine status code based on success/failure
+        if ($result['success']) {
+            $statusCode = 200;
+            $this->logger->info('Cart remove: Successfully removed item.', ['product_id' => $productId, 'new_total_items' => $result['total_items']]);
+            $this->logger->info('Cart remove: Sending success response.', ['status_code' => $statusCode, 'product_id' => $productId, 'response_summary' => ['total_items' => $result['total_items']]]);
+        } else {
+            $statusCode = ($result['message'] === 'Item not found in cart.') ? 404 : 400;
+            $this->logger->warning('Cart remove: CartHelper failed to remove item.', ['product_id' => $productId, 'error' => $result['message'], 'status_code' => $statusCode]);
+            $this->logger->warning('Cart remove: Sending error response.', ['status_code' => $statusCode, 'product_id' => $productId, 'error_message' => $result['message']]);
+        }
         $this->jsonResponse($result, $statusCode);
     }
 
@@ -500,49 +557,53 @@ class CartApiController extends BaseController
      */
     public function removeItem($params)
     {
-        $this->logger->info('Received request to delete item from cart via URL parameter.', ['params_received' => $params]);
+        $this->logger->info('Cart removeItem (URL param) request received.', ['params_received' => $params, 'method' => $_SERVER['REQUEST_METHOD']]);
 
         // Although the route might imply DELETE, web forms often use POST for this.
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->logger->warning('Invalid request method for removeItem.', ['method' => $_SERVER['REQUEST_METHOD']]);
+            $this->logger->warning('Cart removeItem: Invalid request method.', ['method' => $_SERVER['REQUEST_METHOD'], 'product_id_param' => $params['product_id'] ?? 'N/A']);
             $this->jsonResponse(['error' => 'Invalid request method. Only POST is allowed for this action.'], 405);
-            return;
-        }
-
-        // Check authentication
-        if (!$this->session->isAuthenticated()) {
-            $this->logger->warning('Authentication required for removeItem.', ['params_received' => $params]);
-            $this->jsonResponse(['error' => 'Authentication required.'], 401);
             return;
         }
 
         // Get JSON data (even if it's just for the CSRF token)
         $requestData = json_decode(file_get_contents('php://input'), true);
+        $this->logger->info('Cart removeItem: Request details.', [
+            'product_id_param' => $params['product_id'] ?? 'N/A',
+            'csrf_token_present' => isset($requestData['csrf_token'])
+        ]);
+
+        // Check authentication
+        if (!$this->session->isAuthenticated()) {
+            $this->logger->warning('Cart removeItem: Authentication required.', ['product_id_param' => $params['product_id'] ?? 'N/A']);
+            $this->jsonResponse(['error' => 'Authentication required.'], 401);
+            return;
+        }
 
         // Validate CSRF token
         if (!isset($requestData['csrf_token']) || !$this->session->validateCsrfToken($requestData['csrf_token'])) {
-            $this->logger->warning('Invalid CSRF token for cart removeItem.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token' => $this->session->getCsrfToken()]);
+            $this->logger->warning('Cart removeItem: Invalid CSRF token.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token_hash' => $this->session->getCsrfToken() ? hash('sha256', $this->session->getCsrfToken()) : 'N/A', 'product_id_param' => $params['product_id'] ?? 'N/A']);
             $this->jsonResponse(['error' => 'Invalid security token.'], 403);
             return;
         }
 
         // Validate the product ID from the route parameters
         if (!isset($params['product_id']) || !is_numeric($params['product_id']) || (int)$params['product_id'] <= 0) {
-            $this->logger->warning('Invalid or missing product ID received for removeItem.', ['params_received' => $params]);
+            $this->logger->warning('Cart removeItem: Invalid or missing product ID in URL.', ['params_received' => $params]);
             $this->jsonResponse(['success' => false, 'error' => 'Invalid product ID.'], 400);
             return;
         }
 
         $actualProductId = (int) $params['product_id'];
-        $this->logger->info('Validated product ID.', ['productId' => $actualProductId]);
+        $this->logger->info('Cart removeItem: Input validated.', ['product_id' => $actualProductId]);
 
         // Attempt to remove the item using CartHelper
-        $this->logger->info('Attempting to remove item from session/cart helper.', ['productId' => $actualProductId]);
+        $this->logger->info('Cart removeItem: Calling CartHelper::removeCartItem.', ['product_id' => $actualProductId]);
         $result = $this->cartHelper->removeCartItem($actualProductId);
 
         // Prepare response based on the result
         if ($result['success']) {
-            $this->logger->info('Successfully removed item from cart.', ['productId' => $actualProductId, 'result' => $result]);
+            $statusCode = 200;
             $responseData = [
                 'success' => true,
                 'message' => $result['message'] ?? 'Item removed from cart.',
@@ -551,18 +612,17 @@ class CartApiController extends BaseController
                 'total_price' => $result['total_price'],
                 'is_empty' => $result['is_empty']
             ];
-            $statusCode = 200;
+            $this->logger->info('Cart removeItem: Successfully removed item.', ['product_id' => $actualProductId, 'new_total_items' => $result['total_items']]);
+            $this->logger->info('Cart removeItem: Sending success response.', ['status_code' => $statusCode, 'product_id' => $actualProductId, 'response_summary' => ['total_items' => $result['total_items']]]);
         } else {
-            $this->logger->warning('Failed to remove item from cart (item might not exist?).', ['productId' => $actualProductId, 'result' => $result]);
-            // Determine status code: 404 if specifically "not found", 400 otherwise
             $statusCode = ($result['message'] === 'Item not found in cart.') ? 404 : 400;
             $responseData = [
                 'success' => false,
                 'error' => $result['message'] ?? 'Could not remove item from cart.'
             ];
+            $this->logger->warning('Cart removeItem: CartHelper failed to remove item.', ['product_id' => $actualProductId, 'error' => $result['message'], 'status_code' => $statusCode]);
+            $this->logger->warning('Cart removeItem: Sending error response.', ['status_code' => $statusCode, 'product_id' => $actualProductId, 'error_message' => $result['message']]);
         }
-
-        $this->logger->info('Sending JSON response for delete request.', ['response' => $responseData, 'statusCode' => $statusCode]);
         $this->jsonResponse($responseData, $statusCode);
     }
 
@@ -611,37 +671,45 @@ class CartApiController extends BaseController
     {
         // Ensure POST request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->logger->warning('Cart clear: Invalid request method.', ['method' => $_SERVER['REQUEST_METHOD']]);
             $this->jsonResponse(['error' => 'Invalid request method. Only POST is allowed.'], 405);
-            return;
-        }
-
-        // Check authentication
-        if (!$this->session->isAuthenticated()) {
-            $this->jsonResponse(['error' => 'Authentication required.'], 401);
             return;
         }
 
         // Get JSON data (even if it's just for the CSRF token)
         $requestData = json_decode(file_get_contents('php://input'), true);
+        $this->logger->info('Cart clear request received.', ['csrf_token_present' => isset($requestData['csrf_token'])]);
+
+
+        // Check authentication
+        if (!$this->session->isAuthenticated()) {
+            $this->logger->warning('Cart clear: Authentication required.');
+            $this->jsonResponse(['error' => 'Authentication required.'], 401);
+            return;
+        }
 
         // Validate CSRF token
         if (!isset($requestData['csrf_token']) || !$this->session->validateCsrfToken($requestData['csrf_token'])) {
-            $this->logger->warning('Invalid CSRF token for cart clear.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token' => $this->session->getCsrfToken()]);
+            $this->logger->warning('Cart clear: Invalid CSRF token.', ['submitted_token' => $requestData['csrf_token'] ?? 'N/A', 'session_token_hash' => $this->session->getCsrfToken() ? hash('sha256', $this->session->getCsrfToken()) : 'N/A']);
             $this->jsonResponse(['error' => 'Invalid security token.'], 403);
             return;
         }
 
         // Use CartHelper to clear the cart
+        $this->logger->info('Cart clear: Calling CartHelper::clearCart.');
         $result = $this->cartHelper->clearCart();
+        $this->logger->info('Cart clear: Cart successfully cleared.', ['new_total_items' => $result['total_items']]);
 
         // Respond with confirmation and the now empty cart state
-        $this->jsonResponse([
+        $responseData = [
             'success' => true,
             'message' => 'Cart cleared.',
-            'total_items' => $result['total_items'], // Should be 0
-            'total_price' => $result['total_price'], // Should be 0.00
-            'is_empty' => $result['is_empty']      // Should be true
-        ], 200);
+            'total_items' => $result['total_items'],
+            'total_price' => $result['total_price'],
+            'is_empty' => $result['is_empty']
+        ];
+        $this->logger->info('Cart clear: Sending success response.', ['status_code' => 200, 'response_summary' => ['total_items' => $result['total_items']]]);
+        $this->jsonResponse($responseData, 200);
     }
 
     /**
@@ -674,27 +742,34 @@ class CartApiController extends BaseController
      */
     public function getCartCount()
     {
+        $this->logger->info('Get cart count request received.');
         // Ensure GET request
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            $this->logger->warning('Get cart count: Invalid request method.', ['method' => $_SERVER['REQUEST_METHOD']]);
             $this->jsonResponse(['error' => 'Invalid request method. Only GET is allowed.'], 405);
             return;
         }
 
-        // Note: Depending on requirements, this might not strictly need authentication
-        // if the cart count is displayed even for logged-out users (session-based cart).
-        // However, keeping it consistent with other cart actions requiring auth.
-        // if (!$this->session->isAuthenticated()) {
-        //     $this->jsonResponse(['error' => 'Authentication required.'], 401);
-        //     return;
-        // }
+        // Authentication check: The original code commented this out.
+        // For consistency with other cart actions and general API security, it's often good to require authentication
+        // unless there's a specific reason for unauthenticated access to cart count (e.g. for guest carts).
+        // Re-enabling it for now, assuming consistency is preferred.
+        if (!$this->session->isAuthenticated()) {
+            $this->logger->warning('Get cart count: Authentication required.');
+            $this->jsonResponse(['error' => 'Authentication required.'], 401);
+            return;
+        }
 
         // Retrieve cart data using the helper
+        $this->logger->info('Get cart count: Calling CartHelper::getCartData.');
         $cartData = $this->cartHelper->getCartData();
+        $this->logger->info('Get cart count: Cart data retrieved for count.', ['total_items_from_helper' => $cartData['total_items'] ?? 'N/A']);
 
+        $count = $cartData['total_items'] ?? 0;
         // Respond with just the count
-        $this->jsonResponse([
-            'count' => $cartData['total_items'] ?? 0 // Default to 0 if cart is empty/not set
-        ], 200);
+        $responseData = ['count' => $count];
+        $this->logger->info('Get cart count: Sending success response.', ['status_code' => 200, 'count' => $count]);
+        $this->jsonResponse($responseData, 200);
     }
 
     /**
