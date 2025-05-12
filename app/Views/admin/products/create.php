@@ -79,14 +79,14 @@
             <!-- Price and Stock Quantity Row -->
             <div class="form-row">
                 <!-- Price Input -->
-                <div class="form-group col-md-6">
+                <div class="form-group">
                     <label for="price">Price ($) <span class="text-danger">*</span></label>
                     <input type="number" id="price" name="price" class="form-control" min="0.01" step="0.01" required
                         value="<?php echo isset($_POST['price']) ? htmlspecialchars($_POST['price']) : ''; // Repopulate if validation failed 
                                 ?>">
                 </div>
                 <!-- Stock Quantity Input -->
-                <div class="form-group col-md-6">
+                <div class="form-group">
                     <label for="stock_quantity">Stock Quantity <span class="text-danger">*</span></label>
                     <input type="number" id="stock_quantity" name="stock_quantity" class="form-control" min="0" required
                         value="<?php echo isset($_POST['stock_quantity']) ? htmlspecialchars($_POST['stock_quantity']) : '100'; // Repopulate or default to 100 

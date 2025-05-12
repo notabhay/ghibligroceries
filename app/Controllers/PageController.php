@@ -291,4 +291,57 @@ class PageController extends BaseController
         // No output is necessary, just the header.
         exit;
     }
+
+    /**
+     * Displays a themed 404 "Page Not Found" error page.
+     * Sets the HTTP response code to 404 and renders the custom 404 view.
+     *
+     * @return void Renders the 'errors/404' view.
+     */
+    public function showNotFoundPage(): void
+    {
+        // Inside PageController::showNotFoundPage()
+        http_response_code(404);
+
+        $data = [
+            'page_title' => 'Page Not Found (404) - GhibliGroceries',
+            'error_main_heading' => '404', // For the large "404"
+            'error_sub_heading' => 'Page Not Found', // For the text below
+            'error_message' => "Oops! The page you're looking for doesn't seem to exist or may have been moved.",
+            'link_home_text' => 'Go to Homepage',
+            'link_home_href' => '/',
+            'link_browse_text' => 'Browse Products',
+            'link_browse_href' => '/categories',
+            'additional_css_files' => ['/assets/css/error-page.css'],
+            'logged_in' => $this->session->isAuthenticated(),
+            'body_class' => 'error-page-body', // Add body class for specific styling
+            // No footer for this page
+        ];
+
+        // Manually render the view within the new error layout
+        $viewPath = BASE_PATH . '/app/Views/errors/404.php';
+        $layoutPath = BASE_PATH . '/app/Views/layouts/error.php'; // Use the new error layout
+
+        if (!file_exists($viewPath)) {
+            // Log error and output basic message
+            $this->logger->error("404 view file not found: {$viewPath}");
+            echo "Error: 404 View file not found.";
+            exit;
+        }
+        if (!file_exists($layoutPath)) {
+            // Log error and output basic message
+            $this->logger->error("Error layout file not found: {$layoutPath}");
+            echo "Error: Error Layout file not found.";
+            exit;
+        }
+
+        extract($data);
+
+        ob_start();
+        include $viewPath;
+        $content = ob_get_clean(); // This $content is for the layout
+
+        // $content is now available for the layout
+        include $layoutPath; // This will render the error layout with the 404 page content
+    }
 }

@@ -8,40 +8,12 @@
 // Wait for the HTML document to be fully loaded and parsed.
 document.addEventListener('DOMContentLoaded', function () {
     // Initialize all relevant functionalities when the DOM is ready.
-    initMobileMenu();
     initQuantityInputs();
     initOrderForm();
     initOrderCancellation();
     initPrintButtons();
     initOrderStatusFilter();
 });
-
-/**
- * @function initMobileMenu
- * @description Initializes the toggle functionality for the mobile navigation menu.
- *              Adds a click event listener to the toggle button to show/hide the menu
- *              and switch the icon between bars (menu) and times (close).
- */
-function initMobileMenu() {
-    // Select the mobile menu toggle button and the navigation menu itself.
-    const menuToggle = document.querySelector('.mobile-menu-toggle');
-    const navMenu = document.querySelector('.mobile-menu');
-
-    // Ensure both elements exist before adding the event listener.
-    if (menuToggle && navMenu) {
-        menuToggle.addEventListener('click', function () {
-            // Toggle the 'show' class on the navigation menu to control visibility.
-            navMenu.classList.toggle('show');
-            // Find the icon within the toggle button.
-            const icon = menuToggle.querySelector('i');
-            if (icon) {
-                // Toggle Font Awesome classes to change the icon appearance.
-                icon.classList.toggle('fa-bars'); // Hamburger icon
-                icon.classList.toggle('fa-times'); // Close icon
-            }
-        });
-    }
-}
 
 /**
  * @function initQuantityInputs

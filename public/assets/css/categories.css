@@ -257,44 +257,6 @@
    ========================================================================== */
 
 /* Larger tablets / Small desktops */
-@media (max-width: 1024px) {
-
-    /* Switch to single column layout (stack sidebar above grid) */
-    .products-wrapper {
-        grid-template-columns: 1fr;
-    }
-
-    /* Make sidebar non-sticky and add bottom margin */
-    .filter-sidebar {
-        position: relative;
-        /* Remove sticky positioning */
-        top: 0;
-        margin-bottom: 30px;
-    }
-}
-
-/* Tablets */
-@media (max-width: 768px) {
-
-    /* Adjust product grid to 2 columns */
-    .products-row {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    /* Increase card height slightly to accommodate content better */
-    .products-grid .product-card {
-        height: 320px;
-    }
-}
-
-/* Mobile phones */
-@media (max-width: 480px) {
-
-    /* Adjust product grid to 1 column */
-    .products-row {
-        grid-template-columns: 1fr;
-    }
-}
 
 /* Specific layout for the search results page wrapper */
 .products-wrapper.search-results-page-wrapper {

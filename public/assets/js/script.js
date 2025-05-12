@@ -35,18 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Mobile Menu Toggle ---
-    const menuToggle = document.querySelector('.mobile-menu-toggle');
-    const navMenu = document.querySelector('.mobile-menu');
-    if (menuToggle && navMenu) { // Ensure both elements exist
-        menuToggle.addEventListener('click', function () {
-            // Toggles the visibility of the mobile navigation menu
-            navMenu.classList.toggle('show');
-        });
-    } else {
-        if (!menuToggle) console.warn("Mobile menu toggle button not found.");
-        if (!navMenu) console.warn("Mobile navigation menu element not found.");
-    }
 
     // --- Footer Toggle ---
     const footerToggle = document.querySelector('.footer-toggle');
@@ -346,21 +334,21 @@ document.addEventListener('DOMContentLoaded', function () {
      * Fetches sub-categories based on a parent category ID and populates the sub-category dropdown.
      * @param {string|number} categoryId - The ID of the parent category.
      */
-    function fetchAndPopulateSubcategories(categoryId) {
+    function fetchAndPopulateSubcategories(categoryId, activeSubCategoryId = null) {
         // Do nothing if the sub-category select element doesn't exist
         if (!subCategorySelect) {
-            return;
+            return Promise.resolve(); // Return a resolved promise if no select element
         }
         // Reset the dropdown before fetching
         resetSubCategoryDropdown();
 
         // Do nothing if no valid category ID is provided
         if (!categoryId || categoryId === 'all') {
-            return;
+            return Promise.resolve(); // Return a resolved promise
         }
 
         // Fetch sub-categories from the server
-        fetch(`/ajax/subcategories?parentId=${encodeURIComponent(categoryId)}`)
+        return fetch(`/ajax/subcategories?parentId=${encodeURIComponent(categoryId)}`)
             .then(response => {
                 // Check for HTTP errors
                 if (!response.ok) {
@@ -383,6 +371,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else if (data.subcategories && Array.isArray(data.subcategories)) {
                     // If sub-categories are found
                     if (data.subcategories.length > 0) {
+                        let subCategorySelected = false;
                         // Populate the dropdown with options
                         data.subcategories.forEach(subCat => {
                             // Basic validation of subcategory data
@@ -390,12 +379,22 @@ document.addEventListener('DOMContentLoaded', function () {
                                 const option = document.createElement('option');
                                 option.value = subCat.category_id;
                                 option.textContent = subCat.category_name;
+                                if (activeSubCategoryId && parseInt(subCat.category_id, 10) === parseInt(activeSubCategoryId, 10)) {
+                                    option.selected = true;
+                                    subCategorySelected = true;
+                                }
                                 subCategorySelect.appendChild(option);
                             } else {
                                 console.warn('Skipping invalid subcategory data:', subCat);
                             }
                         });
                         subCategorySelect.disabled = false; // Enable the dropdown
+
+                        // If a subcategory was programmatically selected, trigger change to load its products
+                        if (subCategorySelected) {
+                            console.log(`Active sub-category ${activeSubCategoryId} selected. Triggering change.`);
+                            subCategorySelect.dispatchEvent(new Event('change'));
+                        }
                     } else {
                         // If no sub-categories found
                         subCategorySelect.innerHTML = '<option value="">-- No Sub-categories --</option>';
@@ -410,6 +409,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Handle fetch errors
                 console.error('Fetch subcategories error:', error);
                 subCategorySelect.innerHTML = `<option value="">-- Load Failed --</option>`;
+                throw error; // Re-throw to be caught by initial load logic if needed
             });
     }
 
@@ -454,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Generate product card HTML
                 html += `
                     <div class="product-card">
-                        <a href="/product/${escapeHTML(prod.product_id)}" class="product-link">
+                        <a href="/product/${escapeHTML(prod.product_id)}/${escapeHTML(prod.slug)}" class="product-link">
                             <img src="/${escapeHTML(prod.image_path)}" alt="${escapeHTML(prod.name)}" class="product-image">
                             <h4 class="product-name">${escapeHTML(prod.name)}</h4>
                             <p class="product-price">$${formattedPrice}</p>
@@ -1342,17 +1342,39 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    // --- Initial Sub-category Load ---
-    // If a main category (other than 'all') is pre-selected on page load,
-    // fetch its sub-categories immediately.
-    if (mainCategorySelect && mainCategorySelect.value && mainCategorySelect.value !== 'all') {
-        const initialCategoryId = mainCategorySelect.value;
-        console.log(`Initial main category detected: ${initialCategoryId}. Fetching sub-categories...`);
-        fetchAndPopulateSubcategories(initialCategoryId);
-    } else if (mainCategorySelect) {
-        console.log("No initial main category selected or 'all' selected.");
-    }
+    // --- Initial Page Load Logic for Categories Page ---
+    const productsWrapper = document.querySelector('.products-wrapper');
+    if (mainCategorySelect && productsWrapper) { // Ensure we are on the categories page
+        const activeMainCatId = productsWrapper.dataset.activeMainCategoryId;
+        const activeSubCatId = productsWrapper.dataset.activeSubCategoryId;
 
+        console.log("Initial page load on categories page.");
+        console.log("Active Main Category ID from PHP:", activeMainCatId);
+        console.log("Active Sub Category ID from PHP:", activeSubCatId);
+
+        // If a main category is pre-selected (either by URL filter or default)
+        if (mainCategorySelect.value && mainCategorySelect.value !== 'all') {
+            const initialMainCategoryId = mainCategorySelect.value; // This is the one selected in the dropdown
+            console.log(`Initial main category dropdown value: ${initialMainCategoryId}. Fetching sub-categories...`);
+
+            // Fetch subcategories. If activeSubCatId is present, pass it to select it.
+            fetchAndPopulateSubcategories(initialMainCategoryId, activeSubCatId)
+                .then(() => {
+                    console.log("Subcategories populated (or attempted).");
+                    // If activeSubCatId was provided and successfully selected by fetchAndPopulateSubcategories,
+                    // it should have already triggered a 'change' event to load products.
+                    // If there was no activeSubCatId, or it wasn't found, products for the main category
+                    // should have been loaded by the PHP. If the main category dropdown itself was changed
+                    // by the user, its event listener handles product loading.
+                    // This initial load handles the case where PHP sets the main category, and potentially a sub-category.
+                })
+                .catch(error => {
+                    console.error("Error during initial subcategory population:", error);
+                });
+        } else {
+            console.log("No initial main category selected in dropdown, or 'all' selected. PHP should have loaded initial products.");
+        }
+    }
 
     // --- Order Cancellation Modal (My Orders Page) ---
     const cancelOrderModal = document.getElementById('cancelOrderModal');

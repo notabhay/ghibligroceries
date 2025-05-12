@@ -356,24 +356,3 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-    .product-detail-main-content {
-        flex-direction: column;
-        /* Stack columns */
-    }
-
-    .product-info-column h1 {
-        font-size: 2rem;
-        /* Slightly smaller H1 on mobile */
-    }
-
-    .product-detail-price {
-        font-size: 1.5rem;
-    }
-
-    .add-to-cart-form-detail {
-        align-items: stretch;
-        /* Make form elements take full width */
-    }
-
-}

@@ -31,19 +31,19 @@
 <?php // Display flash messages if they exist 
 ?>
 <?php if (isset($_SESSION['flash_success'])): ?>
-    <div class="alert alert-success">
-        <?php echo htmlspecialchars($_SESSION['flash_success']); // Escape HTML 
+<div class="alert alert-success">
+    <?php echo htmlspecialchars($_SESSION['flash_success']); // Escape HTML 
         ?>
-    </div>
-    <?php // unset($_SESSION['flash_success']); // Optional: Unset after display 
+</div>
+<?php // unset($_SESSION['flash_success']); // Optional: Unset after display 
     ?>
 <?php endif; ?>
 <?php if (isset($_SESSION['flash_error'])): ?>
-    <div class="alert alert-danger">
-        <?php echo htmlspecialchars($_SESSION['flash_error']); // Escape HTML 
+<div class="alert alert-danger">
+    <?php echo htmlspecialchars($_SESSION['flash_error']); // Escape HTML 
         ?>
-    </div>
-    <?php // unset($_SESSION['flash_error']); // Optional: Unset after display 
+</div>
+<?php // unset($_SESSION['flash_error']); // Optional: Unset after display 
     ?>
 <?php endif; ?>
 
@@ -59,12 +59,12 @@
                 <?php // Populate categories from $categories array 
                 ?>
                 <?php foreach ($categories as $category): ?>
-                    <option value="<?php echo $category['category_id']; ?>" <?php // Pre-select if this category is the current filter 
+                <option value="<?php echo $category['category_id']; ?>" <?php // Pre-select if this category is the current filter 
                                                                             ?>
-                        <?php echo (isset($filters['category_id']) && $filters['category_id'] == $category['category_id']) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($category['category_name']); // Escape HTML 
+                    <?php echo (isset($filters['category_id']) && $filters['category_id'] == $category['category_id']) ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($category['category_name']); // Escape HTML 
                         ?>
-                    </option>
+                </option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -92,7 +92,7 @@
 </div>
 
 <!-- Products Table Container -->
-<div class="table-responsive">
+<div>
     <table class="table table-striped">
         <!-- Table Header -->
         <thead>
@@ -112,65 +112,64 @@
             <?php // Check if there are products to display 
             ?>
             <?php if (empty($products)): ?>
-                <tr>
-                    <td colspan="8" class="text-center">No products found matching your criteria.</td>
-                </tr>
+            <tr>
+                <td colspan="8" class="text-center">No products found matching your criteria.</td>
+            </tr>
             <?php else: ?>
-                <?php // Loop through each product 
+            <?php // Loop through each product 
                 ?>
-                <?php foreach ($products as $product): ?>
-                    <tr>
-                        <!-- Product ID -->
-                        <td><?php echo $product['product_id']; ?></td>
-                        <!-- Product Image Thumbnail -->
-                        <td>
-                            <img src="/<?php echo htmlspecialchars($product['image_path']); // Escape HTML 
+            <?php foreach ($products as $product): ?>
+            <tr>
+                <!-- Product ID -->
+                <td><?php echo $product['product_id']; ?></td>
+                <!-- Product Image Thumbnail -->
+                <td>
+                    <img src="/<?php echo htmlspecialchars($product['image_path']); // Escape HTML 
                                         ?>" alt="<?php echo htmlspecialchars($product['name']); // Escape HTML 
                                                     ?>" class="product-thumbnail" width="50" height="50">
-                        </td>
-                        <!-- Product Name -->
-                        <td><?php echo htmlspecialchars($product['name']); // Escape HTML 
+                </td>
+                <!-- Product Name -->
+                <td><?php echo htmlspecialchars($product['name']); // Escape HTML 
                             ?></td>
-                        <!-- Product Category Name -->
-                        <td><?php echo htmlspecialchars($product['category_name']); // Escape HTML 
+                <!-- Product Category Name -->
+                <td><?php echo htmlspecialchars($product['category_name']); // Escape HTML 
                             ?></td>
-                        <!-- Product Price (Formatted) -->
-                        <td>$<?php echo number_format($product['price'], 2); ?></td>
-                        <!-- Stock Quantity -->
-                        <td><?php echo $product['stock_quantity']; ?></td>
-                        <!-- Product Status Badge -->
-                        <td>
-                            <span class="badge <?php echo $product['is_active'] ? 'badge-success' : 'badge-danger'; // Dynamic class based on status 
+                <!-- Product Price (Formatted) -->
+                <td>$<?php echo number_format($product['price'], 2); ?></td>
+                <!-- Stock Quantity -->
+                <td><?php echo $product['stock_quantity']; ?></td>
+                <!-- Product Status Badge -->
+                <td>
+                    <span class="badge <?php echo $product['is_active'] ? 'badge-success' : 'badge-danger'; // Dynamic class based on status 
                                                 ?>">
-                                <?php echo $product['is_active'] ? 'Active' : 'Inactive'; // Display status text 
+                        <?php echo $product['is_active'] ? 'Active' : 'Inactive'; // Display status text 
                                 ?>
-                            </span>
-                        </td>
-                        <!-- Action Buttons -->
-                        <td>
-                            <div class="btn-group">
-                                <!-- Edit Button -->
-                                <a href="/admin/products/<?php echo $product['product_id']; ?>/edit"
-                                    class="btn btn-sm btn-primary">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <!-- Activate/Deactivate Form & Button -->
-                                <form action="/admin/products/<?php echo $product['product_id']; ?>/toggle-active" method="POST"
-                                    class="d-inline"> <?php // Form submitted inline 
+                    </span>
+                </td>
+                <!-- Action Buttons -->
+                <td>
+                    <div class="btn-group">
+                        <!-- Edit Button -->
+                        <a href="/admin/products/<?php echo $product['product_id']; ?>/edit" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <!-- Activate/Deactivate Form & Button -->
+                        <form action="/admin/products/<?php echo $product['product_id']; ?>/toggle-active" method="POST"
+                            class="d-inline"> <?php // Form submitted inline 
                                                         ?>
-                                    <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
-                                    <button type="submit" class="btn btn-sm <?php echo $product['is_active'] ? 'btn-warning' : 'btn-success'; // Dynamic button class 
+                            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                            <button type="submit" class="btn <?php echo $product['is_active'] ? 'btn-warning' : 'btn-success'; // Dynamic button class
                                                                             ?>">
-                                        <i class="fas <?php echo $product['is_active'] ? 'fa-ban' : 'fa-check'; // Dynamic icon 
+                                <i class="fas <?php echo $product['is_active'] ? 'fa-ban' : 'fa-check'; // Dynamic icon 
                                                         ?>"></i>
-                                        <?php echo $product['is_active'] ? 'Deactivate' : 'Activate'; // Dynamic button text 
+                                <?php echo $product['is_active'] ? 'Deactivate' : 'Activate'; // Dynamic button text 
                                         ?>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <?php endforeach; ?>
             <?php endif; // End products check 
             ?>
         </tbody>
@@ -180,144 +179,144 @@
 <?php // Check if pagination is needed 
 ?>
 <?php if (!empty($pagination) && $pagination['total_pages'] > 1): ?>
-    <!-- Pagination Container -->
-    <div class="pagination-container">
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                <?php // Previous Page Link 
+<!-- Pagination Container -->
+<div class="pagination-container">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <?php // Previous Page Link 
                 ?>
-                <?php if ($pagination['has_previous']): ?>
-                    <li class="page-item">
-                        <?php // Build URL with previous page number and existing filters 
+            <?php if ($pagination['has_previous']): ?>
+            <li class="page-item">
+                <?php // Build URL with previous page number and existing filters 
                         ?>
-                        <a class="page-link"
-                            href="/admin/products?page=<?php echo $pagination['current_page'] - 1; ?><?php echo isset($filters['category_id']) ? '&category_id=' . urlencode($filters['category_id']) : ''; ?><?php echo isset($filters['is_active']) ? '&is_active=' . urlencode($filters['is_active']) : ''; ?>"
-                            aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                <?php endif; ?>
+                <a class="page-link"
+                    href="/admin/products?page=<?php echo $pagination['current_page'] - 1; ?><?php echo isset($filters['category_id']) ? '&category_id=' . urlencode($filters['category_id']) : ''; ?><?php echo isset($filters['is_active']) ? '&is_active=' . urlencode($filters['is_active']) : ''; ?>"
+                    aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <?php endif; ?>
 
-                <?php // Page Number Links 
+            <?php // Page Number Links 
                 ?>
-                <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
-                    <li class="page-item <?php echo $i === $pagination['current_page'] ? 'active' : ''; // Highlight current page 
+            <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
+            <li class="page-item <?php echo $i === $pagination['current_page'] ? 'active' : ''; // Highlight current page 
                                             ?>">
-                        <?php // Build URL with page number and existing filters 
+                <?php // Build URL with page number and existing filters 
                         ?>
-                        <a class="page-link"
-                            href="/admin/products?page=<?php echo $i; ?><?php echo isset($filters['category_id']) ? '&category_id=' . urlencode($filters['category_id']) : ''; ?><?php echo isset($filters['is_active']) ? '&is_active=' . urlencode($filters['is_active']) : ''; ?>">
-                            <?php echo $i; ?>
-                        </a>
-                    </li>
-                <?php endfor; ?>
+                <a class="page-link"
+                    href="/admin/products?page=<?php echo $i; ?><?php echo isset($filters['category_id']) ? '&category_id=' . urlencode($filters['category_id']) : ''; ?><?php echo isset($filters['is_active']) ? '&is_active=' . urlencode($filters['is_active']) : ''; ?>">
+                    <?php echo $i; ?>
+                </a>
+            </li>
+            <?php endfor; ?>
 
-                <?php // Next Page Link 
+            <?php // Next Page Link 
                 ?>
-                <?php if ($pagination['has_next']): ?>
-                    <li class="page-item">
-                        <?php // Build URL with next page number and existing filters 
+            <?php if ($pagination['has_next']): ?>
+            <li class="page-item">
+                <?php // Build URL with next page number and existing filters 
                         ?>
-                        <a class="page-link"
-                            href="/admin/products?page=<?php echo $pagination['current_page'] + 1; ?><?php echo isset($filters['category_id']) ? '&category_id=' . urlencode($filters['category_id']) : ''; ?><?php echo isset($filters['is_active']) ? '&is_active=' . urlencode($filters['is_active']) : ''; ?>"
-                            aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                <?php endif; ?>
-            </ul>
-        </nav>
-    </div>
+                <a class="page-link"
+                    href="/admin/products?page=<?php echo $pagination['current_page'] + 1; ?><?php echo isset($filters['category_id']) ? '&category_id=' . urlencode($filters['category_id']) : ''; ?><?php echo isset($filters['is_active']) ? '&is_active=' . urlencode($filters['is_active']) : ''; ?>"
+                    aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</div>
 <?php endif; // End pagination check 
 ?>
 
 <!-- Embedded CSS for styling -->
 <style>
-    /* Body */
-    body {
-        margin: 0;
-        padding: 0;
-    }
+/* Body */
+body {
+    margin: 0;
+    padding: 0;
+}
 
-    /* Header styling */
-    .admin-content-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
+/* Header styling */
+.admin-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
 
-    /* Filter container styling */
-    .filter-container {
-        background-color: #f8f9fa;
-        /* Light background for filter area */
-        padding: 1rem;
-        border-radius: 4px;
-        margin-bottom: 1.5rem;
-    }
+/* Filter container styling */
+.filter-container {
+    background-color: #f8f9fa;
+    /* Light background for filter area */
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
 
-    /* Filter form layout */
-    .filter-form {
-        display: flex;
-        flex-wrap: wrap;
-        /* Allow wrapping on smaller screens */
-        gap: 1rem;
-        /* Spacing between filter elements */
-        align-items: flex-end;
-        /* Align items to the bottom */
-    }
+/* Filter form layout */
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    /* Allow wrapping on smaller screens */
+    gap: 1rem;
+    /* Spacing between filter elements */
+    align-items: flex-end;
+    /* Align items to the bottom */
+}
 
-    /* Individual filter group styling */
-    .filter-group {
-        display: flex;
-        flex-direction: column;
-        /* Stack label and input vertically */
-        min-width: 200px;
-        /* Minimum width for filter inputs */
-    }
+/* Individual filter group styling */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    /* Stack label and input vertically */
+    min-width: 200px;
+    /* Minimum width for filter inputs */
+}
 
-    /* Product thumbnail image styling */
-    .product-thumbnail {
-        object-fit: cover;
-        /* Ensure image covers the area without distortion */
-        border-radius: 4px;
-        /* Slightly rounded corners */
-    }
+/* Product thumbnail image styling */
+.product-thumbnail {
+    object-fit: cover;
+    /* Ensure image covers the area without distortion */
+    border-radius: 4px;
+    /* Slightly rounded corners */
+}
 
-    /* General badge styling */
-    .badge {
-        padding: 0.5em 0.75em;
-        border-radius: 4px;
-        font-weight: normal;
-        /* Override default bold */
-        font-size: 0.85em;
-        /* Slightly smaller font */
-    }
+/* General badge styling */
+.badge {
+    padding: 0.5em 0.75em;
+    border-radius: 4px;
+    font-weight: normal;
+    /* Override default bold */
+    font-size: 0.85em;
+    /* Slightly smaller font */
+}
 
-    /* Success badge (Active) */
-    .badge-success {
-        background-color: #28a745;
-        color: white;
-    }
+/* Success badge (Active) */
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
 
-    /* Danger badge (Inactive) */
-    .badge-danger {
-        background-color: #dc3545;
-        color: white;
-    }
+/* Danger badge (Inactive) */
+.badge-danger {
+    background-color: #dc3545;
+    color: white;
+}
 
-    /* Pagination container centering */
-    .pagination-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 1.5rem;
-    }
+/* Pagination container centering */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
 
-    /* Button group styling for actions */
-    .btn-group {
-        display: flex;
-        /* Align buttons horizontally */
-        gap: 0.5rem;
-        /* Space between buttons */
-    }
+/* Button group styling for actions */
+.btn-group {
+    display: flex;
+    /* Align buttons horizontally */
+    gap: 0.5rem;
+    /* Space between buttons */
+}
 </style>

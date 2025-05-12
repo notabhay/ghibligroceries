@@ -21,7 +21,7 @@
     <!-- Breadcrumbs -->
     <nav aria-label="breadcrumb" class="product-breadcrumbs">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/categories">Categories</a></li>
             <?php foreach ($category_breadcrumbs as $breadcrumb): ?>
             <li class="breadcrumb-item">
                 <a

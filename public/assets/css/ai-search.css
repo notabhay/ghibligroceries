@@ -318,30 +318,3 @@
 }
 
 /* Responsive Adjustments */
-@media (max-width: 768px) {
-    .ai-search-results-dropdown {
-        position: fixed;
-        top: 60px;
-        /* Adjust based on your header height */
-        left: 0;
-        right: 0;
-        width: 100%;
-        max-width: none;
-        border-radius: 0;
-        margin-top: 0;
-        z-index: 1001;
-    }
-
-    .search-refinement {
-        padding: 0 10px;
-    }
-
-    .products-row {
-        flex-direction: column;
-    }
-
-    .product-card {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-}

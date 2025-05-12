@@ -114,7 +114,7 @@ $items = $order['items'] ?? [];
                 <!-- Action buttons -->
                 <div class="order-actions">
                     <!-- Back button to the main orders list -->
-                    <a href="/orders" class="btn btn-secondary btn-sm">
+                    <a href="/orders" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Orders
                     </a>
                     <!-- Cancel Order button (only shown if status is 'pending') -->
@@ -125,7 +125,7 @@ $items = $order['items'] ?? [];
                         <!-- CSRF token for security -->
                         <input type="hidden" name="csrf_token" value="<?= $csrfToken_safe ?>">
                         <!-- Button to trigger the cancellation confirmation modal -->
-                        <button type="button" name="cancel_order" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                        <button type="button" name="cancel_order" class="btn btn-danger" data-bs-toggle="modal"
                             data-bs-target="#cancelOrderModal" data-cancel-url="/order/cancel/<?= $order_id_safe ?>">
                             <i class="fas fa-times"></i> Cancel Order
                         </button>
@@ -133,7 +133,7 @@ $items = $order['items'] ?? [];
                     </form>
                     <?php endif; ?>
                     <!-- Print button -->
-                    <button class="btn btn-secondary btn-sm" onclick="window.print(); return false;">
+                    <button class="btn btn-secondary" onclick="window.print(); return false;">
                         <i class="fas fa-print"></i> Print
                     </button>
                 </div>
@@ -203,7 +203,7 @@ $items = $order['items'] ?? [];
                 <!-- Check if there are items in the order -->
                 <?php if (!empty($items)): ?>
                 <!-- Responsive table container -->
-                <div class="table-responsive">
+                <div>
                     <!-- Table displaying items in the order -->
                     <table class="order-table">
                         <!-- Table header -->
@@ -357,12 +357,6 @@ $items = $order['items'] ?? [];
 <!-- Note: JavaScript to handle modal visibility and form submission on confirm is expected elsewhere (e.g., in a global script file or potentially added below if specific to this page) -->
 <!-- Inline CSS for specific styling adjustments and print styles -->
 <style>
-/* Style for smaller buttons */
-.btn-sm {
-    padding: 6px 12px;
-    font-size: 14px;
-}
-
 /* Style for danger/cancel buttons */
 .btn-danger {
     background-color: var(--tomato-red);

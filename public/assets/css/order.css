@@ -484,36 +484,6 @@ textarea.form-control {
    Responsive Adjustments (Checkout Page Specific)
    ========================================================================== */
 
-@media (max-width: 768px) {
-
-    /* Stack form action buttons vertically */
-    .form-actions {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    /* Make form action buttons full width */
-    .form-actions .btn {
-        width: 100%;
-    }
-
-    /* Stack product details (image/name) vertically in table */
-    .product-details {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    /* Center thumbnail when stacked */
-    .product-thumbnail {
-        margin: 0 auto;
-    }
-
-    /* Reduce padding in table cells */
-    .order-table th,
-    .order-table td {
-        padding: 10px;
-    }
-}
 
 /* ==========================================================================
    Order Confirmation Page Styles
@@ -1029,61 +999,6 @@ textarea.form-control {
    Responsive Adjustments (Order Details & Confirmation)
    ========================================================================== */
 
-@media (max-width: 768px) {
-
-    /* Stack confirmation action buttons vertically */
-    .confirmation-actions {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    /* Make confirmation buttons full width and adjust margins */
-    .confirmation-actions .btn {
-        margin: 0 0 10px 0;
-        width: 100%;
-    }
-
-    .confirmation-actions .btn-primary {
-        margin-right: 0;
-        /* Reset margin */
-    }
-
-    .confirmation-actions .btn-secondary {
-        margin-left: 0;
-        /* Reset margin */
-    }
-
-    /* Stack order details header items vertically */
-    .details-header {
-        flex-direction: column;
-        align-items: flex-start;
-        /* Align to left */
-        gap: 15px;
-        /* Space between items */
-    }
-
-    /* Align order action buttons to the left and make full width */
-    .order-actions {
-        justify-content: flex-start;
-        width: 100%;
-    }
-
-    /* Adjust timeline padding and icon position for smaller screens */
-    .timeline {
-        padding-left: 25px;
-    }
-
-    .timeline-icon {
-        left: -25px;
-        width: 18px;
-        height: 18px;
-    }
-
-    /* Slightly smaller timeline heading */
-    .timeline-content h4 {
-        font-size: 15px;
-    }
-}
 
 /* ==========================================================================
    Cancel Order Modal Styles
@@ -1186,22 +1101,3 @@ textarea.form-control {
 }
 
 /* Responsive adjustments for the cancel modal on small screens */
-@media (max-width: 480px) {
-
-    /* Adjust padding and width */
-    #cancelOrderModal .modal-content {
-        padding: 20px;
-        width: 95%;
-    }
-
-    /* Stack buttons vertically */
-    #cancelOrderModal .modal-buttons {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    /* Make buttons full width */
-    #cancelOrderModal .modal-btn {
-        width: 100%;
-    }
-}

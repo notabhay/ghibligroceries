@@ -269,31 +269,3 @@
    ========================================================================== */
 
 /* Medium screens (tablets) */
-@media (max-width: 992px) {
-
-    /* Stack info and form blocks vertically */
-    .contact-content {
-        grid-template-columns: 1fr;
-        /* Single column layout */
-    }
-}
-
-/* Smaller screens (large mobiles / small tablets) */
-@media (max-width: 768px) {
-
-    /* Reduce padding for main content blocks */
-    .contact-info,
-    .contact-form-wrapper,
-    .location-map {
-        padding: 20px;
-    }
-}
-
-/* Small screens (mobiles) */
-@media (max-width: 576px) {
-
-    /* Make the form submission button full width */
-    .contact-form button {
-        width: 100%;
-    }
-}

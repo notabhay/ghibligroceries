@@ -76,7 +76,7 @@ $session = App\Core\Registry::get('session');
             <!-- Orders list section -->
             <div class="orders-list">
                 <!-- Responsive table container -->
-                <div class="table-responsive">
+                <div>
                     <!-- Table displaying order history -->
                     <table class="order-table">
                         <!-- Table header -->
@@ -123,7 +123,7 @@ $session = App\Core\Registry::get('session');
                                 <!-- Action buttons -->
                                 <td class="text-center">
                                     <!-- Link to view order details -->
-                                    <a href="/order/details/<?= $order_id_safe ?>" class="btn btn-secondary btn-sm">
+                                    <a href="/order/details/<?= $order_id_safe ?>" class="btn btn-secondary">
                                         View Details
                                     </a>
                                 </td>
@@ -187,13 +187,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <!-- Inline CSS for specific styling adjustments -->
 <style>
-/* Style for smaller buttons */
-.btn-sm {
-    padding: 6px 12px;
-    /* Adjust padding */
-    font-size: 14px;
-    /* Adjust font size */
-}
-
 /* Add any other specific styles for this page below */
 </style>

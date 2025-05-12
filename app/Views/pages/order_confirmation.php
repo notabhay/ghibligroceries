@@ -170,7 +170,7 @@ $items = $order['items'] ?? [];
         <div class="order-summary-section">
             <h2>Items Ordered</h2>
             <!-- Responsive table container -->
-            <div class="table-responsive">
+            <div>
                 <!-- Table displaying items in the order -->
                 <table class="order-table">
                     <!-- Table header -->

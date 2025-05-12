@@ -22,7 +22,9 @@
 $categories ??= [];
 $products ??= [];
 $logged_in ??= false;
-$activeFilter ??= null; // Stores the name of the category passed via query string, if any.
+$activeFilterName ??= null; // Stores the name of the category passed via query string, if any.
+$activeMainCategoryId ??= null;
+$activeSubCategoryId ??= null;
 ?>
 <!-- Page Header Section -->
 <section class="page-header fixed-page-header">
@@ -33,7 +35,9 @@ $activeFilter ??= null; // Stores the name of the category passed via query stri
 </section>
 
 <!-- Main content wrapper containing sidebar and product grid -->
-<div class="products-wrapper">
+<div class="products-wrapper"
+    data-active-main-category-id="<?php echo htmlspecialchars((string)($activeMainCategoryId ?? '')); ?>"
+    data-active-sub-category-id="<?php echo htmlspecialchars((string)($activeSubCategoryId ?? '')); ?>">
     <!-- Sidebar for filtering products -->
     <aside class="filter-sidebar">
         <h3>Filter Products</h3>
@@ -42,16 +46,16 @@ $activeFilter ??= null; // Stores the name of the category passed via query stri
             <label for="main-category">Main Category</label>
             <select id="main-category" name="main_category">
                 <option value="all">All Categories</option>
-                <?php // Check if the $categories array is not empty 
+                <?php // Check if the $categories array is not empty
                 ?>
                 <?php if (!empty($categories)): ?>
-                <?php // Loop through each category provided 
+                <?php // Loop through each category provided
                     ?>
                 <?php foreach ($categories as $cat): ?>
-                <?php // Determine if this category is the currently active filter 
+                <?php // Determine if this category is the currently active filter
                         ?>
-                <?php $isSelected = ($activeFilter !== null && $cat['category_name'] === $activeFilter); ?>
-                <option value="<?php echo htmlspecialchars($cat['category_id']); ?>" <?php echo $isSelected ? 'selected' : ''; // Add 'selected' attribute if it matches the active filter 
+                <?php $isSelected = ($activeMainCategoryId !== null && (int)$cat['category_id'] === (int)$activeMainCategoryId); ?>
+                <option value="<?php echo htmlspecialchars($cat['category_id']); ?>" <?php echo $isSelected ? 'selected' : ''; // Add 'selected' attribute if it matches the active filter
                                                                                                 ?>>
                     <?php echo htmlspecialchars($cat['category_name']); ?>
                 </option>
@@ -64,7 +68,7 @@ $activeFilter ??= null; // Stores the name of the category passed via query stri
             <label for="sub-category">Sub Category / Products</label>
             <select id="sub-category" name="sub_category" disabled>
                 <option value="all">Select Main Category First</option>
-                <?php // Options here might be dynamically loaded via JavaScript based on main category selection 
+                <?php // Options here might be dynamically loaded via JavaScript based on main category selection
                 ?>
             </select>
             <small>Selecting a main category will load products here.</small>

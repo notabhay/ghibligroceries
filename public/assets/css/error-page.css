@@ -1,58 +1,149 @@
-.error-page-container {
+/* Styles for the 404 Error Page */
+
+/* Container for the entire error page content, centered on the viewport */
+.error-container {
     display: flex;
+    /* Already flex, good for centering .error-content */
     flex-direction: column;
+    /* Stack children (e.g. .error-content) vertically */
     align-items: center;
+    /* Center .error-content horizontally */
     justify-content: center;
-    min-height: 60vh;
-    /* Adjust as needed to fit within your layout */
+    /* Center .error-content vertically */
+    flex-grow: 1;
+    /* Allow this container to grow and fill the .main-content area */
+    width: 100%;
+    /* Ensure it takes the full width of .main-content */
+    padding: 5vh 20px 25vh 20px;
+    /* Adjust top/bottom padding to shift content up */
+    /* background-color: var(--soft-off-white); MOVED to .main-content on error pages */
+    font-family: "Poppins", sans-serif;
+    /* Match site font */
     text-align: center;
-    padding: 20px;
+    /* Retain for text within .error-content if not overridden */
 }
 
+/* Content box for the error message and links */
 .error-content {
-    background-color: #fff;
-    /* Or your site's card background color */
+    background-color: #ffffff;
+    /* White card background */
     padding: 40px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    /* Consistent with other elements if applicable */
+    /* Consistent rounded corners */
+    box-shadow: var(--shadow);
+    /* Use global shadow */
     max-width: 600px;
     width: 100%;
 }
 
-.error-title {
-    font-size: 2.5rem;
-    /* Adjust to match your H1 styling */
-    color: #333;
-    /* Or your site's primary heading color */
+/* Optional: Styling for an error icon (if you add one) */
+.error-icon {
+    width: 80px;
+    /* Adjust size as needed */
+    height: 80px;
+    /* Adjust size as needed */
     margin-bottom: 20px;
+    opacity: 0.7;
 }
 
+/* Heading style for "404 - Page Not Found" */
+.error-heading {
+    font-size: 3rem;
+    /* Large, prominent heading */
+    color: var(--tomato-red);
+    /* Use accent color for emphasis */
+    margin-bottom: 15px;
+    font-weight: 700;
+    /* Bold */
+}
+
+/* Paragraph style for the user-friendly message */
 .error-message {
     font-size: 1.1rem;
-    /* Adjust to match your paragraph styling */
-    color: #555;
-    /* Or your site's text color */
+    color: var(--herb-green);
+    /* Main text color */
     margin-bottom: 30px;
+    line-height: 1.6;
 }
 
-.btn-primary {
-    /* Assuming you have a .btn-primary class in styles.css */
-    /* If not, define styles here or ensure it matches your global button styles */
-    /* Example:
-    display: inline-block;
+/* Container for action buttons/links */
+.error-actions {
+    display: flex;
+    flex-direction: column;
+    /* Stack buttons on small screens */
+    align-items: center;
+    gap: 15px;
+    /* Space between buttons */
+}
+
+/* Styling for buttons, leveraging global .btn styles */
+.error-actions .btn {
+    min-width: 200px;
+    /* Minimum width for buttons */
     padding: 12px 25px;
-    background-color: #007bff; // Your primary button color
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    */
+    /* Consistent padding */
 }
 
-.btn-primary:hover {
-    /* Example:
-    background-color: #0056b3; // Darker shade for hover
-    */
+/* Primary button (e.g., Go to Homepage) */
+.error-actions .btn-primary {
+    background-color: var(--tomato-red);
+    /* Global primary button color */
+    color: white;
+}
+
+.error-actions .btn-primary:hover {
+    background-color: var(--dark-tomato-red);
+    /* Global primary button hover color */
+}
+
+/* Secondary button (e.g., Browse Products) */
+.error-actions .btn-secondary {
+    background-color: transparent;
+    color: var(--herb-green);
+    /* Global secondary button color */
+    border: 1px solid var(--herb-green);
+    /* Global secondary button border */
+}
+
+.error-actions .btn-secondary:hover {
+    background-color: var(--soft-off-white);
+    /* Light background on hover */
+    color: var(--dark-herb-green);
+    border-color: var(--dark-herb-green);
+}
+
+/* Responsive adjustments */
+@media (min-width: 576px) {
+    .error-actions {
+        flex-direction: row;
+        /* Align buttons in a row on larger screens */
+        justify-content: center;
+        /* Center buttons in the row */
+    }
+
+    .error-heading {
+        font-size: 3.5rem;
+        /* Slightly larger heading on wider screens */
+    }
+}
+
+
+/* Styles for the new 404 heading structure */
+.error-main-heading {
+    font-size: 8rem;
+    /* Adjust as needed */
+    font-weight: bold;
+    color: var(--tomato-red);
+    /* Or your primary error color */
+    margin-bottom: 0;
+    line-height: 1;
+}
+
+.error-sub-heading {
+    font-size: 2rem;
+    /* Adjust as needed */
+    color: var(--dark-gray);
+    /* Or a secondary text color */
+    margin-top: 0;
+    margin-bottom: 20px;
 }

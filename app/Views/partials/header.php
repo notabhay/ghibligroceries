@@ -118,58 +118,5 @@ $logged_in = isset($_SESSION['user_id']); // Simplified boolean check
             <?php endif; ?>
         </div> <!-- End header-actions -->
 
-        <!-- Mobile Menu Toggle Button -->
-        <!-- This button is typically shown only on smaller screens via CSS media queries -->
-        <!-- JavaScript is used to toggle the visibility of the '.mobile-menu' element -->
-        <div class="mobile-menu-toggle">
-            <i class="fas fa-bars"></i> <!-- Hamburger icon -->
-        </div>
-
     </div> <!-- End container -->
 </header> <!-- End fixed-header -->
-
-<!-- Mobile Menu Container -->
-<!-- This menu is likely hidden by default and slides/appears when the toggle is clicked -->
-<div class="mobile-menu">
-    <nav>
-        <ul>
-            <!-- Mobile navigation items - mirrors desktop but styled for mobile -->
-            <li><a href="/"
-                    class="<?php echo (isset($currentPath) && $currentPath === '/') ? 'active' : ''; ?>">Home</a></li>
-            <li><a href="/categories"
-                    class="<?php echo (isset($currentPath) && $currentPath === '/categories') ? 'active' : ''; ?>">Categories</a>
-            </li>
-            <li><a href="/about"
-                    class="<?php echo (isset($currentPath) && $currentPath === '/about') ? 'active' : ''; ?>">About</a>
-            </li>
-            <li><a href="/contact"
-                    class="<?php echo (isset($currentPath) && $currentPath === '/contact') ? 'active' : ''; ?>">Contact</a>
-            </li>
-
-            <?php
-            // Conditional items based on login status for mobile menu
-            if ($logged_in): ?>
-            <!-- Mobile Cart Link -->
-            <li>
-                <a href="/cart" class="mobile-cart-button">
-                    <?php // Display filled/empty cart icon
-                        if (isset($_SESSION['cart']) && count($_SESSION['cart']) > 0): ?>
-                    <img src="/assets/images/cart/filled_shopping_cart.png" alt="Shopping Cart" class="cart-image">
-                    <?php else: ?>
-                    <img src="/assets/images/cart/empty_shopping_cart.png" alt="Empty Shopping Cart" class="cart-image">
-                    <?php endif; ?>
-                    <span>Cart</span>
-                    <!-- Note: Mobile cart count might need separate JS handling if badge isn't reused -->
-                </a>
-            </li>
-            <!-- Other logged-in links -->
-            <li><a href="/my-orders" class="sign-in-btn">My Orders</a></li>
-            <li><a href="/logout">Logout</a></li>
-            <?php else: ?>
-            <!-- Logged-out links -->
-            <li><a href="/login">Sign In</a></li>
-            <li><a href="/register">Sign Up</a></li>
-            <?php endif; ?>
-        </ul>
-    </nav>
-</div> <!-- End mobile-menu -->

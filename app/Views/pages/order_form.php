@@ -80,7 +80,7 @@ $session = App\Core\Registry::get('session');
             <section class="order-summary-section">
                 <h2>Order Summary</h2>
                 <!-- Responsive table container -->
-                <div class="table-responsive">
+                <div>
                     <!-- Table showing cart items -->
                     <table class="order-table">
                         <!-- Table header -->

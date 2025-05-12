@@ -338,31 +338,3 @@
    ========================================================================== */
 
 /* Tablets and smaller */
-@media (max-width: 768px) {
-
-    /* Reduce padding in the form container */
-    .register-form-container {
-        padding: 20px;
-    }
-
-    /* Reduce padding in input fields */
-    .form-group input {
-        padding: 10px;
-    }
-}
-
-/* Mobile phones */
-@media (max-width: 576px) {
-
-    /* Reduce page title font size */
-    .page-title h2 {
-        font-size: 1.8rem;
-    }
-
-    /* Remove shadow and reduce padding further for form container */
-    .register-form-container {
-        box-shadow: none;
-        /* Remove shadow on small screens */
-        padding: 15px;
-    }
-}

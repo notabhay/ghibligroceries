@@ -27,12 +27,12 @@
     <!-- Page Header Row -->
     <div class="row mb-4">
         <!-- Page Title displaying the Order ID -->
-        <div class="col-md-6">
+        <div>
             <h1>Order #<?= htmlspecialchars($order['order_id']) // Display Order ID, escape HTML 
                         ?></h1>
         </div>
         <!-- Back to Orders List Button -->
-        <div class="col-md-6 text-end">
+        <div class="text-end">
             <a href="/admin/orders" class="btn btn-secondary">Back to Orders</a>
         </div>
     </div>
@@ -61,7 +61,7 @@
     <!-- Row containing Order Summary, Customer Info, and Notes cards -->
     <div class="row">
         <!-- Order Summary Card -->
-        <div class="col-md-4 mb-4">
+        <div class="mb-4">
             <div class="card h-100">
                 <div class="card-header">
                     <h5 class="mb-0">Order Summary</h5>
@@ -130,7 +130,7 @@
         </div>
 
         <!-- Customer Information Card -->
-        <div class="col-md-4 mb-4">
+        <div class="mb-4">
             <div class="card h-100">
                 <div class="card-header">
                     <h5 class="mb-0">Customer Information</h5>
@@ -166,7 +166,7 @@
         </div>
 
         <!-- Order Notes Card -->
-        <div class="col-md-4 mb-4">
+        <div class="mb-4">
             <div class="card h-100">
                 <div class="card-header">
                     <h5 class="mb-0">Order Notes</h5>
@@ -200,7 +200,7 @@
             <div class="alert alert-info">No items found for this order.</div>
             <?php else: ?>
             <!-- Responsive table container for items -->
-            <div class="table-responsive">
+            <div>
                 <!-- Order Items Table -->
                 <table class="table table-striped">
                     <!-- Table Header -->

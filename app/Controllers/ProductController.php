@@ -90,33 +90,55 @@ class ProductController extends BaseController
         $logged_in = $this->session->isAuthenticated(); // Check login status
         $categories = [];
         $initialProducts = [];
-        $activeFilterForView = null; // To highlight the active filter in the view
+        $activeFilterName = null;
+        $activeMainCategoryId = null;
+        $activeSubCategoryId = null;
 
         try {
             // Fetch all top-level categories for display
             $categories = $this->categoryModel->getAllTopLevel();
 
-            // Check if a category filter is applied via query parameter (e.g., /categories?filter=Fruits+%26+Veggies)
-            $categoryFilter = $this->request->get('filter'); // Get 'filter' query parameter
+            // Check if a category filter is applied via query parameter
+            $filterQueryParam = $this->request->get('filter');
 
-            if ($categoryFilter) {
-                $this->logger->info("Category filter applied", ['filter' => $categoryFilter]);
-                $activeFilterForView = $categoryFilter; // Pass the filter name to the view
+            if ($filterQueryParam) {
+                $this->logger->info("Category filter applied from URL", ['filter' => $filterQueryParam]);
+                $activeFilterName = $filterQueryParam; // Store the original filter name
 
                 // Find the category ID corresponding to the filter name
-                $categoryId = $this->getCategoryIdByName($categoryFilter);
+                $filteredCategoryId = $this->getCategoryIdByName($filterQueryParam);
 
-                if ($categoryId) {
-                    // Fetch products belonging to the specified category
-                    $initialProducts = $this->productModel->findByCategory($categoryId);
+                if ($filteredCategoryId) {
+                    $filteredCategory = $this->categoryModel->findById($filteredCategoryId);
+
+                    if ($filteredCategory) {
+                        if (!empty($filteredCategory['parent_id'])) { // It's a subcategory
+                            $activeSubCategoryId = (int)$filteredCategory['category_id'];
+                            $activeMainCategoryId = (int)$filteredCategory['parent_id'];
+                            // Fetch products for this subcategory
+                            $initialProducts = $this->productModel->findByCategory($activeSubCategoryId);
+                            $this->logger->info("Filter is a subcategory.", ['main_category_id' => $activeMainCategoryId, 'sub_category_id' => $activeSubCategoryId, 'filter_name' => $filterQueryParam]);
+                        } else { // It's a main category
+                            $activeMainCategoryId = (int)$filteredCategory['category_id'];
+                            // Fetch products for this main category
+                            $initialProducts = $this->productModel->findByCategory($activeMainCategoryId);
+                            $this->logger->info("Filter is a main category.", ['main_category_id' => $activeMainCategoryId, 'filter_name' => $filterQueryParam]);
+                        }
+                    } else {
+                        // Category ID found by name, but findById failed (should be rare)
+                        $this->logger->warning("Category details not found for ID, showing all products.", ['category_id' => $filteredCategoryId, 'filter_name' => $filterQueryParam]);
+                        $initialProducts = $this->productModel->getAll();
+                        $activeFilterName = null; // Reset as filter was problematic
+                    }
                 } else {
                     // If category name doesn't match, log a warning and show all products as fallback
-                    $this->logger->warning("Category not found for filter, showing all products.", ['filter' => $categoryFilter]);
+                    $this->logger->warning("Category not found for filter, showing all products.", ['filter' => $filterQueryParam]);
                     $initialProducts = $this->productModel->getAll();
-                    $activeFilterForView = null; // Reset active filter as it was invalid
+                    $activeFilterName = null; // Reset active filter as it was invalid
                 }
             } else {
                 // If no filter is applied, fetch all products initially
+                $this->logger->info("No category filter applied, showing all products.");
                 $initialProducts = $this->productModel->getAll();
             }
 
@@ -125,7 +147,6 @@ class ProductController extends BaseController
                 $product['slug'] = $this->generateSlug($product['name']);
             }
             unset($product);
-
 
         } catch (\Exception $e) {
             // Log error if fetching categories or products fails
@@ -140,7 +161,9 @@ class ProductController extends BaseController
         $this->view('pages/categories', [
             'categories' => $categories,
             'products' => $initialProducts, // Products to display initially
-            'activeFilter' => $activeFilterForView, // Name of the active filter, if any
+            'activeFilterName' => $activeFilterName, // Name of the active filter from URL, if any
+            'activeMainCategoryId' => $activeMainCategoryId,
+            'activeSubCategoryId' => $activeSubCategoryId,
             'page_title' => 'Browse Products',
             'meta_description' => 'Browse our wide selection of fresh groceries by category.',
             'meta_keywords' => 'products, categories, grocery, online shopping',
@@ -216,6 +239,17 @@ class ProductController extends BaseController
             $this->logger->info('AJAX: Calling productModel->findByCategory.', ['categoryId' => $categoryId]);
             $products = $this->productModel->findByCategory($categoryId);
             $this->logger->info('AJAX: Received products from model.', ['products_count' => count($products)]); // Avoid logging full data unless debugging
+// Add slug to each product before sending response
+            foreach ($products as &$product) { // Use a reference to modify the array directly
+                if (isset($product['name'])) { // Ensure name exists before generating slug
+                    $product['slug'] = $this->generateSlug($product['name']);
+                } else {
+                    // Fallback slug if name is missing, and log this occurrence
+                    $product['slug'] = 'n-a'; 
+                    $this->logger->warning('Product missing name in ajaxGetProductsByCategory, using default slug.', ['product_id' => $product['product_id'] ?? 'unknown']);
+                }
+            }
+            unset($product); // Unset the reference to avoid unintended side effects
 
             // Send successful JSON response with the products
             $this->jsonResponse(['products' => $products]);
@@ -571,9 +605,6 @@ class ProductController extends BaseController
             }
         }
         
-        // Add "Home" as the first breadcrumb
-        array_unshift($breadcrumbs, ['name' => 'Home', 'link' => '/', 'active' => false]);
-
         // The view will append the product name as the last, active breadcrumb item.
         // Example: Home / Category / SubCategory / ProductName (active)
         // This function returns: [ {Home}, {Category}, {SubCategory} ] all with active=false.

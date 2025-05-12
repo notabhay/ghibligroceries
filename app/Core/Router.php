@@ -302,8 +302,25 @@ class Router
             return $this->callAction($controllerClass, $action, $this->params);
         }
 
-        // If no route matched, throw a 404 exception.
-        throw new Exception("No route defined for this URI: {$uriPath} [{$requestType}]", 404);
+        // If no route matched, instantiate PageController and call showNotFoundPage.
+        // This ensures our themed 404 page is displayed.
+        try {
+            // Ensure PageController is correctly namespaced
+            $pageController = new \App\Controllers\PageController();
+            $pageController->showNotFoundPage();
+            exit(); // Stop further script execution after displaying 404 page
+        } catch (\Throwable $e) {
+            // Fallback to a generic error if PageController itself fails
+            // Log this critical failure
+            if (Registry::has('logger')) {
+                Registry::get('logger')->critical("Failed to display custom 404 page. Router fallback.", ['exception' => $e]);
+            }
+            http_response_code(404);
+            echo "<h1>404 - Page Not Found</h1><p>The page you are looking for could not be found.</p>";
+            // Optionally, include more details if in a development environment
+            // error_log("Router fallback 404: " . $e->getMessage());
+            exit();
+        }
     }
 
     /**

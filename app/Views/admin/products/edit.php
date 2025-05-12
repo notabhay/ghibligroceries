@@ -82,14 +82,14 @@
             <!-- Price and Stock Quantity Row -->
             <div class="form-row">
                 <!-- Price Input -->
-                <div class="form-group col-md-6">
+                <div class="form-group">
                     <label for="price">Price ($) <span class="text-danger">*</span></label>
                     <input type="number" id="price" name="price" class="form-control" min="0.01" step="0.01" required
                         value="<?php echo htmlspecialchars($product['price']); // Pre-fill with current price 
                                 ?>">
                 </div>
                 <!-- Stock Quantity Input -->
-                <div class="form-group col-md-6">
+                <div class="form-group">
                     <label for="stock_quantity">Stock Quantity <span class="text-danger">*</span></label>
                     <input type="number" id="stock_quantity" name="stock_quantity" class="form-control" min="0" required
                         value="<?php echo htmlspecialchars($product['stock_quantity']); // Pre-fill with current stock 

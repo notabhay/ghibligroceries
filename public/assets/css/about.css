@@ -116,24 +116,3 @@
    ========================================================================== */
 
 /* Medium screens (tablets) */
-@media (max-width:768px) {
-
-    /* Adjust values grid to 2 columns */
-    .values-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    /* Reduce padding for the main content block */
-    .about-content {
-        padding: 20px;
-    }
-}
-
-/* Small screens (mobile) */
-@media (max-width:576px) {
-
-    /* Adjust values grid to a single column */
-    .values-grid {
-        grid-template-columns: 1fr;
-    }
-}

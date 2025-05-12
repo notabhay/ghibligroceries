@@ -56,7 +56,17 @@
 }
 
 /* Base body styles */
+html {
+    height: 100%;
+}
+
 body {
+    height: 100%;
+    /* Ensure body takes full height */
+    display: flex;
+    /* Enable flex layout for direct children */
+    flex-direction: column;
+    /* Stack children vertically */
     position: relative;
     /* Needed for absolute positioning contexts */
     /* Subtle gradient background */
@@ -87,6 +97,32 @@ body {
     /* Reset margin (centering handled elsewhere if needed) */
     padding: 0 30px;
     /* Horizontal padding */
+}
+
+/* Styles for the main application wrapper, typically found in layout files */
+.app-container {
+    display: flex;
+    /* Enable flex layout for direct children (header, main, footer) */
+    flex-direction: column;
+    /* Stack children vertically */
+    flex-grow: 1;
+    /* Make app-container fill remaining space in body */
+    /* min-height: 100vh; /* This was causing overflow with body's padding-top */
+}
+
+/* Styles for the main content area specifically on error pages */
+/* This requires adding 'error-page-body' class to the <body> tag in the error layout */
+body.error-page-body .main-content {
+    flex-grow: 1;
+    /* Allow the main content to take up all available vertical space */
+    display: flex;
+    /* Enable flex for its children, e.g., to center .error-container */
+    align-items: center;
+    /* Center .error-container vertically */
+    justify-content: center;
+    /* Center .error-container horizontally */
+    background-color: var(--soft-off-white);
+    /* Apply the desired background color to the full-height area */
 }
 
 /* Base anchor link styles */
@@ -1186,256 +1222,6 @@ footer.hidden {
    ========================================================================== */
 
 /* Larger Tablets / Small Desktops */
-@media (max-width: 1024px) {
-
-    /* Adjust hero layout to stack vertically */
-    .hero {
-        flex-direction: column;
-        /* Stack elements */
-        padding: 30px 20px;
-        /* Reduce padding */
-    }
-
-    /* Make hero sections full width */
-    .hero-copy,
-    .hero-visual,
-    .product-showcase {
-        flex: 0 0 100%;
-        /* Take full width */
-        margin-right: 0;
-        /* Remove right margin */
-        max-width: 100%;
-        /* Allow full width */
-    }
-
-    /* Center hero visual and add margin */
-    .hero-visual {
-        justify-content: center;
-        margin: 40px 0;
-        /* Add vertical margin */
-    }
-
-    /* Adjust product showcase layout */
-    .product-showcase {
-        flex-direction: row;
-        /* Arrange horizontally */
-        justify-content: center;
-        /* Center items */
-        gap: 20px;
-        /* Adjust gap */
-    }
-
-    /* Adjust hero heading size and alignment */
-    .hero h1 {
-        font-size: 36px;
-        /* Smaller font size */
-        text-align: center;
-        /* Center align */
-    }
-
-    .hero h1 span {
-        font-size: 32px;
-        /* Smaller font size */
-    }
-
-    /* Center hero paragraph */
-    .hero p {
-        margin: 0 auto 30px;
-        /* Center horizontally */
-        text-align: center;
-        /* Center align */
-    }
-
-    /* Make search bar responsive */
-    .search-bar {
-        margin: 0 auto 25px;
-        /* Center horizontally */
-        width: 100%;
-        /* Full width */
-        max-width: 460px;
-        /* Keep max width */
-    }
-
-    /* Center feature list */
-    .feature-list {
-        margin: 0 auto;
-        /* Center horizontally */
-        max-width: 460px;
-        /* Keep max width */
-    }
-
-    /* Hide desktop navigation */
-    nav {
-        display: none;
-    }
-
-    /* Show mobile menu toggle button */
-    .mobile-menu-toggle {
-        display: block;
-        /* Make visible */
-        cursor: pointer;
-        /* Pointer cursor */
-        font-size: 24px;
-        /* Icon size */
-        /* Add color if needed */
-    }
-
-    /* Adjust category section grid */
-    .category-section {
-        grid-template-columns: repeat(3, 1fr);
-        /* 3 columns */
-    }
-}
-
-/* Tablets */
-@media (max-width: 768px) {
-
-    /* Hide desktop header actions */
-    .header-actions {
-        display: none;
-    }
-
-    /* Adjust hero product showcase layout */
-    .product-showcase {
-        flex-direction: column;
-        /* Stack vertically */
-        align-items: center;
-        /* Center items */
-    }
-
-    /* Adjust hero heading size (already adjusted in previous query) */
-    .hero h1 {
-        font-size: 36px;
-    }
-
-    .hero h1 span {
-        font-size: 32px;
-    }
-
-    /* Adjust feature list grid */
-    .feature-list {
-        grid-template-columns: 1fr;
-        /* Single column */
-    }
-
-    /* Adjust category section grid */
-    .category-section {
-        grid-template-columns: repeat(2, 1fr);
-        /* 2 columns */
-    }
-}
-
-/* Mobile Phones */
-@media (max-width: 480px) {
-
-    /* Adjust category section grid */
-    .category-section {
-        grid-template-columns: 1fr;
-        /* Single column */
-    }
-
-    /* Adjust hero heading size (already adjusted) */
-    .hero h1 {
-        font-size: 36px;
-    }
-
-    .hero h1 span {
-        font-size: 32px;
-    }
-
-    /* Adjust search bar height */
-    .search-bar {
-        height: 44px;
-    }
-}
-
-/* ==========================================================================
-   Mobile Menu Styles
-   ========================================================================== */
-
-/* Mobile menu container (hidden by default) */
-.mobile-menu {
-    display: none;
-    /* Hidden */
-}
-
-/* Styles when mobile menu is shown (via JS adding .show class) */
-.mobile-menu.show {
-    display: block;
-    /* Make visible */
-    position: absolute;
-    /* Position below header */
-    top: var(--header-height);
-    /* Position below fixed header */
-    right: 0;
-    left: 0;
-    z-index: 100;
-    /* High z-index */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    /* Add shadow */
-    background-color: white;
-    /* White background */
-    padding: 20px;
-    /* Padding */
-}
-
-/* List items within mobile menu */
-.mobile-menu ul li {
-    margin: 15px 0;
-    /* Vertical spacing */
-
-    /* Cart button specific styling within mobile menu */
-    /* Nested CSS - consider moving this out if preprocessor not used */
-    .mobile-cart-button {
-        display: flex;
-        /* Align icon and text */
-        align-items: center;
-        /* Vertically align */
-        gap: 8px;
-        /* Space between icon and text */
-        margin: 5px 0;
-        /* Vertical margin */
-        border-radius: 5px;
-        /* Rounded corners */
-        background-color: var(--tomato-red);
-        /* Accent color */
-        padding: 8px 16px;
-        /* Padding */
-        color: white !important;
-        /* Ensure text is white */
-        font-weight: 500;
-        /* Medium weight */
-    }
-
-    .mobile-cart-button:hover {
-        background-color: var(--dark-tomato-red);
-        /* Darken background */
-        color: white !important;
-        /* Ensure text is white */
-    }
-
-    .mobile-cart-button img {
-        width: 24px;
-        /* Icon size */
-        height: 24px;
-        /* Icon size */
-    }
-
-    /* End of nested .mobile-cart-button styles */
-}
-
-/* Mobile menu toggle button (hamburger icon) - hidden by default */
-.mobile-menu-toggle {
-    display: none;
-}
-
-/* Show toggle button on smaller screens (matches nav hiding breakpoint) */
-@media (max-width: 1024px) {
-    .mobile-menu-toggle {
-        display: block;
-        /* Show the button */
-    }
-}
 
 /* ==========================================================================
    User Actions Section (Register/Login Prompt)
@@ -1474,6 +1260,182 @@ footer.hidden {
     color: var(--herb-green);
     /* Theme color */
 }
+
+/* ==========================================================================
+   New Off-Canvas Mobile Menu Styles
+   ========================================================================== */
+
+/* Visually Hidden Class for Accessibility */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1090;
+    /* Below panel, above main content */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
+}
+
+.mobile-menu-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0s;
+}
+
+/* Mobile Menu Panel */
+.mobile-menu-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--soft-off-white);
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+    z-index: 1100;
+    /* Higher than overlay */
+    overflow-y: auto;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.3s ease-in-out, visibility 0s linear 0.3s;
+}
+
+.mobile-menu-panel.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.3s ease-in-out, visibility 0s linear 0s;
+}
+
+/* Mobile Menu Panel Header */
+.mobile-menu-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--creamy-beige);
+}
+
+/* Mobile Menu Close Button */
+.mobile-menu-close-btn {
+    background-color: transparent;
+    border: none;
+    color: var(--tomato-red);
+    font-size: 22px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.mobile-menu-close-btn:hover {
+    background-color: rgba(217, 79, 47, 0.1);
+    /* --tomato-red with 10% opacity */
+}
+
+.mobile-menu-close-btn:focus {
+    background-color: rgba(217, 79, 47, 0.1);
+    outline: 2px solid var(--carrot-orange);
+    outline-offset: 1px;
+}
+
+/* Navigation List in Panel */
+.mobile-menu-panel nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mobile-menu-panel nav ul li a {
+    display: block;
+    padding: 14px 20px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: var(--herb-green);
+    text-decoration: none;
+    border-bottom: 1px solid var(--creamy-beige);
+}
+
+.mobile-menu-panel nav ul li:last-child a {
+    border-bottom: none;
+}
+
+.mobile-menu-panel nav ul li a:hover,
+.mobile-menu-panel nav ul li a:focus {
+    background-color: var(--creamy-beige);
+    color: var(--tomato-red);
+}
+
+.mobile-menu-panel nav ul li a.active {
+    color: var(--tomato-red);
+    font-weight: 600;
+    background-color: var(--creamy-beige);
+}
+
+/* Action Buttons within Mobile Menu (example) */
+.mobile-menu-panel .action-button-item a {
+    display: block;
+    margin: 15px 20px;
+    padding: 12px 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.mobile-menu-panel .action-button-item a.primary {
+    background-color: var(--tomato-red);
+    color: white;
+}
+
+.mobile-menu-panel .action-button-item a.primary:hover,
+.mobile-menu-panel .action-button-item a.primary:focus {
+    background-color: var(--dark-tomato-red);
+}
+
+.mobile-menu-panel .action-button-item a.secondary {
+    background-color: transparent;
+    color: var(--tomato-red);
+    border: 1px solid var(--tomato-red);
+}
+
+.mobile-menu-panel .action-button-item a.secondary:hover,
+.mobile-menu-panel .action-button-item a.secondary:focus {
+    background-color: rgba(217, 79, 47, 0.05);
+}
+
+/* Cart button in mobile menu */
+.mobile-menu-panel .mobile-cart-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mobile-menu-panel .mobile-cart-button i {
+    font-size: 1em;
+    /* Match text size or adjust as needed */
+}
+
+
+/* Body Scroll Lock */
+body.mobile-menu-active {
+    overflow: hidden;
+}
+
+/* Media Query for Hiding Desktop Elements and Showing Mobile Toggle */
+/* This should be placed after the general .mobile-menu-toggle display:none rule */
 
 /* Container for the action buttons */
 .action-buttons {
@@ -2456,4 +2418,9 @@ textarea.form-control {
 #homepage-search-button.loading {
     opacity: 0.7;
     cursor: default;
+}
+
+/* Product link display style */
+.product-link {
+    display: contents;
 }
